@@ -1,4 +1,5 @@
 import { ArchiveClient } from './ArchiveClient';
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -29,7 +30,9 @@ export default function ArchivePage() {
       </div>
 
       {/* Interactive content — client component; code-split from homepage bundle */}
-      <ArchiveClient />
+      <Suspense fallback={<div className="h-64" />}>
+        <ArchiveClient />
+      </Suspense>
     </div>
   );
 }

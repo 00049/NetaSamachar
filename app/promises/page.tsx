@@ -1,4 +1,5 @@
 import { PromisesClient } from './PromisesClient';
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -29,7 +30,9 @@ export default function PromisesPage() {
       </div>
 
       {/* Interactive filtering — client component */}
-      <PromisesClient />
+      <Suspense fallback={<div className="h-64" />}>
+        <PromisesClient />
+      </Suspense>
     </div>
   );
 }

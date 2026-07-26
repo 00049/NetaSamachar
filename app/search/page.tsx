@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, Suspense } from 'react';
 import { SearchX } from 'lucide-react';
 import { PoliticianCard } from '@/components/politicians/PoliticianCard';
 import { PromiseCard } from '@/components/promises/PromiseCard';
@@ -46,7 +46,7 @@ type SearchTab = 'All' | 'Politicians' | 'Promises' | 'Evidence';
 
 const POPULAR_SEARCHES = ['Infrastructure', 'Healthcare', 'Broken Promises', 'Pending Scrutiny', 'BJP', 'INC'];
 
-export default function SearchPage() {
+function SearchContent() {
   const [inputValue, setInputValue] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [activeTab, setActiveTab] = useUrlState('tab', 'All');
@@ -218,5 +218,13 @@ export default function SearchPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[var(--bg-base)]" />}>
+      <SearchContent />
+    </Suspense>
   );
 }

@@ -1,4 +1,5 @@
 import { PoliticiansClient } from './PoliticiansClient';
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { POLITICIANS } from '@/data/politicians';
 
@@ -30,7 +31,9 @@ export default function PoliticiansPage() {
       </div>
 
       {/* Interactive filtering/sorting — client component */}
-      <PoliticiansClient />
+      <Suspense fallback={<div className="h-64" />}>
+        <PoliticiansClient />
+      </Suspense>
     </main>
   );
 }
