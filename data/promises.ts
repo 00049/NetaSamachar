@@ -272,7 +272,7 @@ export const PROMISES: Promise[] = [
     state: 'Himachal Pradesh',
     confidenceScore: 95,
     timeline: [
-      { id: 'tl-hp-010-1', date: '2014-01-01', title: 'Funds Refused', description: 'State government ignored the CMP and refused to release the estimated ₹500 Crore required.', type: 'cancelled', evidenceIds: [], confidenceScore: 95 }
+      { id: 'tl-hp-010-1', date: '2014-01-01', title: 'Funds Refused', description: 'State government ignored the CMP and refused to release the estimated ₹500 Crore required.', type: 'setback', evidenceIds: [], confidenceScore: 95 }
     ],
     evidenceIds: [],
     tags: ['traffic', 'shimla', 'infrastructure'],
