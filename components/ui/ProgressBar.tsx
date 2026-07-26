@@ -36,6 +36,12 @@ export function ProgressBar({
   const fillRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
+  const valueRef = useRef(value);
+
+  // Keep value ref in sync so the observer callback always sees the latest value
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
 
   useEffect(() => {
     const fill = fillRef.current;
@@ -47,7 +53,7 @@ export function ProgressBar({
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // Start collapsed
-    fill.style.transform = `scaleX(${reduced ? value / 100 : 0})`;
+    fill.style.transform = `scaleX(${reduced ? valueRef.current / 100 : 0})`;
     fill.style.transition = 'none';
 
     const observer = new IntersectionObserver(
@@ -60,7 +66,7 @@ export function ProgressBar({
 
         const run = () => {
           fill.style.transition = `transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)`;
-          fill.style.transform = `scaleX(${value / 100})`;
+          fill.style.transform = `scaleX(${valueRef.current / 100})`;
         };
 
         if (delay > 0) {
@@ -75,7 +81,21 @@ export function ProgressBar({
 
     observer.observe(track);
     return () => observer.disconnect();
-  }, [value, delay]);
+  }, [delay]); // Only re-run if delay changes (unlikely)
+
+  // Handle subsequent dynamic value changes smoothly
+  useEffect(() => {
+    if (hasAnimated.current && fillRef.current) {
+      const reduced =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+      if (!reduced) {
+        fillRef.current.style.transition = `transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)`;
+      }
+      fillRef.current.style.transform = `scaleX(${value / 100})`;
+    }
+  }, [value]);
 
   return (
     <div

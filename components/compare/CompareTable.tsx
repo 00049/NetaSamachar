@@ -8,6 +8,8 @@ import { CompareType } from './CompareBuilder';
 import { Info, ExternalLink } from 'lucide-react';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import Link from 'next/link';
+import { useSearchCache } from '@/lib/useSearchCache';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface CompareTableProps {
   type: CompareType;
@@ -25,9 +27,15 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
     );
   }
 
+  const cache = useSearchCache<any>('aggregateStats');
+
   // Aggregate data for each slot based on type
   const columnsData = useMemo(() => {
     return entityIds.map(id => {
+      const cacheKey = `${type}:${id}`;
+      const cached = cache.get(cacheKey);
+      if (cached) return cached;
+
       let matchedPoliticians: typeof POLITICIANS = [];
       let matchedPromises: typeof PROMISES = [];
       let name = '';
@@ -56,13 +64,16 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
         matchedPromises = PROMISES.filter(p => p.politicianId === id);
       }
 
-      return {
+      const result = {
         id,
         name,
         stats: aggregateStats(matchedPoliticians, matchedPromises),
       };
+      
+      cache.set(cacheKey, result);
+      return result;
     });
-  }, [type, entityIds]);
+  }, [type, entityIds, cache]);
 
   // Check sample sizes (total promises)
   const sampleSizes = columnsData.map(c => c.stats.totalPromises);
@@ -120,16 +131,27 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
           </div>
         
         {columnsData.map((col, i) => (
-          <div key={`header-${col.id}-${i}`} className="flex-1 p-6 border-l border-white/[0.06] flex flex-col items-start justify-end">
-            <div className="text-xs uppercase tracking-widest text-[#71717A] mb-2 font-semibold">
-              Slot {String.fromCharCode(65 + i)}
-            </div>
-            <div className="font-serif font-bold text-xl text-white">
-              {col.name}
-            </div>
-            <div className="text-[#A1A1AA] text-xs mt-1">
-              n={col.stats.totalPromises} promises
-            </div>
+          <div key={`header-${i}`} className="flex-1 p-6 border-l border-white/[0.06] flex flex-col items-start justify-end relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={col.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="flex flex-col items-start w-full"
+              >
+                <div className="text-xs uppercase tracking-widest text-[#71717A] mb-2 font-semibold">
+                  Slot {String.fromCharCode(65 + i)}
+                </div>
+                <div className="font-serif font-bold text-xl text-white">
+                  {col.name}
+                </div>
+                <div className="text-[#A1A1AA] text-xs mt-1">
+                  n={col.stats.totalPromises} promises
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         ))}
       </div>
@@ -178,15 +200,26 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
               }
 
               return (
-                <div key={i} className="flex-1 p-6 border-l border-white/[0.04] flex flex-col justify-center gap-3">
-                  <div className="text-white font-semibold tabular-nums text-lg">
-                    {displayVal}
-                  </div>
-                  <ProgressBar
-                    value={barWidth}
-                    color={barColor}
-                    height="6px"
-                  />
+                <div key={`cell-${i}`} className="flex-1 p-6 border-l border-white/[0.04] flex flex-col justify-center gap-3 relative">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={col.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex flex-col gap-3 w-full"
+                    >
+                      <div className="text-white font-semibold tabular-nums text-lg">
+                        {displayVal}
+                      </div>
+                      <ProgressBar
+                        value={barWidth}
+                        color={barColor}
+                        height="6px"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               );
             })}
