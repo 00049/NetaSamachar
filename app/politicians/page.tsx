@@ -1,5 +1,6 @@
 import { PoliticiansClient } from './PoliticiansClient';
 import { Suspense } from 'react';
+import { PoliticiansGridSkeleton } from '@/components/ui/Skeletons';
 import type { Metadata } from 'next';
 import { POLITICIANS } from '@/data/politicians';
 
@@ -31,7 +32,13 @@ export default function PoliticiansPage() {
       </div>
 
       {/* Interactive filtering/sorting — client component */}
-      <Suspense fallback={<div className="h-64" />}>
+      <Suspense fallback={
+        <div className="max-w-[1440px] mx-auto px-6 md:px-10 xl:px-20 pb-32">
+          {/* Skeleton for search/filter bar */}
+          <div className="h-14 w-full bg-white/[0.02] border border-white/[0.06] rounded-lg mb-8 animate-pulse" />
+          <PoliticiansGridSkeleton count={12} />
+        </div>
+      }>
         <PoliticiansClient />
       </Suspense>
     </main>

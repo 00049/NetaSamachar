@@ -1,5 +1,6 @@
 import { ArchiveClient } from './ArchiveClient';
 import { Suspense } from 'react';
+import { PromiseCardSkeleton } from '@/components/ui/Skeletons';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -30,7 +31,18 @@ export default function ArchivePage() {
       </div>
 
       {/* Interactive content — client component; code-split from homepage bundle */}
-      <Suspense fallback={<div className="h-64" />}>
+      <Suspense fallback={
+        <div className="max-w-[1440px] mx-auto px-6 md:px-10 xl:px-20 pb-32">
+          {/* Skeleton for search/filter bar */}
+          <div className="h-14 w-full bg-white/[0.02] border border-white/[0.06] rounded-lg mb-8 animate-pulse" />
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <PromiseCardSkeleton />
+            <PromiseCardSkeleton />
+            <PromiseCardSkeleton />
+            <PromiseCardSkeleton />
+          </div>
+        </div>
+      }>
         <ArchiveClient />
       </Suspense>
     </div>

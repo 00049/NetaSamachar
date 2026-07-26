@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { POLITICIANS, PARTIES } from '@/data/politicians';
-import { PROMISES } from '@/data/promises';
+import { POLITICIANS } from '@/data/politicians';
+import { getPoliticianDossier } from '@/lib/api';
 import { PromiseCard } from '@/components/promises/PromiseCard';
 import { formatCurrency, getPromiseFulfillmentRate } from '@/lib/utils';
 import clsx from 'clsx';
@@ -27,11 +27,12 @@ export function generateStaticParams() {
 
 export default async function PoliticianProfilePage({ params }: Props) {
   const { id } = await params;
-  const politician = POLITICIANS.find(p => p.id === id);
-  if (!politician) notFound();
+  
+  // Use the simulated unified database query
+  const dossier = await getPoliticianDossier(id);
+  if (!dossier) notFound();
 
-  const party = PARTIES.find(p => p.id === politician.partyId);
-  const politicianPromises = PROMISES.filter(p => p.politicianId === politician.id);
+  const { politician, party, promises: politicianPromises } = dossier;
   const fulfillmentRate = getPromiseFulfillmentRate(politician.promisesFulfilled, politician.promisesTotal);
   const heinousCases = politician.criminalCases.filter(c => c.severity === 'heinous').length;
 

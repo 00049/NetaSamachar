@@ -6,7 +6,7 @@ import { formatCurrency, getPromiseFulfillmentRate } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink } from 'lucide-react';
 import { Avatar } from '@/components/ui/Avatar';
-import Link from 'next/link';
+import { HoverPrefetchLink } from '@/components/ui/HoverPrefetchLink';
 
 interface Props {
   politician: Politician | null;
@@ -104,12 +104,12 @@ export function PoliticianDrawer({ politician, isOpen, onClose }: Props) {
             </div>
 
             <div className="p-6 border-t border-[var(--border-subtle)] bg-[var(--bg-base)]">
-              <Link 
+              <HoverPrefetchLink 
                 href={`/politicians/${politician.id}`}
                 className="w-full flex items-center justify-center gap-2 py-4 bg-[var(--text-primary)] text-[var(--bg-base)] text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
               >
                 Access Full Dossier <ExternalLink className="w-4 h-4" />
-              </Link>
+              </HoverPrefetchLink>
             </div>
           </motion.div>
         </>

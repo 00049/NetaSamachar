@@ -9,7 +9,7 @@ import { useSearchCache } from '@/lib/useSearchCache';
 import { useUrlState } from '@/lib/useUrlState';
 import clsx from 'clsx';
 import { LayoutGrid, List, ArrowUpDown } from 'lucide-react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { CheckboxSelectionProvider } from '@/components/ui/CheckboxSelectionProvider';
 import { StickyCompareBar } from '@/components/ui/StickyCompareBar';
 import { ScrollReveal } from '@/components/ui/ScrollReveal';
@@ -118,12 +118,11 @@ export function PoliticiansClient() {
   const colCount = Math.max(1, Math.floor((gridWidth + CARD_GAP) / (MIN_CARD_WIDTH + CARD_GAP)));
   const rowCount = Math.ceil(filteredAndSorted.length / colCount);
 
-  const rowVirtualizer = useVirtualizer({
+  const rowVirtualizer = useWindowVirtualizer({
     count: rowCount,
-    getScrollElement: () => null, // use window scroll
     estimateSize: () => CARD_HEIGHT + CARD_GAP,
     overscan: 3,
-    scrollMargin: 0,
+    scrollMargin: gridRef.current?.offsetTop ?? 0,
   });
 
   return (

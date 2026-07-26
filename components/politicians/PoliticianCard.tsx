@@ -1,13 +1,14 @@
 'use client';
 
+import React from 'react';
 import { Politician } from '@/lib/types';
 import { PARTIES } from '@/data/politicians';
 import { formatCurrency, getPromiseFulfillmentRate } from '@/lib/utils';
 import { Avatar } from '@/components/ui/Avatar';
+import { HoverPrefetchLink } from '@/components/ui/HoverPrefetchLink';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { CheckSquare, Square, ChevronRight, AlertTriangle } from 'lucide-react';
-import Link from 'next/link';
 import { useSelection } from '@/components/ui/CheckboxSelectionProvider';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 
@@ -119,7 +120,7 @@ export function PoliticianCard({
     const partyRingColor = partyNeutralTones[(party?.abbreviation?.length || 0) % partyNeutralTones.length];
 
     return (
-      <Link href={`/politicians/${politician.id}`} className="group block w-full outline-none">
+      <HoverPrefetchLink href={`/politicians/${politician.id}`} className="group block w-full outline-none">
         <div
           className="h-auto md:h-[340px] p-[32px] bg-white/[0.02] border border-white/8 rounded-[4px] flex flex-col items-center text-center transition-all duration-220 ease-out hover:bg-white/[0.04] hover:border-white/20 hover:-translate-y-[2px] hover:shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
         >
@@ -169,7 +170,7 @@ export function PoliticianCard({
             </div>
           </div>
         </div>
-      </Link>
+      </HoverPrefetchLink>
     );
   }
 
@@ -285,15 +286,15 @@ export function PoliticianCard({
       </div>
 
       {/* Footer link */}
-      <Link
+      <HoverPrefetchLink
         href={`/politicians/${politician.id}`}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
         className="border-t border-[var(--border-subtle)] px-8 py-4 flex items-center justify-between text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-raised)] glide-transition"
         style={{ fontSize: '10px', letterSpacing: '0.1em', fontWeight: 700 }}
       >
         <span className="uppercase">View Full Dossier</span>
         <ChevronRight className="w-3.5 h-3.5" />
-      </Link>
+      </HoverPrefetchLink>
     </motion.div>
   );
 }
