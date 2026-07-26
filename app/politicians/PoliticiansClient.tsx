@@ -128,7 +128,7 @@ export function PoliticiansClient() {
   return (
     <CheckboxSelectionProvider type="politician">
       {/* Sticky Control Bar */}
-      <div className="sticky top-[60px] z-30 bg-[var(--bg-base)]/90 backdrop-blur-md border-y border-[var(--border-subtle)] mb-12 shadow-sm">
+      <div className="sticky top-[60px] z-30 bg-[var(--bg-base)]/90 backdrop-blur-md border-y border-[var(--border-subtle)] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             {/* Debounced search */}
@@ -207,7 +207,7 @@ export function PoliticiansClient() {
       </div>
 
       {/* Directory Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pb-[120px]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pt-10 pb-[120px]">
         {filteredAndSorted.length === 0 ? (
           <div className="py-24 text-center text-[var(--text-tertiary)] font-serif italic text-lg">
             No dossiers match your current filters.
