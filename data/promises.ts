@@ -296,7 +296,6 @@ export const PROMISES: Promise[] = [
     evidenceIds: [],
     tags: ['employment', 'youth', 'himachal-pradesh'],
   },
-,
   {
     id: 'p-hp-007',
     politicianId: 'jp-nadda',
