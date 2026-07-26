@@ -8,6 +8,7 @@ import { PromiseCard } from '@/components/promises/PromiseCard';
 import { PoliticianCard } from '@/components/politicians/PoliticianCard';
 import { CommandPaletteUI } from '@/components/home/CommandPaletteUI';
 import { EvidenceSpotlight } from '@/components/home/EvidenceSpotlight';
+import { BrowseByDimension } from '@/components/home/BrowseByDimension';
 
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 import { ArrowRight, ShieldCheck, Search, Scale, FileSignature, Landmark } from 'lucide-react';
@@ -92,29 +93,28 @@ export default function HomePage() {
             </motion.h1>
 
             {/* Body */}
-            <motion.p variants={heroItem} className="text-[var(--text-secondary)] text-[18px] leading-[1.6] max-w-[640px] mb-8">
-              12,847 verified documents tracking 4,219 political promises across India. <Link href="/promises" className="text-[var(--text-primary)] hover:underline ml-1">Browse full database &rarr;</Link>
+            <motion.p variants={heroItem} className="text-[var(--text-secondary)] text-[18px] leading-[1.6] max-w-[640px] mb-2">
+              12,847 verified documents tracking 4,219 political promises. <Link href="/promises" className="text-[var(--text-primary)] hover:underline ml-1">Browse full database &rarr;</Link>
             </motion.p>
+
+            {/* Coverage Transparency */}
+            <motion.div variants={heroItem} className="text-[#71717A] text-[13px] mb-8">
+              {(() => {
+                const activeStates = Array.from(new Set(POLITICIANS.map(p => p.state)));
+                if (activeStates.length === 1) {
+                  return `Currently tracking ${activeStates[0]} in full depth, expanding nationwide.`;
+                }
+                return `Currently tracking ${activeStates.length} states in full depth, expanding nationwide.`;
+              })()}
+            </motion.div>
 
             {/* CTA Row & Search Input Container */}
             <motion.div variants={heroItem} className="flex flex-col gap-[12px] w-full max-w-[920px]">
               {/* Search */}
               <CommandPaletteUI />
-
-              {/* Quick Filters */}
-              <div className="flex flex-wrap items-center gap-[8px] mt-[12px]">
-                <Link href="/search?category=infrastructure" className="chip">Infrastructure</Link>
-                <Link href="/search?category=healthcare" className="chip">Healthcare</Link>
-                <Link href="/search?category=education" className="chip">Education</Link>
-                <Link href="/search?category=digital" className="chip">Digital & Internet</Link>
-                <Link href="/search?category=housing" className="chip">Housing</Link>
-              </div>
-              <div className="flex flex-wrap items-center gap-[8px]">
-                <Link href="/search?status=fully_delivered" className="chip"><div className="status-dot status-dot--verified mr-2" />Fully Delivered</Link>
-                <Link href="/search?status=under_construction" className="chip"><div className="status-dot status-dot--info mr-2" />Under Construction</Link>
-                <Link href="/search?status=broken" className="chip"><div className="status-dot status-dot--risk mr-2" />Broken Promises</Link>
-                <Link href="/search?status=pending" className="chip"><div className="status-dot status-dot--caution mr-2" />Pending Scrutiny</Link>
-              </div>
+              
+              {/* Dimensions Filter */}
+              <BrowseByDimension />
             </motion.div>
           </div>
         </motion.div>

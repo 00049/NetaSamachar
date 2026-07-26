@@ -7,11 +7,14 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { CheckSquare, Square, ChevronRight, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
+import { useSelection } from '@/components/ui/CheckboxSelectionProvider';
 
 interface Props {
   politician: Politician;
   viewMode?: 'grid' | 'list' | 'compact';
   onClickPreview?: (politician: Politician) => void;
+  /** Set to true for cards below the viewport fold so avatars don't block initial render */
+  lazy?: boolean;
 }
 
 export function PoliticianCard({
@@ -23,16 +26,36 @@ export function PoliticianCard({
   const fulfillmentRate = getPromiseFulfillmentRate(politician.promisesFulfilled, politician.promisesTotal);
   const hasSevereCases  = politician.criminalCases.some(c => c.severity === 'heinous');
   const totalCases      = politician.criminalCases.length;
+  
+  const selection = useSelection();
+  const isSelected = selection?.isSelected(politician.id);
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    selection?.toggleSelection(politician.id);
+  };
 
   // ── List view ──────────────────────────────────────────────
   if (viewMode === 'list') {
     return (
       <motion.div
         whileHover={{ backgroundColor: 'var(--bg-raised)' }}
-        className="group flex items-center gap-6 px-6 py-4 border-b border-[var(--border-subtle)] cursor-pointer glide-transition"
+        className="group relative flex items-center gap-6 px-6 py-4 border-b border-[var(--border-subtle)] cursor-pointer glide-transition"
         onClick={() => onClickPreview?.(politician)}
       >
-
+        {/* Checkbox (if in selection context) */}
+        {selection && (
+          <div 
+            className="p-2 -ml-2 text-[var(--text-tertiary)] hover:text-white transition-colors cursor-pointer"
+            onClick={handleToggle}
+          >
+            {isSelected ? (
+              <CheckSquare className="w-5 h-5 text-emerald-400" />
+            ) : (
+              <Square className="w-5 h-5" />
+            )}
+          </div>
+        )}
 
         {/* Avatar — neutral, no party color */}
         <div className="w-10 h-10 rounded-full bg-[var(--bg-raised)] border border-[var(--border-default)] flex-shrink-0 flex items-center justify-center">

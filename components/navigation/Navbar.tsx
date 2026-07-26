@@ -10,6 +10,7 @@ import { LiveIndicator } from '@/components/ui/LiveIndicator';
 const NAV_ITEMS = [
   { href: '/politicians',  label: 'Politicians' },
   { href: '/promises',     label: 'Investigations' },
+  { href: '/compare',      label: 'Compare' },
   { href: '/archive',      label: 'Archive' },
   { href: '/search',       label: 'Search' },
   { href: '/about',        label: 'About' },

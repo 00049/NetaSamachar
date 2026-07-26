@@ -59,6 +59,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        {/*
+          Explicit preload for the primary display font.
+          next/font already generates preload links, but this ensures the
+          font is fetched at the highest priority during the initial parse,
+          not deferred until the CSS is discovered.
+          Both subsets declared below cover Latin characters used by headlines.
+        */}
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href="https://fonts.gstatic.com/s/ibmplexsans/v19/zYX9KVElMYYaJe8bpLHnCwDKjQ76AI9sdP3pBms.woff2"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className="min-h-svh antialiased">
         <Navbar />
