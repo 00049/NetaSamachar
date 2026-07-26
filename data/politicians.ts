@@ -5,6 +5,67 @@ export const PARTIES: Party[] = [
   { id: 'bjp', name: 'Bharatiya Janata Party', abbreviation: 'BJP', color: '#FF6B00', ideology: 'Hindu nationalism, Conservatism', founded: 1980 },
   { id: 'inc', name: 'Indian National Congress', abbreviation: 'INC', color: '#19AAED', ideology: 'Social democracy, Secularism', founded: 1885 },
   { id: 'cpi-m', name: 'Communist Party of India (Marxist)', abbreviation: 'CPI(M)', color: '#FF0000', ideology: 'Communism, Marxism-Leninism', founded: 1964 },
+  { id: 'aap', name: 'Aam Aadmi Party', abbreviation: 'AAP', color: '#0066A4', ideology: 'Populism, Anti-corruption', founded: 2012 },
+  {
+    id: 'sanjay-sood',
+    name: 'Sanjay Sood',
+    nameHindi: 'संजय सूद',
+    photoUrl: '/politicians/placeholder.jpg',
+    partyId: 'bjp',
+    constituency: 'Shimla Urban',
+    state: 'Himachal Pradesh',
+    position: 'Challenger',
+    chamber: 'state_assembly',
+    education: 'Not specified',
+    age: 50,
+    yearsInPolitics: 15,
+    attendancePercent: 0,
+    questionsRaised: 0,
+    billsIntroduced: 0,
+    debatesParticipated: 0,
+    promisesTotal: 5,
+    promisesFulfilled: 0,
+    promisesBroken: 0,
+    promisesInProgress: 0,
+    criminalCases: [],
+    assetDeclarations: [
+      { year: 2022, totalAssets: 27125351, totalLiabilities: 0, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ],
+    latestNetWorth: 27125351,
+    bio: 'Sanjay Sood, known as the "Chaiwala" candidate, was fielded by the BJP in 2022 for the Shimla Urban seat. Despite his grassroots branding, his assets exceeded ₹2.7 Crore.',
+    termsSince: 0,
+    verified: true,
+    lastUpdated: '2026-07-26',
+  },
+  {
+    id: 'prem-kumar',
+    name: 'Prem Kumar',
+    nameHindi: 'प्रेम कुमार',
+    photoUrl: '/politicians/placeholder.jpg',
+    partyId: 'aap',
+    constituency: 'Shimla Rural',
+    state: 'Himachal Pradesh',
+    position: 'Challenger',
+    chamber: 'state_assembly',
+    education: 'Not specified',
+    age: 45,
+    yearsInPolitics: 5,
+    attendancePercent: 0,
+    questionsRaised: 0,
+    billsIntroduced: 0,
+    debatesParticipated: 0,
+    promisesTotal: 0,
+    promisesFulfilled: 0,
+    promisesBroken: 0,
+    promisesInProgress: 0,
+    criminalCases: [],
+    assetDeclarations: [],
+    latestNetWorth: 0,
+    bio: 'Prem Kumar contested the Shimla Rural assembly seat in 2022 on an AAP ticket but failed to secure significant votes, receiving only a handful in several booths.',
+    termsSince: 0,
+    verified: true,
+    lastUpdated: '2026-07-26',
+  },
 ];
 
 export const POLITICIANS: Politician[] = [
@@ -65,9 +126,15 @@ export const POLITICIANS: Politician[] = [
     promisesFulfilled: 18,
     promisesBroken: 2,
     promisesInProgress: 5,
-    criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    criminalCases: [
+      { caseNumber: 'CBI-CC No. 02/17', court: 'Patiala House Court', section: 'IPC 120B, 465, 471, PC Act 13(1)(d), 13(1)(e)', chargeDescription: 'Criminal conspiracy, forgery, disproportionate assets', status: 'pending', year: 2017, severity: 'cognizable' },
+      { caseNumber: 'FIR 27/2009', court: 'Vigilance Bureau', section: 'IPC 120B, PC Act 7, 11', chargeDescription: 'Criminal conspiracy and corruption', status: 'pending', year: 2012, severity: 'cognizable' }
+    ]
+    assetDeclarations: [
+      { year: 2017, totalAssets: 305215611, totalLiabilities: 62524000, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
+      { year: 2012, totalAssets: 340014971, totalLiabilities: 2402720, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ]
+    latestNetWorth: 305215611,
     bio: 'Virbhadra Singh was a veteran INC leader and the longest-serving Chief Minister of Himachal Pradesh. He won the inaugural 2012 election in Shimla Rural with a massive 71.48% vote share.',
     termsSince: 1983,
     verified: true,
@@ -130,9 +197,12 @@ export const POLITICIANS: Politician[] = [
     promisesFulfilled: 7,
     promisesBroken: 4,
     promisesInProgress: 4,
-    criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    criminalCases: []
+    assetDeclarations: [
+      { year: 2022, totalAssets: 18467695, totalLiabilities: 401218, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
+      { year: 2017, totalAssets: 9353349, totalLiabilities: 789320, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ]
+    latestNetWorth: 18467695,
     bio: 'Suresh Bhardwaj is a veteran BJP leader who represented Shimla Urban consecutively in 2007, 2012, and 2017. He served as a Cabinet Minister before losing the Kasumpti seat in 2022.',
     termsSince: 1990,
     verified: true,
@@ -193,9 +263,14 @@ export const POLITICIANS: Politician[] = [
     promisesFulfilled: 4,
     promisesBroken: 1,
     promisesInProgress: 2,
-    criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    criminalCases: [
+      { caseNumber: 'Not specified', court: 'Various', section: 'IPC 143, 341, 188, 353', chargeDescription: '4 cases related to protests, wrongful restraint, assault to deter public servant', status: 'pending', year: 2022, severity: 'cognizable' }
+    ]
+    assetDeclarations: [
+      { year: 2022, totalAssets: 102093247, totalLiabilities: 67780000, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
+      { year: 2017, totalAssets: 162217508, totalLiabilities: 10999355, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ]
+    latestNetWorth: 102093247,
     bio: 'Anirudh Singh is an INC leader who has maintained an unyielding bastion in Kasumpti, winning consecutively in 2012, 2017, and 2022. He defeated veteran BJP leader Suresh Bhardwaj in 2022.',
     termsSince: 2012,
     verified: true,
@@ -222,9 +297,14 @@ export const POLITICIANS: Politician[] = [
     promisesFulfilled: 3,
     promisesBroken: 0,
     promisesInProgress: 3,
-    criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    criminalCases: [
+      { caseNumber: 'FIR 114/20, 150/19, 203/18', court: 'Theog and Shimla', section: 'IPC 143, 188, 341, 336', chargeDescription: '3 cases related to public protests and civil disobedience', status: 'pending', year: 2022, severity: 'cognizable' }
+    ]
+    assetDeclarations: [
+      { year: 2022, totalAssets: 25168089, totalLiabilities: 1748069, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
+      { year: 2017, totalAssets: 18280012, totalLiabilities: 4000000, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ]
+    latestNetWorth: 25168089,
     bio: 'Mohan Lal Brakta represents the SC-reserved Rohru constituency. A steadfast INC leader, he has achieved a hat-trick of victories in 2012, 2017, and 2022, demonstrating strong localized popularity.',
     termsSince: 2012,
     verified: true,
@@ -251,9 +331,11 @@ export const POLITICIANS: Politician[] = [
     promisesFulfilled: 5,
     promisesBroken: 3,
     promisesInProgress: 4,
-    criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    criminalCases: []
+    assetDeclarations: [
+      { year: 2017, totalAssets: 15422613, totalLiabilities: 0, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ]
+    latestNetWorth: 15422613,
     bio: 'Sanjay Chauhan is a prominent CPI(M) leader who orchestrated a historic victory as the directly elected Mayor of Shimla Municipal Corporation in 2012.',
     termsSince: 2012,
     verified: true,
@@ -280,9 +362,11 @@ export const POLITICIANS: Politician[] = [
     promisesFulfilled: 1,
     promisesBroken: 0,
     promisesInProgress: 4,
-    criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    criminalCases: []
+    assetDeclarations: [
+      { year: 2023, totalAssets: 25000000, totalLiabilities: 0, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ]
+    latestNetWorth: 25000000,
     bio: 'Surinder Chauhan is the INC leader elected as the Mayor of Shimla in 2023, capitalizing on the backlash against the Smart City urbanization policies.',
     termsSince: 2023,
     verified: true,
@@ -340,12 +424,74 @@ export const POLITICIANS: Politician[] = [
     promisesFulfilled: 12,
     promisesBroken: 6,
     promisesInProgress: 7,
-    criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    criminalCases: []
+    assetDeclarations: [
+      { year: 2024, totalAssets: 34988502, totalLiabilities: 2887803, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ]
+    latestNetWorth: 34988502,
     bio: 'J.P. Nadda is the National President of the BJP and a prominent leader from Himachal Pradesh. He spearheaded the 2022 BJP campaign in the state.',
     termsSince: 2012,
     verified: true,
     lastUpdated: '2026-07-26',
   }
+  {
+    id: 'sanjay-sood',
+    name: 'Sanjay Sood',
+    nameHindi: 'संजय सूद',
+    photoUrl: '/politicians/placeholder.jpg',
+    partyId: 'bjp',
+    constituency: 'Shimla Urban',
+    state: 'Himachal Pradesh',
+    position: 'Challenger',
+    chamber: 'state_assembly',
+    education: 'Not specified',
+    age: 50,
+    yearsInPolitics: 15,
+    attendancePercent: 0,
+    questionsRaised: 0,
+    billsIntroduced: 0,
+    debatesParticipated: 0,
+    promisesTotal: 5,
+    promisesFulfilled: 0,
+    promisesBroken: 0,
+    promisesInProgress: 0,
+    criminalCases: [],
+    assetDeclarations: [
+      { year: 2022, totalAssets: 27125351, totalLiabilities: 0, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ],
+    latestNetWorth: 27125351,
+    bio: 'Sanjay Sood, known as the "Chaiwala" candidate, was fielded by the BJP in 2022 for the Shimla Urban seat. Despite his grassroots branding, his assets exceeded ₹2.7 Crore.',
+    termsSince: 0,
+    verified: true,
+    lastUpdated: '2026-07-26',
+  },
+  {
+    id: 'prem-kumar',
+    name: 'Prem Kumar',
+    nameHindi: 'प्रेम कुमार',
+    photoUrl: '/politicians/placeholder.jpg',
+    partyId: 'aap',
+    constituency: 'Shimla Rural',
+    state: 'Himachal Pradesh',
+    position: 'Challenger',
+    chamber: 'state_assembly',
+    education: 'Not specified',
+    age: 45,
+    yearsInPolitics: 5,
+    attendancePercent: 0,
+    questionsRaised: 0,
+    billsIntroduced: 0,
+    debatesParticipated: 0,
+    promisesTotal: 0,
+    promisesFulfilled: 0,
+    promisesBroken: 0,
+    promisesInProgress: 0,
+    criminalCases: [],
+    assetDeclarations: [],
+    latestNetWorth: 0,
+    bio: 'Prem Kumar contested the Shimla Rural assembly seat in 2022 on an AAP ticket but failed to secure significant votes, receiving only a handful in several booths.',
+    termsSince: 0,
+    verified: true,
+    lastUpdated: '2026-07-26',
+  },
 ];
