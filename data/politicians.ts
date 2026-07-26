@@ -29,9 +29,16 @@ export const POLITICIANS: Politician[] = [
     promisesFulfilled: 5,
     promisesBroken: 2,
     promisesInProgress: 3,
-    criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    criminalCases: [
+      { caseNumber: 'Unknown', court: 'Unknown', section: 'IPC 143, 188, 341', chargeDescription: 'Punishment for being a member of an unlawful assembly, disobedience to order duly promulgated by public servant, wrongful restraint', status: 'pending', year: 2022, severity: 'cognizable' }
+    ],
+    assetDeclarations: [
+      { year: 2022, totalAssets: 120957028, totalLiabilities: 13403020, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
+      { year: 2017, totalAssets: 79200000, totalLiabilities: 0, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
+      { year: 2012, totalAssets: 72200000, totalLiabilities: 0, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
+      { year: 2007, totalAssets: 15000000, totalLiabilities: 0, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ],
+    latestNetWorth: 120957028,
     bio: 'Sukhvinder Singh Sukhu is the Chief Minister of Himachal Pradesh. He led the INC to victory in the 2022 assembly elections with the "10 Guarantees" campaign.',
     termsSince: 2003,
     verified: true,
@@ -87,9 +94,16 @@ export const POLITICIANS: Politician[] = [
     promisesFulfilled: 4,
     promisesBroken: 1,
     promisesInProgress: 3,
-    criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    criminalCases: [
+      { caseNumber: 'Multiple', court: 'Various', section: 'Various', chargeDescription: '14 criminal cases declared in 2024 Lok Sabha affidavit', status: 'pending', year: 2024, severity: 'cognizable' },
+      { caseNumber: 'Multiple', court: 'Various', section: 'Various', chargeDescription: '11 criminal cases declared in 2022 Assembly affidavit', status: 'pending', year: 2022, severity: 'cognizable' }
+    ],
+    assetDeclarations: [
+      { year: 2024, totalAssets: 1005100000, totalLiabilities: 0, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
+      { year: 2022, totalAssets: 1013961033, totalLiabilities: 13870967, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
+      { year: 2017, totalAssets: 843281014, totalLiabilities: 5539000, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ],
+    latestNetWorth: 1005100000,
     bio: "Vikramaditya Singh represents the Shimla Rural constituency. Son of former CM Virbhadra Singh, he has consolidated the family's political base, winning consecutive elections in 2017 and 2022.",
     termsSince: 2017,
     verified: true,
@@ -145,9 +159,14 @@ export const POLITICIANS: Politician[] = [
     promisesFulfilled: 2,
     promisesBroken: 0,
     promisesInProgress: 3,
-    criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    criminalCases: [
+      { caseNumber: 'Unknown', court: 'Unknown', section: 'Various', chargeDescription: '1 criminal case declared in 2022 Assembly affidavit', status: 'pending', year: 2022, severity: 'cognizable' }
+    ],
+    assetDeclarations: [
+      { year: 2022, totalAssets: 46640142, totalLiabilities: 3000000, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
+      { year: 2017, totalAssets: 53406000, totalLiabilities: 6000000, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ],
+    latestNetWorth: 46640142,
     bio: 'Harish Janartha is the MLA from Shimla Urban. A former Deputy Mayor, he reclaimed the INC bastion in the state capital in 2022 with a decisive 51.35% vote share.',
     termsSince: 2022,
     verified: true,
@@ -291,8 +310,10 @@ export const POLITICIANS: Politician[] = [
     promisesBroken: 3,
     promisesInProgress: 5,
     criminalCases: [],
-    assetDeclarations: [],
-    latestNetWorth: 0,
+    assetDeclarations: [
+      { year: 2024, totalAssets: 44000000, totalLiabilities: 5110000, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 }
+    ],
+    latestNetWorth: 44000000,
     bio: 'Suresh Kumar Kashyap is a two-term BJP Member of Parliament from Shimla, winning in 2019 and 2024. He successfully navigated a complex split-ticket voting electorate.',
     termsSince: 2019,
     verified: true,
