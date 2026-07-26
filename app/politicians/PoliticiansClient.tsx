@@ -243,7 +243,7 @@ export function PoliticiansClient() {
                   style={{
                     position: 'absolute',
                     top: 0,
-                    transform: `translateY(${virtualRow.start}px)`,
+                    transform: `translateY(${virtualRow.start - rowVirtualizer.options.scrollMargin}px)`,
                     width: '100%',
                   }}
                 >
