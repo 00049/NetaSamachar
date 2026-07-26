@@ -3,6 +3,7 @@
 import { Politician } from '@/lib/types';
 import { PARTIES } from '@/data/politicians';
 import { formatCurrency, getPromiseFulfillmentRate } from '@/lib/utils';
+import { Avatar } from '@/components/ui/Avatar';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { CheckSquare, Square, ChevronRight, AlertTriangle } from 'lucide-react';
@@ -59,14 +60,7 @@ export function PoliticianCard({
         )}
 
         {/* Avatar — neutral, no party color */}
-        <div className="w-10 h-10 rounded-full bg-[var(--bg-raised)] border border-[var(--border-default)] flex-shrink-0 flex items-center justify-center">
-          <span
-            className="font-serif font-bold text-[var(--text-primary)]"
-            style={{ fontSize: '14px' }}
-          >
-            {politician.name.charAt(0)}
-          </span>
-        </div>
+        <Avatar photoUrl={politician.photoUrl} name={politician.name} size={40} />
 
         <div className="flex-1 min-w-0 grid grid-cols-12 items-center gap-4">
           {/* Name + meta */}
@@ -130,18 +124,13 @@ export function PoliticianCard({
           className="h-auto md:h-[340px] p-[32px] bg-white/[0.02] border border-white/8 rounded-[4px] flex flex-col items-center text-center transition-all duration-220 ease-out hover:bg-white/[0.04] hover:border-white/20 hover:-translate-y-[2px] hover:shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
         >
           {/* Avatar */}
-          <div 
-            className="w-[88px] h-[88px] rounded-full flex items-center justify-center mb-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] relative"
-            style={{ background: 'linear-gradient(135deg, #27272A, #18181B)' }}
-          >
+          <div className="relative mb-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] rounded-full">
+            <Avatar photoUrl={politician.photoUrl} name={politician.name} size={88} />
             {/* Colored Ring */}
             <div 
-              className="absolute inset-[-4px] rounded-full border-[2px] opacity-70"
+              className="absolute inset-[-4px] rounded-full border-[2px] opacity-70 pointer-events-none"
               style={{ borderColor: partyRingColor }}
             />
-            <span className="text-[32px] font-medium text-[#71717A] font-serif">
-              {politician.name.charAt(0)}
-            </span>
           </div>
 
           {/* Name */}
@@ -194,14 +183,12 @@ export function PoliticianCard({
       <div className="p-8 flex flex-col items-center text-center flex-1">
 
         {/* Avatar — neutral, monochrome */}
-        <div className="w-20 h-20 rounded-full bg-[var(--bg-raised)] border border-[var(--border-default)] flex items-center justify-center mb-6 group-hover:border-[var(--border-default)] glide-transition">
-          <span
-            className="font-serif font-bold text-[var(--text-primary)]"
-            style={{ fontSize: '26px' }}
-          >
-            {politician.name.charAt(0)}
-          </span>
-        </div>
+        <Avatar 
+          photoUrl={politician.photoUrl} 
+          name={politician.name} 
+          size={80} 
+          className="mb-6 group-hover:border-[var(--border-default)] glide-transition" 
+        />
 
         {/* Name */}
         <h3

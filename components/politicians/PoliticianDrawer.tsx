@@ -5,6 +5,7 @@ import { PARTIES } from '@/data/politicians';
 import { formatCurrency, getPromiseFulfillmentRate } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink } from 'lucide-react';
+import { Avatar } from '@/components/ui/Avatar';
 import Link from 'next/link';
 
 interface Props {
@@ -48,12 +49,11 @@ export function PoliticianDrawer({ politician, isOpen, onClose }: Props) {
 
             <div className="flex-1 overflow-y-auto p-8">
               <div className="flex items-start gap-6 mb-8">
-                <div 
-                  className="w-20 h-20 flex-shrink-0 flex items-center justify-center font-serif text-3xl font-bold text-[var(--bg-base)]"
-                  style={{ backgroundColor: party?.color || 'var(--text-primary)' }}
-                >
-                  {politician.name.charAt(0)}
-                </div>
+                <Avatar 
+                  photoUrl={politician.photoUrl} 
+                  name={politician.name} 
+                  size={80} 
+                />
                 <div>
                   <h2 className="font-serif text-3xl font-black text-[var(--text-primary)] mb-1">
                     {politician.name}
