@@ -1,0 +1,295 @@
+'use client';
+
+import { Politician } from '@/lib/types';
+import { PARTIES } from '@/data/politicians';
+import { formatCurrency, getPromiseFulfillmentRate } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import clsx from 'clsx';
+import { CheckSquare, Square, ChevronRight, AlertTriangle } from 'lucide-react';
+import Link from 'next/link';
+
+interface Props {
+  politician: Politician;
+  viewMode?: 'grid' | 'list' | 'compact';
+  onClickPreview?: (politician: Politician) => void;
+}
+
+export function PoliticianCard({
+  politician,
+  viewMode = 'grid',
+  onClickPreview,
+}: Props) {
+  const party           = PARTIES.find(p => p.id === politician.partyId);
+  const fulfillmentRate = getPromiseFulfillmentRate(politician.promisesFulfilled, politician.promisesTotal);
+  const hasSevereCases  = politician.criminalCases.some(c => c.severity === 'heinous');
+  const totalCases      = politician.criminalCases.length;
+
+  // ── List view ──────────────────────────────────────────────
+  if (viewMode === 'list') {
+    return (
+      <motion.div
+        whileHover={{ backgroundColor: 'var(--bg-raised)' }}
+        className="group flex items-center gap-6 px-6 py-4 border-b border-[var(--border-subtle)] cursor-pointer glide-transition"
+        onClick={() => onClickPreview?.(politician)}
+      >
+
+
+        {/* Avatar — neutral, no party color */}
+        <div className="w-10 h-10 rounded-full bg-[var(--bg-raised)] border border-[var(--border-default)] flex-shrink-0 flex items-center justify-center">
+          <span
+            className="font-serif font-bold text-[var(--text-primary)]"
+            style={{ fontSize: '14px' }}
+          >
+            {politician.name.charAt(0)}
+          </span>
+        </div>
+
+        <div className="flex-1 min-w-0 grid grid-cols-12 items-center gap-4">
+          {/* Name + meta */}
+          <div className="col-span-12 md:col-span-4 min-w-0">
+            <div
+              className="font-serif font-bold text-[var(--text-primary)] truncate"
+              style={{ fontSize: '15px' }}
+            >
+              {politician.name}
+            </div>
+            <div className="text-[var(--text-tertiary)] truncate mt-0.5" style={{ fontSize: '11px', letterSpacing: '0.06em' }}>
+              {party?.abbreviation} · {politician.constituency}
+            </div>
+          </div>
+
+          {/* Fulfillment */}
+          <div className="hidden md:block col-span-2">
+            <div className="stat-block__label">Fulfillment</div>
+            <div className="font-mono text-sm font-bold text-[var(--text-primary)]">{fulfillmentRate}%</div>
+          </div>
+
+          {/* Attendance */}
+          <div className="hidden md:block col-span-2">
+            <div className="stat-block__label">Attendance</div>
+            <div className="font-mono text-sm font-bold text-[var(--text-primary)]">{politician.attendancePercent}%</div>
+          </div>
+
+          {/* Assets */}
+          <div className="hidden lg:block col-span-2">
+            <div className="stat-block__label">Net Assets</div>
+            <div className="font-mono text-sm font-bold text-[var(--text-primary)]">{formatCurrency(politician.latestNetWorth)}</div>
+          </div>
+
+          {/* Risk */}
+          <div className="hidden md:block col-span-2">
+            <div className="stat-block__label">Legal Risk</div>
+            <div className={clsx('font-mono text-sm font-bold', {
+              'text-[var(--accent-positive)]': totalCases === 0,
+              'text-[var(--accent-negative)]':     hasSevereCases,
+              'text-[var(--accent-warning)]':  totalCases > 0 && !hasSevereCases,
+            })}>
+              {totalCases === 0 ? 'Clear' : `${totalCases} cases`}
+            </div>
+          </div>
+        </div>
+
+      <ChevronRight className="w-4 h-4 text-[var(--text-tertiary)] group-hover:text-[var(--text-tertiary)] glide-transition flex-shrink-0" />
+      </motion.div>
+    );
+  }
+
+  // ── Compact view (Homepage) ────────────────────────────────
+  if (viewMode === 'compact') {
+    const fulfillmentColor = fulfillmentRate <= 33 ? '#F87171' : fulfillmentRate <= 66 ? '#FBBF24' : '#34D399';
+    const partyNeutralTones = ['#52525B', '#71717A', '#A1A1AA', '#3F3F46', '#27272A'];
+    const partyRingColor = partyNeutralTones[(party?.abbreviation?.length || 0) % partyNeutralTones.length];
+
+    return (
+      <Link href={`/politicians/${politician.id}`} className="group block w-full outline-none">
+        <div
+          className="h-auto md:h-[340px] p-[32px] bg-white/[0.02] border border-white/8 rounded-[4px] flex flex-col items-center text-center transition-all duration-220 ease-out hover:bg-white/[0.04] hover:border-white/20 hover:-translate-y-[2px] hover:shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
+        >
+          {/* Avatar */}
+          <div 
+            className="w-[88px] h-[88px] rounded-full flex items-center justify-center mb-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] relative"
+            style={{ background: 'linear-gradient(135deg, #27272A, #18181B)' }}
+          >
+            {/* Colored Ring */}
+            <div 
+              className="absolute inset-[-4px] rounded-full border-[2px] opacity-70"
+              style={{ borderColor: partyRingColor }}
+            />
+            <span className="text-[32px] font-medium text-[#71717A] font-serif">
+              {politician.name.charAt(0)}
+            </span>
+          </div>
+
+          {/* Name */}
+          <h3 className="font-serif font-black text-[#F5F5F7] leading-tight mb-3 text-[22px] tracking-tight line-clamp-2 min-h-[52px]">
+            {politician.name}
+          </h3>
+
+          {/* Party */}
+          <div className="flex items-center gap-2 justify-center mb-8">
+            <span 
+              className="px-[10px] py-[4px] rounded-[3px] text-[11px] font-semibold uppercase tracking-[0.05em] text-[#D4D4D8]"
+              style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+            >
+              {party?.abbreviation || party?.name}
+            </span>
+          </div>
+
+          <div className="w-full flex items-center justify-between mb-3">
+            <span className="text-[#71717A] text-[12px] uppercase tracking-[0.1em]">Fulfillment</span>
+            <span className="font-bold text-[20px] tabular-nums" style={{ color: fulfillmentColor }}>
+              {fulfillmentRate}%
+            </span>
+          </div>
+          
+          <div className="w-full h-[6px] bg-white/8 rounded-[3px] overflow-hidden mb-8">
+            <motion.div 
+              initial={{ width: 0 }}
+              whileInView={{ width: `${fulfillmentRate}%` }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+              className="h-full rounded-[3px]" 
+              style={{ backgroundColor: fulfillmentColor }} 
+            />
+          </div>
+
+          <div className="mt-auto w-full flex justify-center">
+            <div className="inline-flex items-center text-white text-[13px] uppercase tracking-[0.08em] font-medium group-focus-visible:ring-2 ring-white/50 ring-offset-4 ring-offset-[#090B12]">
+              VIEW PROFILE
+              <ChevronRight className="w-4 h-4 ml-2 transition-transform duration-200 ease-out group-hover:translate-x-1" />
+            </div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
+  // ── Grid view ──────────────────────────────────────────────
+  return (
+    <motion.div
+      whileHover={{ y: -3 }}
+      className="group relative bg-[var(--bg-base)] border-r border-b border-[var(--border-subtle)] flex flex-col cursor-pointer overflow-hidden card-hover"
+      style={{ transition: 'transform 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out)' }}
+      onClick={() => onClickPreview?.(politician)}
+    >
+      <div className="p-8 flex flex-col items-center text-center flex-1">
+
+        {/* Avatar — neutral, monochrome */}
+        <div className="w-20 h-20 rounded-full bg-[var(--bg-raised)] border border-[var(--border-default)] flex items-center justify-center mb-6 group-hover:border-[var(--border-default)] glide-transition">
+          <span
+            className="font-serif font-bold text-[var(--text-primary)]"
+            style={{ fontSize: '26px' }}
+          >
+            {politician.name.charAt(0)}
+          </span>
+        </div>
+
+        {/* Name */}
+        <h3
+          className="font-serif font-bold text-[var(--text-primary)] leading-tight mb-2"
+          style={{ fontSize: '17px', letterSpacing: '-0.01em' }}
+        >
+          {politician.name}
+        </h3>
+
+        {/* Party + constituency */}
+        <div className="flex items-center gap-2 justify-center mb-6 flex-wrap">
+          <span className="badge">{party?.abbreviation || party?.name}</span>
+          <span className="text-[var(--text-tertiary)]" style={{ fontSize: '10px' }}>·</span>
+          <span
+            className="text-[var(--text-tertiary)] font-medium uppercase"
+            style={{ fontSize: '10px', letterSpacing: '0.06em' }}
+          >
+            {politician.constituency}
+          </span>
+        </div>
+
+        {/* Divider */}
+        <div className="divider-h w-full mb-6" />
+
+        {/* Stats grid */}
+        <div className="w-full grid grid-cols-2 gap-y-5 gap-x-6 text-left">
+
+          {/* Promises */}
+          <div>
+            <div className="stat-block__label">Promises</div>
+            <div className="font-mono font-bold text-[var(--text-primary)]" style={{ fontSize: '20px' }}>
+              {fulfillmentRate}%
+            </div>
+            <div className="text-[var(--text-tertiary)] mt-0.5" style={{ fontSize: '10px' }}>
+              {politician.promisesFulfilled}/{politician.promisesTotal} fulfilled
+            </div>
+          </div>
+
+          {/* Attendance */}
+          <div>
+            <div className="stat-block__label">Attendance</div>
+            <div className="font-mono font-bold text-[var(--text-primary)]" style={{ fontSize: '20px' }}>
+              {politician.attendancePercent}%
+            </div>
+            {/* Animated mini progress bar */}
+            <div className="w-full h-[4px] bg-white/10 rounded-[2px] overflow-hidden mt-2">
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: `${politician.attendancePercent}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className={clsx("h-full rounded-[2px]", {
+                  'bg-[var(--accent-negative)]': politician.attendancePercent < 50,
+                  'bg-[var(--accent-warning)]': politician.attendancePercent >= 50 && politician.attendancePercent <= 80,
+                  'bg-[var(--accent-positive)]': politician.attendancePercent > 80,
+                })}
+              />
+            </div>
+          </div>
+
+          {/* Assets */}
+          <div>
+            <div className="stat-block__label">Net Assets</div>
+            <div
+              className="font-mono font-bold text-[var(--text-primary)] truncate"
+              style={{ fontSize: '13px' }}
+            >
+              {formatCurrency(politician.latestNetWorth)}
+            </div>
+          </div>
+
+          {/* Legal Risk — semantic color, no fill */}
+          <div>
+            <div className="stat-block__label">Legal Risk</div>
+            {totalCases === 0 ? (
+              <div className="font-mono font-bold text-[var(--accent-positive)]" style={{ fontSize: '13px' }}>
+                Clear
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5">
+                {hasSevereCases && <AlertTriangle className="w-3 h-3 text-[var(--accent-negative)]" />}
+                <span
+                  className={clsx('font-mono font-bold', {
+                    'text-[var(--accent-negative)]':    hasSevereCases,
+                    'text-[var(--accent-warning)]': !hasSevereCases,
+                  })}
+                  style={{ fontSize: '13px' }}
+                >
+                  {totalCases} {totalCases === 1 ? 'case' : 'cases'}
+                </span>
+              </div>
+            )}
+          </div>
+
+        </div>
+      </div>
+
+      {/* Footer link */}
+      <Link
+        href={`/politicians/${politician.id}`}
+        onClick={(e) => e.stopPropagation()}
+        className="border-t border-[var(--border-subtle)] px-8 py-4 flex items-center justify-between text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-raised)] glide-transition"
+        style={{ fontSize: '10px', letterSpacing: '0.1em', fontWeight: 700 }}
+      >
+        <span className="uppercase">View Full Dossier</span>
+        <ChevronRight className="w-3.5 h-3.5" />
+      </Link>
+    </motion.div>
+  );
+}
