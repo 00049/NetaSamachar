@@ -238,30 +238,35 @@ export function PoliticiansClient() {
               const startIdx = virtualRow.index * colCount;
               const rowPoliticians = filteredAndSorted.slice(startIdx, startIdx + colCount);
               return (
-                <ScrollReveal
+                <div
                   key={virtualRow.key}
-                  delay={Math.min(virtualRow.index, 3) * 70}
                   style={{
                     position: 'absolute',
                     top: 0,
                     transform: `translateY(${virtualRow.start}px)`,
                     width: '100%',
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
-                    gap: `${CARD_GAP}px`,
-                    paddingBottom: `${CARD_GAP}px`,
                   }}
                 >
-                  {rowPoliticians.map((politician, i) => (
-                    <PoliticianCard
-                      key={politician.id}
-                      politician={politician}
-                      viewMode="compact"
-                      lazy={virtualRow.index > 0}
-                      onClickPreview={() => setPreviewPoliticianId(politician.id)}
-                    />
-                  ))}
-                </ScrollReveal>
+                  <ScrollReveal
+                    delay={Math.min(virtualRow.index, 3) * 70}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
+                      gap: `${CARD_GAP}px`,
+                      paddingBottom: `${CARD_GAP}px`,
+                    }}
+                  >
+                    {rowPoliticians.map((politician, i) => (
+                      <PoliticianCard
+                        key={politician.id}
+                        politician={politician}
+                        viewMode="compact"
+                        lazy={virtualRow.index > 0}
+                        onClickPreview={() => setPreviewPoliticianId(politician.id)}
+                      />
+                    ))}
+                  </ScrollReveal>
+                </div>
               );
             })}
           </div>
