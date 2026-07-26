@@ -185,20 +185,58 @@ body {
 }
 
 /* ── GLIDE TRANSITIONS ───────────────────────────────────── */
-.glide-transition  { transition: all var(--duration-base) var(--ease-glide); }
-.glide-fast        { transition: all var(--duration-fast) var(--ease-out); }
-.glide-slow        { transition: all var(--duration-slow) var(--ease-glide); }
+/* IMPORTANT: only animate transform + opacity — never width/height/top/margin.
+   Those properties cause layout recalculations on every frame (jank on mobile). */
+.glide-transition {
+  transition:
+    transform var(--duration-base) var(--ease-glide),
+    opacity var(--duration-base) var(--ease-glide);
+}
+.glide-fast {
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
+}
+.glide-slow {
+  transition:
+    transform var(--duration-slow) var(--ease-glide),
+    opacity var(--duration-slow) var(--ease-glide);
+}
 
 /* ── CARD ELEVATION ──────────────────────────────────────── */
+/*
+  Box-shadow trick: instead of animating box-shadow blur/spread directly
+  (which is GPU-expensive), we pre-render the shadow at full intensity on
+  a ::after pseudo-element and cross-fade its opacity on hover.
+  Only transform and opacity are on the compositor thread.
+*/
 .card-hover {
-  transition:
-    transform var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out),
-    border-color var(--duration-base) var(--ease-out);
+  position: relative;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+.card-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+  pointer-events: none;
+  z-index: -1;
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  /* Add will-change only on hover to promote the element to its own layer
+     only while it's being interacted with — removed when mouse leaves. */
+  will-change: transform;
+}
+.card-hover:hover::after {
+  opacity: 1;
+}
+/* Remove will-change when not hovered so GPU memory is freed */
+.card-hover:not(:hover) {
+  will-change: auto;
 }
 
 /* ── BUTTON SYSTEM ───────────────────────────────────────── */

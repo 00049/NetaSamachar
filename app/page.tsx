@@ -9,7 +9,7 @@ import { PoliticianCard } from '@/components/politicians/PoliticianCard';
 import { CommandPaletteUI } from '@/components/home/CommandPaletteUI';
 import { EvidenceSpotlight } from '@/components/home/EvidenceSpotlight';
 import { BrowseByDimension } from '@/components/home/BrowseByDimension';
-
+import { StaggeredRevealGrid, ScrollReveal } from '@/components/ui/ScrollReveal';
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 import { ArrowRight, ShieldCheck, Search, Scale, FileSignature, Landmark } from 'lucide-react';
 
@@ -23,7 +23,9 @@ const section: Variants = {
 
 const stagger: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.15 } },
+  // 70ms between children — caps simultaneous animating DOM elements
+  // to avoid a wave of 12 cards all firing in the same frame
+  show: { transition: { staggerChildren: 0.07 } },
 };
 
 const heroItem: Variants = {
@@ -181,13 +183,14 @@ export default function HomePage() {
             </Link>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredPromises.map((promise) => (
-              <motion.div key={promise.id} variants={section} className="h-full">
+          {/* Promise cards — IntersectionObserver-based, staggered 70ms apart */}
+          <StaggeredRevealGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredPromises.map((promise, i) => (
+              <ScrollReveal key={promise.id} staggerIndex={i}>
                 <PromiseCard promise={promise} viewMode="compact" />
-              </motion.div>
+              </ScrollReveal>
             ))}
-          </div>
+          </StaggeredRevealGrid>
         </motion.div>
       </section>
 
@@ -213,16 +216,14 @@ export default function HomePage() {
           </Link>
         </motion.div>
 
-        <motion.div
-          variants={stagger}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-        >
-          {featuredPoliticians.map(pol => (
-            <motion.div key={pol.id} variants={section}>
+        {/* Politician cards — staggered IntersectionObserver reveals */}
+        <StaggeredRevealGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {featuredPoliticians.map((pol, i) => (
+            <ScrollReveal key={pol.id} staggerIndex={i}>
               <PoliticianCard politician={pol} viewMode="compact" />
-            </motion.div>
+            </ScrollReveal>
           ))}
-        </motion.div>
+        </StaggeredRevealGrid>
       </motion.section>
 
       {/* ═══════════════════════════════════════════════════

@@ -12,6 +12,7 @@ import { LayoutGrid, List, ArrowUpDown } from 'lucide-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { CheckboxSelectionProvider } from '@/components/ui/CheckboxSelectionProvider';
 import { StickyCompareBar } from '@/components/ui/StickyCompareBar';
+import { ScrollReveal } from '@/components/ui/ScrollReveal';
 import { Politician } from '@/lib/types';
 
 type SortOption = 'fulfillment' | 'assets' | 'cases' | 'attendance';
@@ -238,8 +239,9 @@ export function PoliticiansClient() {
               const startIdx = virtualRow.index * colCount;
               const rowPoliticians = filteredAndSorted.slice(startIdx, startIdx + colCount);
               return (
-                <div
+                <ScrollReveal
                   key={virtualRow.key}
+                  delay={Math.min(virtualRow.index, 3) * 70}
                   style={{
                     position: 'absolute',
                     top: 0,
@@ -260,7 +262,7 @@ export function PoliticiansClient() {
                       onClickPreview={() => setPreviewPoliticianId(politician.id)}
                     />
                   ))}
-                </div>
+                </ScrollReveal>
               );
             })}
           </div>

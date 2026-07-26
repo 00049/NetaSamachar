@@ -6,6 +6,7 @@ import { PROMISES } from '@/data/promises';
 import { aggregateStats } from '@/lib/aggregation';
 import { CompareType } from './CompareBuilder';
 import { Info, ExternalLink } from 'lucide-react';
+import { ProgressBar } from '@/components/ui/ProgressBar';
 import Link from 'next/link';
 
 interface CompareTableProps {
@@ -164,17 +165,16 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
               const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
               const barWidth = Math.max(2, Math.min(100, pct));
               
-              // Determine semantic color based on absolute value, not relative rank.
-              let color = 'bg-[#F4F5F7]';
+              // Determine semantic color (absolute value, not relative rank)
+              let barColor = 'rgba(255,255,255,0.2)';
               if (metric.isPercentage) {
-                if (val >= 66) color = 'bg-emerald-500';
-                else if (val >= 34) color = 'bg-amber-500';
-                else color = 'bg-red-500';
+                if (val >= 66) barColor = 'var(--accent-positive)';
+                else if (val >= 34) barColor = 'var(--accent-warning)';
+                else barColor = 'var(--accent-negative)';
               } else if (metric.invertColor) {
-                // e.g., legal cases (lower is better)
-                if (val === 0) color = 'bg-emerald-500';
-                else if (val <= 2) color = 'bg-amber-500';
-                else color = 'bg-red-500';
+                if (val === 0) barColor = 'var(--accent-positive)';
+                else if (val <= 2) barColor = 'var(--accent-warning)';
+                else barColor = 'var(--accent-negative)';
               }
 
               return (
@@ -182,12 +182,11 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
                   <div className="text-white font-semibold tabular-nums text-lg">
                     {displayVal}
                   </div>
-                  <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full ${color} transition-all duration-1000 ease-out`} 
-                      style={{ width: `${barWidth}%` }}
-                    />
-                  </div>
+                  <ProgressBar
+                    value={barWidth}
+                    color={barColor}
+                    height="6px"
+                  />
                 </div>
               );
             })}

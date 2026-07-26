@@ -1,5 +1,6 @@
 import { getConfidenceTier, CONFIDENCE_CONFIG } from '@/lib/utils';
 import clsx from 'clsx';
+import { ProgressBar } from '@/components/ui/ProgressBar';
 
 interface Props {
   score: number;
@@ -50,12 +51,11 @@ export function ConfidenceScore({ score, size = 'md', showLabel = true, showBar 
       </div>
 
       {showBar && (
-        <div className="w-full h-1 bg-[var(--border-subtle)] relative">
-          <div 
-            className={clsx('absolute top-0 left-0 h-full transition-all duration-1000', config.colorClass.replace('text-', 'bg-').split(' ')[0])}
-            style={{ width: `${score}%` }}
-          />
-        </div>
+        <ProgressBar
+          value={score}
+          color={`var(--accent-${tier === 'absolute' || tier === 'high' ? 'positive' : tier === 'moderate' ? 'warning' : 'negative'})`}
+          height="4px"
+        />
       )}
     </div>
   );

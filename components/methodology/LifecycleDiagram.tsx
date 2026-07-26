@@ -73,11 +73,12 @@ export function LifecycleDiagram() {
             {/* Connecting Line to Next Phase */}
             {phaseIdx < phases.length - 1 && (
               <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                whileInView={{ height: 48, opacity: 1 }}
+                initial={{ scaleY: 0, opacity: 0 }}
+                whileInView={{ scaleY: 1, opacity: 1 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="absolute -bottom-10 left-8 w-px bg-[var(--border-subtle)] flex flex-col items-center justify-end"
+                style={{ transformOrigin: 'top' }}
+                className="absolute -bottom-10 left-8 w-px h-12 bg-[var(--border-subtle)] flex flex-col items-center justify-end"
               >
                 <ArrowDown className="w-3 h-3 text-[var(--border-subtle)] translate-y-3" />
               </motion.div>

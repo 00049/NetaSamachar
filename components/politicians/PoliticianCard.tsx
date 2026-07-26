@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import { CheckSquare, Square, ChevronRight, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { useSelection } from '@/components/ui/CheckboxSelectionProvider';
+import { ProgressBar } from '@/components/ui/ProgressBar';
 
 interface Props {
   politician: Politician;
@@ -165,16 +166,12 @@ export function PoliticianCard({
             </span>
           </div>
           
-          <div className="w-full h-[6px] bg-white/8 rounded-[3px] overflow-hidden mb-8">
-            <motion.div 
-              initial={{ width: 0 }}
-              whileInView={{ width: `${fulfillmentRate}%` }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="h-full rounded-[3px]" 
-              style={{ backgroundColor: fulfillmentColor }} 
-            />
-          </div>
+          <ProgressBar
+            value={fulfillmentRate}
+            color={fulfillmentColor}
+            height="6px"
+            className="mb-8"
+          />
 
           <div className="mt-auto w-full flex justify-center">
             <div className="inline-flex items-center text-white text-[13px] uppercase tracking-[0.08em] font-medium group-focus-visible:ring-2 ring-white/50 ring-offset-4 ring-offset-[#090B12]">
@@ -192,7 +189,6 @@ export function PoliticianCard({
     <motion.div
       whileHover={{ y: -3 }}
       className="group relative bg-[var(--bg-base)] border-r border-b border-[var(--border-subtle)] flex flex-col cursor-pointer overflow-hidden card-hover"
-      style={{ transition: 'transform 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out)' }}
       onClick={() => onClickPreview?.(politician)}
     >
       <div className="p-8 flex flex-col items-center text-center flex-1">
@@ -250,20 +246,18 @@ export function PoliticianCard({
             <div className="font-mono font-bold text-[var(--text-primary)]" style={{ fontSize: '20px' }}>
               {politician.attendancePercent}%
             </div>
-            {/* Animated mini progress bar */}
-            <div className="w-full h-[4px] bg-white/10 rounded-[2px] overflow-hidden mt-2">
-              <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: `${politician.attendancePercent}%` }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                className={clsx("h-full rounded-[2px]", {
-                  'bg-[var(--accent-negative)]': politician.attendancePercent < 50,
-                  'bg-[var(--accent-warning)]': politician.attendancePercent >= 50 && politician.attendancePercent <= 80,
-                  'bg-[var(--accent-positive)]': politician.attendancePercent > 80,
-                })}
-              />
-            </div>
+            <ProgressBar
+              value={politician.attendancePercent}
+              color={
+                politician.attendancePercent < 50
+                  ? 'var(--accent-negative)'
+                  : politician.attendancePercent <= 80
+                  ? 'var(--accent-warning)'
+                  : 'var(--accent-positive)'
+              }
+              height="4px"
+              className="mt-2"
+            />
           </div>
 
           {/* Assets */}

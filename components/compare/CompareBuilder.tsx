@@ -114,9 +114,10 @@ export function CompareBuilder({ initialSearchParams }: { initialSearchParams: {
           {slots.map((slotValue, idx) => (
             <motion.div 
               key={`slot-${idx}`}
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: '100%' }}
-              exit={{ opacity: 0, width: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
               className="flex-1 relative overflow-visible"
             >
               <div className="text-xs uppercase tracking-widest text-[#71717A] mb-3 font-semibold">
