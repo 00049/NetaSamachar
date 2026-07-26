@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { Search, SearchX } from 'lucide-react';
+import { useState, useMemo, useCallback } from 'react';
+import { SearchX } from 'lucide-react';
 import { PoliticianCard } from '@/components/politicians/PoliticianCard';
 import { PromiseCard } from '@/components/promises/PromiseCard';
 import { ArchiveCard } from '@/components/archive/ArchiveCard';
 import { POLITICIANS } from '@/data/politicians';
 import { PROMISES } from '@/data/promises';
+import { DebouncedSearchInput } from '@/components/ui/DebouncedSearchInput';
+import { useSearchCache } from '@/lib/useSearchCache';
+import { useUrlState } from '@/lib/useUrlState';
 
 // Mock Evidence since it doesn't live in data yet
 const MOCK_EVIDENCE = [
@@ -46,35 +49,37 @@ const POPULAR_SEARCHES = ['Infrastructure', 'Healthcare', 'Broken Promises', 'Pe
 export default function SearchPage() {
   const [inputValue, setInputValue] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<SearchTab>('All');
-  
-  // Debounce logic
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedQuery(inputValue.trim().toLowerCase());
-    }, 250);
-    return () => clearTimeout(handler);
-  }, [inputValue]);
+  const [activeTab, setActiveTab] = useUrlState('tab', 'All');
 
-  // Compute Results
+  const cache = useSearchCache<{ politicians: typeof POLITICIANS; promises: typeof PROMISES; evidence: typeof MOCK_EVIDENCE }>('search');
+
+  const handleDebouncedSearch = useCallback((q: string) => setDebouncedQuery(q.trim().toLowerCase()), []);
+
+  // Compute Results — cached by query so clearing and re-typing is instant
   const { politicians, promises, evidence } = useMemo(() => {
     if (!debouncedQuery) return { politicians: [], promises: [], evidence: [] };
-    
-    const p = POLITICIANS.filter(x => 
-      x.name.toLowerCase().includes(debouncedQuery) || 
-      x.constituency.toLowerCase().includes(debouncedQuery)
+    const cached = cache.get(debouncedQuery);
+    if (cached) return cached;
+    const p = POLITICIANS.filter(
+      (x) =>
+        x.name.toLowerCase().includes(debouncedQuery) ||
+        x.constituency.toLowerCase().includes(debouncedQuery)
     );
-    const pr = PROMISES.filter(x => 
-      x.title.toLowerCase().includes(debouncedQuery) || 
-      x.fullStatement.toLowerCase().includes(debouncedQuery)
+    const pr = PROMISES.filter(
+      (x) =>
+        x.title.toLowerCase().includes(debouncedQuery) ||
+        x.fullStatement.toLowerCase().includes(debouncedQuery)
     );
-    const ev = MOCK_EVIDENCE.filter(x => 
-      x.title.toLowerCase().includes(debouncedQuery) || 
-      x.excerpt.toLowerCase().includes(debouncedQuery) ||
-      x.sha256Hash.toLowerCase().includes(debouncedQuery)
+    const ev = MOCK_EVIDENCE.filter(
+      (x) =>
+        x.title.toLowerCase().includes(debouncedQuery) ||
+        x.excerpt.toLowerCase().includes(debouncedQuery) ||
+        x.sha256Hash.toLowerCase().includes(debouncedQuery)
     );
-    return { politicians: p, promises: pr, evidence: ev };
-  }, [debouncedQuery]);
+    const result = { politicians: p, promises: pr, evidence: ev };
+    cache.set(debouncedQuery, result);
+    return result;
+  }, [debouncedQuery, cache]);
 
   const totalResults = politicians.length + promises.length + evidence.length;
 
@@ -84,17 +89,14 @@ export default function SearchPage() {
       <div className="sticky top-0 z-40 bg-[var(--bg-base)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]">
         <div className="max-w-4xl mx-auto px-4 sm:px-8 pt-8">
           
-          <div className="relative mb-6">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-[#A1A1AA]" />
-            <input
-              type="text"
-              autoFocus
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Search politicians, promises, or evidence..."
-              className="w-full h-[64px] pl-16 pr-6 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] text-[18px] text-white focus:outline-none focus:border-white/20 transition-colors"
-            />
-          </div>
+          <DebouncedSearchInput
+            value={inputValue}
+            onChange={setInputValue}
+            onDebounced={handleDebouncedSearch}
+            placeholder="Search politicians, promises, or evidence..."
+            className="mb-6 [&_input]:h-[64px] [&_input]:text-[18px] [&_input]:pl-14 [&_input]:border-[rgba(255,255,255,0.08)] [&_input]:focus:border-white/20"
+            id="global-search"
+          />
 
           <div className="flex items-center gap-8 border-b border-[var(--border-subtle)] overflow-x-auto no-scrollbar">
             {['All', 'Politicians', 'Promises', 'Evidence'].map((tab) => {

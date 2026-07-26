@@ -1,46 +1,75 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { PROMISES } from '@/data/promises';
 import { PromiseCard } from '@/components/promises/PromiseCard';
 import { POLICY_CATEGORIES } from '@/lib/utils';
-import { Search, Filter, ArrowUpDown } from 'lucide-react';
+import { DebouncedSearchInput } from '@/components/ui/DebouncedSearchInput';
+import { useSearchCache } from '@/lib/useSearchCache';
+import { useUrlState } from '@/lib/useUrlState';
+import { Filter, ArrowUpDown } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
+import { Promise as AppPromise } from '@/lib/types';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useRef } from 'react';
+
+function filterPromises(
+  list: AppPromise[],
+  query: string,
+  category: string,
+  sort: string
+): AppPromise[] {
+  let result = list;
+  if (query) {
+    const q = query.toLowerCase();
+    result = result.filter(
+      (p) => p.title.toLowerCase().includes(q) || p.fullStatement.toLowerCase().includes(q)
+    );
+  }
+  if (category !== 'All') {
+    result = result.filter((p) => p.category === category);
+  }
+  return [...result].sort((a, b) => {
+    if (sort === 'confidence') return b.confidenceScore - a.confidenceScore;
+    return new Date(b.madeDate).getTime() - new Date(a.madeDate).getTime();
+  });
+}
 
 export function PromisesClient() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string>('All');
-  const [sortBy, setSortBy] = useState<'recent' | 'confidence'>('recent');
+  const [inputValue, setInputValue] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  // Shallow-routed URL state — chip/sort changes update URL, no reload
+  const [activeCategory, setActiveCategory] = useUrlState('category', 'All');
+  const [sortBy, setSortBy] = useUrlState('sort', 'recent');
+
+  const cache = useSearchCache<AppPromise[]>('promises');
 
   const avgConfidence = Math.round(
     PROMISES.reduce((s, p) => s + p.confidenceScore, 0) / PROMISES.length
   );
 
   const filteredPromises = useMemo(() => {
-    let result = [...PROMISES];
-
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.title.toLowerCase().includes(q) || p.fullStatement.toLowerCase().includes(q)
-      );
-    }
-
-    if (activeCategory !== 'All') {
-      result = result.filter((p) => p.category === activeCategory);
-    }
-
-    result.sort((a, b) => {
-      if (sortBy === 'confidence') return b.confidenceScore - a.confidenceScore;
-      return new Date(b.madeDate).getTime() - new Date(a.madeDate).getTime();
-    });
-
+    const cacheKey = `${debouncedQuery}|${activeCategory}|${sortBy}`;
+    const cached = cache.get(cacheKey);
+    if (cached) return cached;
+    const result = filterPromises(PROMISES, debouncedQuery, activeCategory, sortBy);
+    cache.set(cacheKey, result);
     return result;
-  }, [searchQuery, activeCategory, sortBy]);
+  }, [debouncedQuery, activeCategory, sortBy, cache]);
 
+  const handleDebouncedSearch = useCallback((q: string) => setDebouncedQuery(q), []);
   const categories = ['All', ...Object.keys(POLICY_CATEGORIES)];
+
+  // Virtualize the promise list
+  const listRef = useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: filteredPromises.length,
+    getScrollElement: () => listRef.current,
+    estimateSize: () => 260,
+    overscan: 4,
+  });
 
   return (
     <>
@@ -76,18 +105,16 @@ export function PromisesClient() {
       {/* Sticky Filter Bar */}
       <div className="sticky top-[60px] z-30 bg-[var(--bg-base)]/80 backdrop-blur-md border-b border-[var(--border-subtle)] mb-12">
         <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12 py-4 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="relative w-full md:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search statements or subjects..."
-              className="w-full pl-10 pr-4 py-2.5 bg-transparent border-b border-transparent focus:border-[var(--text-primary)] text-sm font-medium focus:outline-none transition-colors"
-            />
-          </div>
+          <DebouncedSearchInput
+            value={inputValue}
+            onChange={setInputValue}
+            onDebounced={handleDebouncedSearch}
+            placeholder="Search statements or subjects..."
+            className="md:max-w-md"
+          />
 
           <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
+            {/* Category filter — shallow URL routing */}
             <div className="flex items-center gap-2 border-r border-[var(--border-subtle)] pr-6">
               <Filter className="w-4 h-4 text-[var(--text-tertiary)]" />
               <select
@@ -106,7 +133,7 @@ export function PromisesClient() {
               <ArrowUpDown className="w-4 h-4 text-[var(--text-tertiary)]" />
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'recent' | 'confidence')}
+                onChange={(e) => setSortBy(e.target.value)}
                 className="bg-transparent text-xs font-bold uppercase tracking-widest text-[var(--text-primary)] focus:outline-none cursor-pointer"
               >
                 <option value="recent">Most Recent</option>
@@ -117,18 +144,32 @@ export function PromisesClient() {
         </div>
       </div>
 
-      {/* Main List */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12 space-y-8">
+      {/* Virtualized promise list */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12">
         {filteredPromises.length === 0 ? (
           <div className="py-24 text-center text-[var(--text-tertiary)] font-serif italic text-lg">
             No promises match your forensic criteria.
           </div>
         ) : (
-          <AnimatePresence>
-            {filteredPromises.map((promise) => (
-              <PromiseCard key={promise.id} promise={promise} />
+          <div
+            ref={listRef}
+            style={{ height: `${rowVirtualizer.getTotalSize()}px`, position: 'relative' }}
+          >
+            {rowVirtualizer.getVirtualItems().map((vRow) => (
+              <div
+                key={vRow.key}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  transform: `translateY(${vRow.start}px)`,
+                  width: '100%',
+                  paddingBottom: '32px',
+                }}
+              >
+                <PromiseCard promise={filteredPromises[vRow.index]} />
+              </div>
             ))}
-          </AnimatePresence>
+          </div>
         )}
       </div>
     </>

@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { DebouncedSearchInput } from '@/components/ui/DebouncedSearchInput';
+import { useSearchCache } from '@/lib/useSearchCache';
+import { useUrlState } from '@/lib/useUrlState';
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
-import { Search, ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 import { ArchiveCard } from '@/components/archive/ArchiveCard';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useRef } from 'react';
 
-// Mock data — in production this would be fetched in the Server Component
-// and passed down as props, ensuring zero client-side data fetching
 const STATS = [
   { label: 'Total Documents', value: 12847, color: 'var(--text-primary)' },
   { label: 'Tier 1 Sources', value: 8294, color: 'var(--accent-info)' },
@@ -20,8 +23,7 @@ const MOCK_DOCUMENTS = [
     title: 'UP Budget Allocation 2023-24: Public Works Department',
     type: 'budget_document',
     tier: 1,
-    excerpt:
-      'An outlay of ₹25,350 crore has been proposed for roads and bridges, including the initial allocation for the Ganga Expressway Phase II land acquisition.',
+    excerpt: 'An outlay of ₹25,350 crore has been proposed for roads and bridges, including the initial allocation for the Ganga Expressway Phase II land acquisition.',
     source: 'Ministry of Finance, Govt of UP',
     confidenceScore: 98,
     sha256Hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
@@ -35,8 +37,7 @@ const MOCK_DOCUMENTS = [
     title: 'CAG Audit Report: Healthcare Infrastructure 2022',
     type: 'cag_report',
     tier: 1,
-    excerpt:
-      'Audit observed that out of the 15 targeted primary health centers in the district, only 4 were functional by the deadline. Funds for the remaining 11 were unutilized.',
+    excerpt: 'Audit observed that out of the 15 targeted primary health centers in the district, only 4 were functional by the deadline. Funds for the remaining 11 were unutilized.',
     source: 'Comptroller and Auditor General of India',
     confidenceScore: 95,
     sha256Hash: '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92',
@@ -47,8 +48,7 @@ const MOCK_DOCUMENTS = [
     title: 'RTI Response: Status of Metro Rail Project',
     type: 'rti_response',
     tier: 2,
-    excerpt:
-      'As per the records available with the Urban Development department, the Detailed Project Report (DPR) is currently under revision and civil works have not commenced.',
+    excerpt: 'As per the records available with the Urban Development department, the Detailed Project Report (DPR) is currently under revision and civil works have not commenced.',
     source: 'Urban Development Department, State Govt',
     confidenceScore: 78,
     sha256Hash: 'f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2',
@@ -59,30 +59,56 @@ const MOCK_DOCUMENTS = [
   },
 ];
 
-type DocumentTypeFilter =
-  | 'All'
-  | 'Budget Document'
-  | 'Court Order'
-  | 'Gazette'
-  | 'Parliamentary Record'
-  | 'RTI Response';
+type Doc = (typeof MOCK_DOCUMENTS)[0];
+type DocTypeFilter = 'All' | 'Budget Document' | 'Court Order' | 'Gazette' | 'Parliamentary Record' | 'RTI Response';
 type TierFilter = 'All' | 'Tier 1' | 'Tier 2';
 
-export function ArchiveClient() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeType, setActiveType] = useState<DocumentTypeFilter>('All');
-  const [activeTier, setActiveTier] = useState<TierFilter>('All');
-  const [sortBy, setSortBy] = useState('recent');
+function filterDocs(list: Doc[], query: string, type: string, tier: string): Doc[] {
+  return list.filter((d) => {
+    if (query) {
+      const q = query.toLowerCase();
+      if (!d.title.toLowerCase().includes(q) && !d.excerpt.toLowerCase().includes(q)) {
+        return false;
+      }
+    }
+    if (type !== 'All' && d.type !== type.toLowerCase().replace(/ /g, '_')) return false;
+    if (tier !== 'All' && d.tier !== parseInt(tier.split(' ')[1])) return false;
+    return true;
+  });
+}
 
-  const documentTypes: DocumentTypeFilter[] = [
-    'All',
-    'Budget Document',
-    'Court Order',
-    'Gazette',
-    'Parliamentary Record',
-    'RTI Response',
-  ];
+export function ArchiveClient() {
+  const [inputValue, setInputValue] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  const [activeType, setActiveType] = useUrlState('type', 'All');
+  const [activeTier, setActiveTier] = useUrlState('tier', 'All');
+  const [sortBy, setSortBy] = useUrlState('sort', 'recent');
+
+  const cache = useSearchCache<Doc[]>('archive');
+
+  const filteredDocs = useMemo(() => {
+    const cacheKey = `${debouncedQuery}|${activeType}|${activeTier}|${sortBy}`;
+    const cached = cache.get(cacheKey);
+    if (cached) return cached;
+    const result = filterDocs(MOCK_DOCUMENTS, debouncedQuery, activeType, activeTier);
+    cache.set(cacheKey, result);
+    return result;
+  }, [debouncedQuery, activeType, activeTier, sortBy, cache]);
+
+  const handleDebouncedSearch = useCallback((q: string) => setDebouncedQuery(q), []);
+
+  const documentTypes: DocTypeFilter[] = ['All', 'Budget Document', 'Court Order', 'Gazette', 'Parliamentary Record', 'RTI Response'];
   const tiers: TierFilter[] = ['All', 'Tier 1', 'Tier 2'];
+
+  // Virtualize the document list — critical as the archive grows into thousands
+  const listRef = useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: filteredDocs.length,
+    getScrollElement: () => listRef.current,
+    estimateSize: () => 320,
+    overscan: 3,
+  });
 
   return (
     <>
@@ -94,17 +120,11 @@ export function ArchiveClient() {
               <div className="text-[12px] uppercase tracking-[0.1em] text-[var(--text-tertiary)] mb-3">
                 {stat.label}
               </div>
-              <div
-                className="text-[56px] font-semibold leading-none"
-                style={{ color: stat.color, fontVariantNumeric: 'tabular-nums' }}
-              >
+              <div className="text-[56px] font-semibold leading-none" style={{ color: stat.color, fontVariantNumeric: 'tabular-nums' }}>
                 {typeof stat.value === 'number' && stat.label !== 'Last Ingested' ? (
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 ) : (
-                  <span>
-                    {stat.value}
-                    {stat.suffix}
-                  </span>
+                  <span>{stat.value}{stat.suffix}</span>
                 )}
               </div>
             </div>
@@ -116,18 +136,16 @@ export function ArchiveClient() {
       <div className="border-b border-[var(--border-subtle)] sticky top-0 z-30 bg-[var(--bg-base)]/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-4">
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
-            <div className="relative w-full xl:max-w-md flex-shrink-0">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search documents, sources, or SHA hashes..."
-                className="w-full pl-10 pr-4 py-2.5 bg-transparent border border-[var(--border-subtle)] text-sm font-medium focus:outline-none focus:border-[var(--text-primary)] transition-colors rounded-none"
-              />
-            </div>
+            <DebouncedSearchInput
+              value={inputValue}
+              onChange={setInputValue}
+              onDebounced={handleDebouncedSearch}
+              placeholder="Search documents, sources, or SHA hashes..."
+              className="xl:max-w-md flex-shrink-0"
+            />
 
             <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 xl:ml-auto w-full xl:w-auto overflow-x-auto no-scrollbar">
+              {/* Type filter chips — shallow URL routing */}
               <div className="flex flex-wrap items-center gap-[8px] flex-shrink-0">
                 {documentTypes.map((filter) => (
                   <button
@@ -146,6 +164,7 @@ export function ArchiveClient() {
 
               <div className="h-6 w-px bg-[var(--border-subtle)] hidden lg:block flex-shrink-0" />
 
+              {/* Tier chips */}
               <div className="flex flex-wrap items-center gap-[8px] flex-shrink-0">
                 {tiers.map((filter) => (
                   <button
@@ -181,19 +200,41 @@ export function ArchiveClient() {
         </div>
       </div>
 
-      {/* Document List */}
+      {/* Virtualized Document List */}
       <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 py-16 pb-[96px]">
-        <div className="flex flex-col gap-12">
-          {MOCK_DOCUMENTS.map((doc) => (
-            <ArchiveCard key={doc.id} doc={doc} />
-          ))}
+        {filteredDocs.length === 0 ? (
+          <div className="py-24 text-center text-[var(--text-tertiary)] font-serif italic text-lg">
+            No documents match your query.
+          </div>
+        ) : (
+          <div
+            ref={listRef}
+            style={{ height: `${rowVirtualizer.getTotalSize()}px`, position: 'relative' }}
+          >
+            {rowVirtualizer.getVirtualItems().map((vRow) => (
+              <div
+                key={vRow.key}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  transform: `translateY(${vRow.start}px)`,
+                  width: '100%',
+                  paddingBottom: '48px',
+                }}
+              >
+                <ArchiveCard doc={filteredDocs[vRow.index]} />
+              </div>
+            ))}
+          </div>
+        )}
 
+        {filteredDocs.length > 0 && (
           <div className="flex justify-center mt-12">
             <button className="px-8 py-3 border border-white/20 text-[11px] font-bold uppercase tracking-widest text-white hover:bg-white/10 hover:border-white/30 transition-all rounded-[4px]">
               Load 20 more documents
             </button>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
