@@ -1,10 +1,10 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import { STATUS_CONFIG } from '@/lib/utils';
-import { PromiseStatus } from '@/lib/types';
+
 import clsx from 'clsx';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
-import { ChevronDown, FileText, CheckCircle2, ShieldAlert, Scale, GitMerge, Settings2, Network } from 'lucide-react';
+import { ChevronDown, Scale, FileText, ShieldAlert } from 'lucide-react';
 import { useState } from 'react';
 
 // New Interactive Components
@@ -12,26 +12,6 @@ import { EvidenceHierarchyDiagram } from '@/components/methodology/EvidenceHiera
 import { LifecycleDiagram } from '@/components/methodology/LifecycleDiagram';
 import { ConfidenceScoreVisualisation } from '@/components/methodology/ConfidenceScoreVisualisation';
 import { DecisionTree } from '@/components/methodology/DecisionTree';
-
-const CLASSIFICATION_STATES: {
-  status: PromiseStatus;
-  definition: string;
-  threshold: string;
-}[] = [
-  { status: 'planning', definition: 'Formal recognition by executive apparatus.', threshold: 'Budget Speech, Cabinet Resolution, DPR.' },
-  { status: 'tender_issued', definition: 'Legally binding public procurement initiated.', threshold: 'NIT, RFP, or EOI published on CPPP.' },
-  { status: 'construction_started', definition: 'Physical execution commenced on ground.', threshold: 'Award of Contract, disbursement of advance.' },
-  { status: 'implementation_started', definition: 'Execution of non-infrastructure policies.', threshold: 'Official launch notification, fund transfers.' },
-  { status: 'partially_completed', definition: 'Progress surpassed 25% threshold.', threshold: 'Interim utilization certificates, phased inaugurations.' },
-  { status: 'mostly_completed', definition: 'Surpassed 75% completion. Minor works remain.', threshold: 'Pre-commissioning statements, provisional handover.' },
-  { status: 'completed', definition: 'Finished to exact original specifications.', threshold: 'Completion Certificate, final gazette notification.' },
-  { status: 'operational', definition: 'Actively functioning and delivering utility.', threshold: 'Staffing rosters, live transaction data.' },
-  { status: 'delayed', definition: 'Missed official deadline.', threshold: 'Time extension requests, revised estimates.' },
-  { status: 'cancelled', definition: 'Formally abandoned or rescinded.', threshold: 'Gazette repeal, cabinet decision to halt.' },
-  { status: 'no_verified_progress', definition: 'No action detected after 1 fiscal year.', threshold: 'Absence from subsequent budgets/NITs.' },
-  { status: 'insufficient_evidence', definition: 'Fails epistemological Confidence thresholds.', threshold: 'Relies solely on unverified political statements.' },
-  { status: 'unable_to_verify', definition: 'Subjective or classified nature.', threshold: 'Unquantifiable metrics, defense operations.' },
-];
 
 export default function MethodologyPage() {
   const { scrollYProgress } = useScroll();

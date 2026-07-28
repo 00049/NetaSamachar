@@ -8,7 +8,6 @@ import { DebouncedSearchInput } from '@/components/ui/DebouncedSearchInput';
 import { useSearchCache } from '@/lib/useSearchCache';
 import { useUrlState } from '@/lib/useUrlState';
 import { Filter, ArrowUpDown } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 import { Promise as AppPromise } from '@/lib/types';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -64,38 +63,39 @@ export function PromisesClient() {
 
   // Virtualize the promise list
   const listRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
     count: filteredPromises.length,
     getScrollElement: () => listRef.current,
-    estimateSize: () => 260,
+    estimateSize: () => 400,
     overscan: 4,
   });
 
   return (
     <>
       {/* Stats Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border border-[var(--border-subtle)] mb-12">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20 px-6 sm:px-8 lg:px-12">
         {[
-          { label: 'Tracked', value: PROMISES.length, color: 'var(--text-primary)' },
+          { label: 'Tracked', value: PROMISES.length, color: 'var(--color-text-primary)' },
           {
             label: 'Verified Complete',
             value: PROMISES.filter(
               (p) => p.status === 'completed' || p.status === 'operational'
             ).length,
-            color: 'var(--accent-positive)',
+            color: 'var(--color-accent-positive)',
           },
           {
             label: 'Cancelled / Delayed',
             value: PROMISES.filter(
               (p) => p.status === 'cancelled' || p.status === 'delayed'
             ).length,
-            color: 'var(--accent-negative)',
+            color: 'var(--color-accent-negative)',
           },
-          { label: 'Avg Trust Score', value: avgConfidence, color: 'var(--accent-info)' },
+          { label: 'Avg Trust Score', value: avgConfidence, color: 'var(--color-accent-info)' },
         ].map((stat, i) => (
-          <div key={i} className="p-6 border-r border-[var(--border-subtle)] last:border-r-0">
-            <div className="stat-block__label">{stat.label}</div>
-            <div className="stat-block__value" style={{ color: stat.color }}>
+          <div key={i} className="card-glass border-0 bg-transparent p-0">
+            <div className="text-meta mb-4">{stat.label}</div>
+            <div className="text-display" style={{ color: stat.color }}>
               <AnimatedCounter value={stat.value} />
             </div>
           </div>
@@ -103,41 +103,43 @@ export function PromisesClient() {
       </div>
 
       {/* Sticky Filter Bar */}
-      <div className="sticky top-[60px] z-30 bg-[var(--bg-base)]/80 backdrop-blur-md border-b border-[var(--border-subtle)] mb-12">
-        <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12 py-4 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <DebouncedSearchInput
-            value={inputValue}
-            onChange={setInputValue}
-            onDebounced={handleDebouncedSearch}
-            placeholder="Search statements or subjects..."
-            className="md:max-w-md"
-          />
+      <div className="sticky top-[72px] z-30 bg-[var(--color-base)]/80 backdrop-blur-xl border-b border-t border-[var(--color-border-subtle)] mb-16 py-6">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="flex-1 max-w-lg relative">
+            <DebouncedSearchInput
+              value={inputValue}
+              onChange={setInputValue}
+              onDebounced={handleDebouncedSearch}
+              placeholder="Search statements or subjects..."
+              className="input-minimal w-full text-heading-md placeholder-[var(--color-text-tertiary)]"
+            />
+          </div>
 
-          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-8 overflow-x-auto no-scrollbar">
             {/* Category filter — shallow URL routing */}
-            <div className="flex items-center gap-2 border-r border-[var(--border-subtle)] pr-6">
-              <Filter className="w-4 h-4 text-[var(--text-tertiary)]" />
+            <div className="flex items-center gap-3 pr-8 border-r border-[var(--color-border-subtle)]">
+              <Filter className="w-4 h-4 text-[var(--color-text-tertiary)]" />
               <select
                 value={activeCategory}
                 onChange={(e) => setActiveCategory(e.target.value)}
-                className="bg-transparent text-xs font-bold uppercase tracking-widest text-[var(--text-primary)] focus:outline-none cursor-pointer"
+                className="bg-transparent text-meta !text-[var(--color-text-primary)] focus:outline-none cursor-pointer"
               >
                 {categories.map((c) => (
-                  <option key={c} value={c}>
+                  <option key={c} value={c} className="bg-[var(--color-raised)] text-[var(--color-text-primary)]">
                     {c.replace(/_/g, ' ')}
                   </option>
                 ))}
               </select>
             </div>
-            <div className="flex items-center gap-2">
-              <ArrowUpDown className="w-4 h-4 text-[var(--text-tertiary)]" />
+            <div className="flex items-center gap-3">
+              <ArrowUpDown className="w-4 h-4 text-[var(--color-text-tertiary)]" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-transparent text-xs font-bold uppercase tracking-widest text-[var(--text-primary)] focus:outline-none cursor-pointer"
+                className="bg-transparent text-meta !text-[var(--color-text-primary)] focus:outline-none cursor-pointer"
               >
-                <option value="recent">Most Recent</option>
-                <option value="confidence">Highest Evidence</option>
+                <option value="recent" className="bg-[var(--color-raised)] text-[var(--color-text-primary)]">Most Recent</option>
+                <option value="confidence" className="bg-[var(--color-raised)] text-[var(--color-text-primary)]">Highest Evidence</option>
               </select>
             </div>
           </div>
@@ -145,10 +147,12 @@ export function PromisesClient() {
       </div>
 
       {/* Virtualized promise list */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12">
+      <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
         {filteredPromises.length === 0 ? (
-          <div className="py-24 text-center text-[var(--text-tertiary)] font-serif italic text-lg">
-            No promises match your forensic criteria.
+          <div className="py-32 text-center">
+            <div className="text-heading-lg text-[var(--color-text-secondary)]">
+              No promises match your forensic criteria.
+            </div>
           </div>
         ) : (
           <div
@@ -163,7 +167,7 @@ export function PromisesClient() {
                   top: 0,
                   transform: `translateY(${vRow.start}px)`,
                   width: '100%',
-                  paddingBottom: '32px',
+                  paddingBottom: '40px',
                 }}
               >
                 <PromiseCard promise={filteredPromises[vRow.index]} />

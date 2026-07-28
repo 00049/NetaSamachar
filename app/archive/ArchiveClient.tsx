@@ -103,6 +103,7 @@ export function ArchiveClient() {
 
   // Virtualize the document list — critical as the archive grows into thousands
   const listRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
     count: filteredDocs.length,
     getScrollElement: () => listRef.current,

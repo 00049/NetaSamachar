@@ -1,11 +1,13 @@
+/* eslint-disable react/no-unescaped-entities */
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { PROMISES, EVIDENCE } from '@/data/promises';
 import { POLITICIANS, PARTIES } from '@/data/politicians';
 import { StatusBadge, CategoryBadge } from '@/components/ui/Badges';
+import { TimelineSpine } from '@/components/promises/TimelineSpine';
 import { ConfidenceScore } from '@/components/ui/ConfidenceScore';
-import { EVIDENCE_TYPE_CONFIG, STATUS_CONFIG, POLICY_CATEGORIES } from '@/lib/utils';
+import { EVIDENCE_TYPE_CONFIG, STATUS_CONFIG } from '@/lib/utils';
 import clsx from 'clsx';
 
 interface Props {
@@ -126,49 +128,8 @@ export default async function PromiseDetailPage({ params }: Props) {
             <span className="text-[var(--text-tertiary)] text-xs font-bold">{promise.timeline.length} EVENTS</span>
           </div>
           
-          <div className="space-y-0 border-l-2 border-[var(--border-subtle)] ml-2">
-            {promise.timeline.map((event, i) => (
-              <div key={event.id} className="relative pl-8 pb-12 last:pb-0">
-                {/* Node */}
-                <div className={clsx(
-                  "absolute left-[-5px] top-0 w-2 h-2 rounded-none",
-                  event.type === 'milestone' ? 'bg-[var(--accent-positive)]' :
-                  event.type === 'progress' ? 'bg-[var(--accent-info)]' :
-                  event.type === 'setback' ? 'bg-[var(--accent-negative)]' : 'bg-[var(--border-subtle)]'
-                )} />
-                
-                <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-4 mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] flex-shrink-0">
-                    {new Date(event.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </span>
-                  <h3 className="font-serif text-xl font-bold text-[var(--text-primary)]">{event.title}</h3>
-                </div>
-                
-                <div className="mb-4">
-                  <ConfidenceScore score={event.confidenceScore} showLabel={false} size="sm" />
-                </div>
-                
-                <p className="text-[var(--text-primary)] text-sm leading-relaxed mb-4">{event.description}</p>
-                
-                {event.evidenceIds.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {event.evidenceIds.map(eid => {
-                      const ev = EVIDENCE.find(e => e.id === eid);
-                      if (!ev) return null;
-                      const typeConfig = EVIDENCE_TYPE_CONFIG[ev.type];
-                      return (
-                        <div key={eid} className="inline-flex items-center gap-2 px-3 py-1 border border-[var(--border-subtle)] bg-[var(--bg-base)]">
-                          <span className="text-xs">{typeConfig.icon}</span>
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-primary)]">
-                            Tier {typeConfig.tier}: {ev.title.substring(0, 30)}...
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            ))}
+          <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-[4px] p-6 md:p-10 mt-6">
+            <TimelineSpine promise={promise} />
           </div>
         </div>
 

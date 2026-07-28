@@ -3,7 +3,7 @@
  * Used as a loading placeholder to prevent layout shift.
  * Height: ~340px (same as compact card), grid: repeat(auto-fill, minmax(280px, 1fr))
  */
-export function PoliticianCardSkeleton() {
+function PoliticianCardSkeleton() {
   return (
     <div className="animate-pulse bg-white/[0.02] border border-white/[0.06] rounded-[12px] p-6 h-[340px] flex flex-col items-center">
       {/* Avatar */}

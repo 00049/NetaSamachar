@@ -21,6 +21,7 @@ export function useUrlState(key: string, def: string): [string, (v: string) => v
 
   // Keep state in sync if user navigates back/forward
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setValue(searchParams.get(key) ?? def);
   }, [searchParams, key, def]);
 

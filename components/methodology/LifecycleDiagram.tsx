@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowDown, CheckCircle2, GitMerge } from 'lucide-react';
+import { ArrowDown, GitMerge } from 'lucide-react';
 import clsx from 'clsx';
 import { STATUS_CONFIG } from '@/lib/utils';
 import { PromiseStatus } from '@/lib/types';

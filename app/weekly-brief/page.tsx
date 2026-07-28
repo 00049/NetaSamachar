@@ -1,3 +1,6 @@
+/* eslint-disable react/no-unescaped-entities */
+
+
 export default function WeeklyBriefPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-base)] flex flex-col items-center justify-center px-8 text-center">

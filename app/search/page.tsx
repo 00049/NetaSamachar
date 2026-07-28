@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable react/no-unescaped-entities */
 
 import { useState, useMemo, useCallback, Suspense } from 'react';
 import { SearchX } from 'lucide-react';

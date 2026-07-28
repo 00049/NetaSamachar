@@ -13,7 +13,7 @@ export const POLITICIANS: Politician[] = [
     id: 'sukhvinder-singh-sukhu',
     name: 'Sukhvinder Singh Sukhu',
     nameHindi: 'सुखविंदर सिंह सुक्खू',
-    photoUrl: '/politicians/placeholder.jpg',
+    photoUrl: '/politicians/sukhvinder-singh-sukhu.jpg',
     partyId: 'inc',
     constituency: 'Nadaun',
     state: 'Himachal Pradesh',

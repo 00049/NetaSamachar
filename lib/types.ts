@@ -15,14 +15,10 @@ export type PromiseStatus =
   | 'unable_to_verify';
 
 // ===== EVIDENCE CONFIDENCE SCORING =====
-export type ConfidenceTier = 'absolute' | 'high' | 'moderate' | 'unverified';
-export type EvidenceTier = 1 | 2 | 3 | 4 | 5;
+type EvidenceTier = 1 | 2 | 3 | 4 | 5;
 
-export interface ConfidenceScore {
-  value: number; // 0-100
-  tier: ConfidenceTier;
-  label: string;
-}
+export type ConfidenceTier = 'absolute' | 'high' | 'moderate' | 'unverified';
+
 
 // ===== EVIDENCE SOURCES =====
 export type EvidenceType =
@@ -99,7 +95,7 @@ export interface Promise {
 }
 
 // ===== CRIMINAL CASE =====
-export interface CriminalCase {
+interface CriminalCase {
   caseNumber: string;
   court: string;
   section: string;
@@ -110,7 +106,7 @@ export interface CriminalCase {
 }
 
 // ===== ASSET DECLARATION =====
-export interface AssetDeclaration {
+interface AssetDeclaration {
   year: number; // election year of affidavit
   totalAssets: number; // in rupees
   totalLiabilities: number;
@@ -163,6 +159,36 @@ export interface Politician {
   termsSince: number;
   verified: boolean;
   lastUpdated: string;
+}
+
+// ===== BILL =====
+export type BillStatus = 'introduced' | 'in_committee' | 'passed' | 'rejected' | 'withdrawn';
+
+export interface Bill {
+  id: string;
+  politicianId: string;
+  title: string;
+  summary: string;
+  status: BillStatus;
+  sponsorRole: 'primary_sponsor' | 'co_sponsor';
+  introducedDate: string;
+  votesFor?: number;
+  votesAgainst?: number;
+  votesAbstain?: number;
+  officialRecordUrl?: string;
+  gazetteUrl?: string;
+  relatedPromiseIds: string[];
+}
+
+// ===== VOTE RECORD =====
+export interface VoteRecord {
+  id: string;
+  politicianId: string;
+  billId: string;
+  billTitle: string;
+  vote: 'yes' | 'no' | 'absent';
+  date: string;
+  partyPosition: 'yes' | 'no';
 }
 
 // ===== POLITICAL PARTY =====

@@ -1,6 +1,8 @@
 import { unstable_cache } from 'next/cache';
 import { POLITICIANS, PARTIES } from '@/data/politicians';
 import { PROMISES } from '@/data/promises';
+import { BILLS } from '@/data/bills';
+import { VOTES } from '@/data/votes';
 
 /**
  * Calculates and caches global platform statistics.
@@ -48,14 +50,18 @@ export async function getPoliticianDossier(id: string) {
 
   const party = PARTIES.find(p => p.id === politician.partyId) || null;
   const promises = PROMISES.filter(p => p.politicianId === politician.id);
+  const bills = BILLS.filter(b => b.politicianId === politician.id);
+  const votes = VOTES.filter(v => v.politicianId === politician.id);
   
   // In a real implementation, we would also fetch evidence documents here
-  const evidence: any[] = []; 
+  const evidence: unknown[] = []; 
 
   return {
     politician,
     party,
     promises,
+    bills,
+    votes,
     evidence
   };
 }

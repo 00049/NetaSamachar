@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 import { useState } from 'react';
 import { Check, Copy, FileText, ChevronRight, User } from 'lucide-react';
@@ -60,7 +61,7 @@ export function ArchiveCard({ doc }: { doc: any }) {
           <span className="text-[10px] font-bold uppercase tracking-widest text-[#71717A] mr-1">
             Supports:
           </span>
-          {doc.supports.map((item: any, idx: number) => (
+          {doc.supports.map((item: { href: string; type: string; label: string }, idx: number) => (
             <Link 
               key={idx} 
               href={item.href}

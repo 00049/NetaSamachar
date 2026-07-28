@@ -4,22 +4,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
-import { LiveIndicator } from '@/components/ui/LiveIndicator';
+import { Menu, X, Search } from 'lucide-react';
 
 const NAV_ITEMS = [
   { href: '/politicians',  label: 'Politicians' },
-  { href: '/promises',     label: 'Investigations' },
+  { href: '/parties',      label: 'Parties' },
+  { href: '/investigations', label: 'Investigations' },
   { href: '/compare',      label: 'Compare' },
   { href: '/archive',      label: 'Archive' },
-  { href: '/search',       label: 'Search' },
-  { href: '/about',        label: 'About' },
+  { href: '/live-data',    label: 'Live Data' },
 ];
 
 export function Navbar() {
-  const pathname  = usePathname();
-  const [menuOpen, setMenuOpen]   = useState(false);
-  const [scrolled, setScrolled]   = useState(false);
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 24);
@@ -27,140 +26,133 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  useEffect(() => { setMenuOpen(false); }, [pathname]);
+  useEffect(() => { 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMenuOpen(false); 
+  }, [pathname]);
 
   return (
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? 'bg-[#090B12]/95 backdrop-blur-2xl border-b border-white/[0.06]'
-            : 'bg-transparent'
+          scrolled || menuOpen
+            ? 'bg-[#0B0E14]/95 backdrop-blur-2xl border-b border-white/[0.06]'
+            : 'bg-[#0B0E14] border-b border-transparent'
         }`}
       >
         {/* ── Main bar: 80px tall ── */}
-        <div className="max-w-[1440px] mx-auto px-6 md:px-10 xl:px-20">
-          <div className="flex items-center justify-between" style={{ height: '80px' }}>
+        <div className="w-full px-6 md:px-10 h-[80px] flex items-center justify-between">
+          
+          {/* ── LEFT SIDE: Logo ── */}
+          <Link href="/" className="flex items-center gap-[12px] group" aria-label="Neta Samachar home">
+            <div className="w-[42px] h-[42px] rounded-[10px] border-[1.5px] border-[#22C55E] flex items-center justify-center bg-black/20 group-hover:bg-[#22C55E]/10 transition-colors">
+              <span className="text-white font-bold text-[22px] leading-none">N</span>
+            </div>
+            <div className="flex flex-col justify-center">
+              <span className="text-white font-bold text-[15px] leading-[1.1] tracking-wide">NETA</span>
+              <span className="text-white font-bold text-[15px] leading-[1.1] tracking-wide">SAMACHAR</span>
+            </div>
+          </Link>
 
-            {/* ── Logo ── */}
-            <Link href="/" className="group flex-shrink-0 flex flex-col" aria-label="Neta Samachar home">
-              <div className="text-white text-[18px] font-bold tracking-[0.02em] leading-none group-hover:opacity-80 transition-opacity">
-                NETA SAMACHAR
-              </div>
-              <div className="text-[#71717A] text-[10px] uppercase tracking-[0.14em] mt-1.5 leading-none">
-                Political Accountability
-              </div>
-            </Link>
-
-            {/* ── Desktop Nav — centered ── */}
-            <nav
-              className="hidden md:flex items-center"
-              style={{ gap: '40px' }}
-              aria-label="Main navigation"
-            >
-              {NAV_ITEMS.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="relative py-2"
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: isActive ? 500 : 400,
-                      letterSpacing: '0.01em',
-                      color: isActive ? '#F4F5F7' : 'rgba(244,245,247,0.5)',
-                      transition: 'color 0.2s ease',
-                    }}
-                    onMouseEnter={e => { if (!isActive) (e.target as HTMLElement).style.color = 'rgba(244,245,247,0.85)'; }}
-                    onMouseLeave={e => { if (!isActive) (e.target as HTMLElement).style.color = 'rgba(244,245,247,0.5)'; }}
-                  >
+          {/* ── CENTER: Links ── */}
+          <nav
+            className="hidden xl:flex items-center h-full gap-[40px]"
+            aria-label="Main navigation"
+          >
+            {NAV_ITEMS.map((item) => {
+              // Exact match or active subroute
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="relative h-full flex items-center group"
+                >
+                  <span className={`font-semibold text-[15px] tracking-wide transition-colors duration-200 ${
+                    isActive ? 'text-white' : 'text-white/70 group-hover:text-white'
+                  }`}>
                     {item.label}
-                    {isActive && (
-                      <motion.span
-                        layoutId="nav-pill"
-                        className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t-full"
-                        style={{ background: '#F4F5F7' }}
-                        transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-                      />
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
+                  </span>
+                  
+                  {/* Active Indicator */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavIndicator"
+                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#22C55E] rounded-t-full"
+                      transition={{ type: 'spring', bounce: 0.1, duration: 0.5 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
 
-            {/* ── Right side ── */}
-            <div className="hidden md:flex items-center" style={{ gap: '24px' }}>
-              {/* Live indicator */}
-              <LiveIndicator label="Live Data" />
-
-              {/* CTA */}
-              <Link
-                href="/promises"
-                className="flex items-center justify-center font-bold uppercase text-[#090B12] bg-white hover:bg-white/90 transition-colors duration-200"
-                style={{
-                  fontSize: '11px',
-                  letterSpacing: '0.06em',
-                  padding: '10px 20px',
-                  borderRadius: 0,
-                }}
-              >
-                Search Database
-              </Link>
+          {/* ── RIGHT SIDE: Search, Lang, Menu ── */}
+          <div className="flex items-center gap-[20px] md:gap-[32px]">
+            
+            {/* Search Bar */}
+            <div className="hidden lg:flex items-center w-[320px] xl:w-[420px] h-[52px] bg-white/[0.03] border border-white/20 hover:border-white/30 rounded-full px-6 focus-within:border-white/50 focus-within:bg-white/[0.06] focus-within:shadow-[0_0_24px_rgba(255,255,255,0.05)] transition-all duration-300 group">
+              <Search className="w-[20px] h-[20px] text-white/60 group-focus-within:text-white flex-shrink-0 transition-colors duration-300" />
+              <input 
+                type="text" 
+                placeholder="Search politicians, parties, issues..."
+                className="w-full bg-transparent text-[16px] text-white placeholder-white/50 focus:outline-none ml-4"
+              />
             </div>
 
-            {/* ── Mobile toggle ── */}
-            <button
-              className="md:hidden flex items-center justify-center text-white/60 hover:text-white transition-colors"
-              style={{ width: 40, height: 40 }}
+            {/* Language Toggle */}
+            <button className="hidden sm:block text-white/80 hover:text-white font-medium text-[14px] transition-colors whitespace-nowrap">
+              EN / हिंदी
+            </button>
+
+            {/* Menu Button */}
+            <button 
+              className="w-[42px] h-[42px] rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors flex-shrink-0"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={menuOpen}
             >
-              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {menuOpen ? <X className="w-[20px] h-[20px] text-white" /> : <Menu className="w-[20px] h-[20px] text-white" />}
             </button>
           </div>
         </div>
 
-        {/* ── Mobile menu ── */}
+        {/* ── Mobile Dropdown Menu ── */}
         <AnimatePresence>
           {menuOpen && (
             <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="md:hidden border-t bg-[#090B12]/98 backdrop-blur-2xl"
-              style={{ borderColor: 'rgba(255,255,255,0.06)' }}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="xl:hidden border-t border-white/[0.06] bg-[#0B0E14]/98 backdrop-blur-2xl overflow-hidden"
             >
-              <nav className="max-w-7xl mx-auto px-8 py-6 flex flex-col" style={{ gap: '2px' }}>
+              <nav className="flex flex-col px-6 py-4">
                 {NAV_ITEMS.map((item) => {
                   const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="py-3.5 border-b"
-                      style={{
-                        fontSize: '14px',
-                        fontWeight: 600,
-                        letterSpacing: '0.01em',
-                        color: isActive ? '#F4F5F7' : 'rgba(244,245,247,0.45)',
-                        borderColor: 'rgba(255,255,255,0.05)',
-                      }}
+                      className={`py-4 border-b border-white/[0.05] font-semibold text-[16px] ${
+                        isActive ? 'text-white' : 'text-white/60'
+                      }`}
                     >
                       {item.label}
                     </Link>
                   );
                 })}
-                <div className="pt-4">
-                  <Link
-                    href="/promises"
-                    className="block text-center font-bold uppercase bg-white text-[#090B12]"
-                    style={{ fontSize: '11px', letterSpacing: '0.06em', padding: '12px 0' }}
-                  >
-                    Search Database
-                  </Link>
+                
+                {/* Mobile Search */}
+                <div className="pt-6 pb-2">
+                  <div className="relative">
+                    <div className="absolute left-[16px] top-1/2 -translate-y-1/2">
+                      <Search className="w-[18px] h-[18px] text-white/50" />
+                    </div>
+                    <input 
+                      type="text" 
+                      placeholder="Search..."
+                      className="w-full h-[48px] bg-white/5 border border-white/10 rounded-full pl-[48px] pr-[20px] text-white placeholder-white/40 focus:outline-none"
+                    />
+                  </div>
                 </div>
               </nav>
             </motion.div>
@@ -168,7 +160,7 @@ export function Navbar() {
         </AnimatePresence>
       </header>
 
-      {/* Spacer so content starts below the 80px navbar */}
+      {/* Spacer */}
       <div style={{ height: '80px' }} />
     </>
   );

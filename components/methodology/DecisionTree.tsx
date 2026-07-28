@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HelpCircle, ChevronRight, CheckCircle2, RotateCcw } from 'lucide-react';
+import { HelpCircle, ChevronRight, RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
 import { STATUS_CONFIG } from '@/lib/utils';
 import { PromiseStatus } from '@/lib/types';

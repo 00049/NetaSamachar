@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import { useMemo } from 'react';
@@ -17,20 +18,13 @@ interface CompareTableProps {
 }
 
 export function CompareTable({ type, entityIds }: CompareTableProps) {
-  // Defense-in-depth: Duplicate entity check
   const hasDuplicates = new Set(entityIds).size !== entityIds.length;
-  if (hasDuplicates) {
-    return (
-      <div className="mt-12 text-center text-[#71717A] italic py-20 bg-white/[0.02] border border-white/[0.06] rounded-xl">
-        You've selected the same {type} twice — choose a different one in Slot B to see a comparison.
-      </div>
-    );
-  }
 
   const cache = useSearchCache<any>('aggregateStats');
 
   // Aggregate data for each slot based on type
   const columnsData = useMemo(() => {
+    if (hasDuplicates) return [];
     return entityIds.map(id => {
       const cacheKey = `${type}:${id}`;
       const cached = cache.get(cacheKey);
@@ -73,7 +67,7 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
       cache.set(cacheKey, result);
       return result;
     });
-  }, [type, entityIds, cache]);
+  }, [type, entityIds, cache, hasDuplicates]);
 
   // Check sample sizes (total promises)
   const sampleSizes = columnsData.map(c => c.stats.totalPromises);
@@ -101,6 +95,14 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
   const warningText = entityIds.length === 2 
     ? `Sample sizes differ significantly (A: n=${sampleSizes[0]}, B: n=${sampleSizes[1]}).`
     : `Sample sizes vary widely (${minSample}–${maxSample} promises) — percentages may not be directly comparable across all three.`;
+
+  if (hasDuplicates) {
+    return (
+      <div className="mt-12 text-center text-[#71717A] italic py-20 bg-white/[0.02] border border-white/[0.06] rounded-xl">
+        You've selected the same {type} twice — choose a different one in Slot B to see a comparison.
+      </div>
+    );
+  }
 
   return (
     <div className="mt-12">

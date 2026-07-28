@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+'use client';
 import Link from 'next/link';
 import { Evidence } from '@/lib/types';
 import { Check } from 'lucide-react';

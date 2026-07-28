@@ -1,7 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Landmark, ShieldCheck, FileSignature, Scale, Database, FileText, ScrollText, Mail, Send, CheckCircle2 } from 'lucide-react';
+import { Landmark, ShieldCheck, FileSignature, Scale, Database, FileText, ScrollText, Mail, Send } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AboutPage() {

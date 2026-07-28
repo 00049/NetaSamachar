@@ -91,6 +91,7 @@ export function SearchSlot({ type, value, selectedIds, onChange }: SearchSlotPro
   }, [allOptions, debouncedQuery, selectedIds, value, cache]);
 
   // Virtualize the dropdown list
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
     count: filteredOptions.length,
     getScrollElement: () => dropdownRef.current,
