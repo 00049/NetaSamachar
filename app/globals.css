@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* ============================================================
    NETA SAMACHAR — DESIGN SYSTEM v3 (Ultra Premium)
