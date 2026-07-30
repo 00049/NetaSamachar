@@ -191,8 +191,13 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
                 <div className="text-white font-bold text-[20px]">{quickLook.netWorthCr}</div>
               </div>
               <div className="text-[#A1A1AA] text-[13px] font-medium mb-[4px] group-hover:text-white transition-colors">Net Worth ({politician.assetDeclarations?.[0]?.year || 'Latest'})</div>
-              <div className="text-[#A1A1AA] text-[11px]">{(politician.assetDeclarations?.[0]?.growthPercent && politician.assetDeclarations[0].growthPercent > 0) ? `+${politician.assetDeclarations[0].growthPercent}%` : (politician.assetDeclarations?.[0]?.growthPercent || 0)}% vs prev cycle</div>
-            </Link>
+              <div className="text-[#A1A1AA] text-[11px]">
+                {(() => {
+                  const percent = politician.assetDeclarations?.[0]?.growthPercent;
+                  if (!percent) return '0%';
+                  return percent > 0 ? `+${percent}%` : `${percent}%`;
+                })()} vs prev cycle
+              </div>            </Link>
 
             {/* Public Trust */}
             <Link href="#performance" className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer">
