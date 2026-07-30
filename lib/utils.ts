@@ -132,6 +132,10 @@ export const EVIDENCE_TYPE_CONFIG: Record<EvidenceType, { label: string; icon: s
   academic: { label: 'Academic Research', icon: '🎓', tier: 1 },
   news_wire: { label: 'Wire Service Report', icon: '📡', tier: 2 },
   investigative_journalism: { label: 'Investigative Journalism', icon: '🗞️', tier: 3 },
+  official_profile: { label: 'Official Profile', icon: '👤', tier: 1 },
+  social_media: { label: 'Social Media', icon: '📱', tier: 2 },
+  news_report: { label: 'News Report', icon: '📰', tier: 2 },
+  encyclopedia: { label: 'Encyclopedia', icon: '📖', tier: 2 },
 };
 
 export const POLICY_CATEGORIES: Record<PolicyCategory, { label: string; icon: string }> = {
