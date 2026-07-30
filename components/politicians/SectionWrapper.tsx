@@ -9,9 +9,11 @@ interface Props {
   heading: string;
   description: string;
   children: ReactNode;
+  rightElement?: ReactNode;
+  labelClassName?: string;
 }
 
-export function SectionWrapper({ id, label, heading, description, children }: Props) {
+export function SectionWrapper({ id, label, heading, description, children, rightElement, labelClassName }: Props) {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -62,11 +64,13 @@ export function SectionWrapper({ id, label, heading, description, children }: Pr
     >
       <div className="max-w-[1280px] mx-auto">
         {/* Section Header */}
-        <div className="mb-16">
+        <div className="mb-16 flex flex-col sm:flex-row justify-between items-start gap-[24px]">
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
             <span 
-              className="text-[11px] font-black uppercase tracking-[0.2em] mb-4"
-              style={{ color: 'rgba(255,255,255,0.4)' }}
+              className={clsx(
+                "text-[11px] font-black uppercase tracking-[0.2em] mb-4",
+                labelClassName || "text-white/40"
+              )}
             >
               {label}
             </span>
@@ -87,6 +91,11 @@ export function SectionWrapper({ id, label, heading, description, children }: Pr
               {description}
             </p>
           </div>
+          {rightElement && (
+            <div className="shrink-0 mt-4 sm:mt-0">
+              {rightElement}
+            </div>
+          )}
         </div>
 
         {/* Section Content */}

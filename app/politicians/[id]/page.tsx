@@ -5,7 +5,7 @@ import { POLITICIANS } from '@/data/politicians';
 import { getPoliticianDossier } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
 import { computeOverallScore, generateVerdictEn, generateVerdictHi } from '@/lib/scoring';
-import { Share2, Bookmark, AlertTriangle, ChevronRight } from 'lucide-react';
+import { Share2, Bookmark, AlertTriangle, ChevronRight, Calendar, ChevronDown } from 'lucide-react';
 
 // New Architecture Components
 import { PoliticianHero } from '@/components/politicians/PoliticianHero';
@@ -14,11 +14,15 @@ import { InfoFooterBar } from '@/components/politicians/InfoFooterBar';
 import { SectionWrapper } from '@/components/politicians/SectionWrapper';
 
 // Content Components
-import { OverviewTab } from '@/components/politicians/OverviewTab';
+import { PerformanceTab } from '@/components/politicians/PerformanceTab';
 import { PromisesTab } from '@/components/politicians/PromisesTab';
 import { BillsTab } from '@/components/politicians/BillsTab';
-import { VotingRecordTab } from '@/components/politicians/VotingRecordTab';
 import { TimelineTab } from '@/components/politicians/TimelineTab';
+import { FinancialsTab } from '@/components/politicians/FinancialsTab';
+import { CasesTab } from '@/components/politicians/CasesTab';
+import { SourcesTab } from '@/components/politicians/SourcesTab';
+import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
+import { ActionButtons } from '@/components/politicians/ActionButtons';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -47,7 +51,7 @@ export default async function PoliticianProfilePage({ params }: Props) {
   const dossier = await getPoliticianDossier(id);
   if (!dossier) notFound();
 
-  const { politician, promises: politicianPromises, bills: politicianBills, votes: politicianVotes } = dossier;
+  const { politician, party, promises: politicianPromises, bills: politicianBills, votes: politicianVotes, evidence } = dossier;
 
   const overallScore = computeOverallScore(politician);
   const quickLookData = {
@@ -73,33 +77,19 @@ export default async function PoliticianProfilePage({ params }: Props) {
           <div className="px-[40px] py-[28px] flex items-center justify-between border-b border-white/10">
 
             {/* Breadcrumbs */}
-            <div className="flex items-center gap-[12px] text-[16px] font-medium text-white/80">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <ChevronRight className="w-[16px] h-[16px] text-white/40" />
-              <Link href="/politicians" className="hover:text-white transition-colors">Politicians</Link>
-              <ChevronRight className="w-[16px] h-[16px] text-white/40" />
-              <span className="hover:text-white transition-colors cursor-pointer">Himachal Pradesh</span>
-              <ChevronRight className="w-[16px] h-[16px] text-white/40" />
-              <span className="text-white drop-shadow-sm">{politician.name}</span>
-            </div>
+            <Breadcrumbs items={[
+              { label: 'Politicians', href: '/politicians' },
+              { label: politician.state, href: `/search?state=${encodeURIComponent(politician.state)}` },
+              { label: politician.name, href: `/politicians/${politician.id}` }
+            ]} />
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-[16px]">
-              <button className="flex items-center gap-[8px] text-[15px] font-semibold text-white px-5 py-2.5 rounded-xl border border-white/20 bg-white/[0.05] hover:bg-white/[0.1] transition-all shadow-sm hover:shadow-md">
-                <Share2 className="w-[18px] h-[18px]" /> Share
-              </button>
-              <button className="flex items-center gap-[8px] text-[15px] font-semibold text-white px-5 py-2.5 rounded-xl border border-white/20 bg-white/[0.05] hover:bg-white/[0.1] transition-all shadow-sm hover:shadow-md">
-                <Bookmark className="w-[18px] h-[18px]" /> Save
-              </button>
-              <button className="flex items-center gap-[8px] text-[15px] font-semibold text-white px-5 py-2.5 rounded-xl border border-white/20 bg-white/[0.05] hover:bg-white/[0.1] transition-all shadow-sm hover:shadow-md">
-                <AlertTriangle className="w-[18px] h-[18px] text-red-500" /> Report Issue
-              </button>
-            </div>
+            <ActionButtons />
           </div>
 
-          <div className="px-[40px] pt-[48px] pb-[32px]">
+          <div id="overview" className="px-[40px] pt-[48px] pb-[32px]">
             {/* ===== PREMIUM HERO ===== */}
-            <PoliticianHero politician={politician} quickLook={quickLookData} />
+            <PoliticianHero politician={politician} party={party} quickLook={quickLookData} />
           </div>
         </div>
 
@@ -109,20 +99,33 @@ export default async function PoliticianProfilePage({ params }: Props) {
 
         {/* ===== CONTINUOUS SCROLL SECTIONS ===== */}
         <div className="px-[40px] pb-[96px] pt-[64px] flex flex-col gap-[96px]">
+
           <SectionWrapper
-            id="overview"
-            label="PUBLIC RECORD SUMMARY"
-            heading="Executive Brief"
-            description="Generated from verified public records. Every statement links to supporting evidence."
+            id="performance"
+            label="PERFORMANCE"
+            labelClassName="text-[var(--color-accent-positive)]"
+            heading="Work & Attendance"
+            description={`Detailed analysis of ${politician.name}'s legislative work, attendance and impact.`}
+            rightElement={
+              <button className="flex items-center gap-[6px] px-[16px] py-[8px] rounded-lg border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white hover:bg-white/[0.02] transition-colors">
+                <Calendar className="w-[16px] h-[16px]" /> All Years <ChevronDown className="w-[16px] h-[16px]" />
+              </button>
+            }
           >
-            <OverviewTab politician={politician} />
+            <PerformanceTab politician={politician} quickLook={quickLookData} />
           </SectionWrapper>
 
           <SectionWrapper
             id="promises"
             label="PROMISES"
-            heading="Commitment Tracking"
-            description="Detailed status of all public promises made during election campaigns and terms."
+            labelClassName="text-[var(--color-accent-positive)]"
+            heading="What Was Promised"
+            description="Track progress of key promises made during election campaigns and terms."
+            rightElement={
+              <button className="flex items-center gap-[6px] px-[16px] py-[8px] rounded-lg border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white hover:bg-white/[0.02] transition-colors">
+                All Promises <ChevronDown className="w-[16px] h-[16px]" />
+              </button>
+            }
           >
             <PromisesTab promises={politicianPromises} />
           </SectionWrapper>
@@ -137,21 +140,39 @@ export default async function PoliticianProfilePage({ params }: Props) {
           </SectionWrapper>
 
           <SectionWrapper
-            id="attendance"
-            label="ATTENDANCE & VOTING"
-            heading="Parliamentary Activity"
-            description="Session attendance records and key voting decisions."
-          >
-            <VotingRecordTab politician={politician} votes={politicianVotes} />
-          </SectionWrapper>
-
-          <SectionWrapper
             id="timeline"
             label="TIMELINE"
             heading="Political Journey"
             description="A chronological view of major milestones, controversies, and achievements."
           >
             <TimelineTab politician={politician} promises={politicianPromises} />
+          </SectionWrapper>
+
+          <SectionWrapper
+            id="financials"
+            label="FINANCIAL OVERVIEW"
+            heading="Assets & Financials"
+            description="Track declared assets, liabilities, income sources and financial growth over time."
+          >
+            <FinancialsTab politician={politician} />
+          </SectionWrapper>
+
+          <SectionWrapper
+            id="cases"
+            label="LEGAL PROCEEDINGS"
+            heading="Cases"
+            description="Overview of criminal cases, charges, and legal proceedings."
+          >
+            <CasesTab politician={politician} />
+          </SectionWrapper>
+
+          <SectionWrapper
+            id="sources"
+            label="DATA SOURCES & EVIDENCE"
+            heading="Sources"
+            description={`All official sources and documents used to collect and verify data on ${politician.name}.`}
+          >
+            <SourcesTab politician={politician} evidence={evidence} />
           </SectionWrapper>
         </div>
 

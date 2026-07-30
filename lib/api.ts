@@ -1,8 +1,9 @@
 import { unstable_cache } from 'next/cache';
 import { POLITICIANS, PARTIES } from '@/data/politicians';
-import { PROMISES } from '@/data/promises';
+import { PROMISES, EVIDENCE } from '@/data/promises';
 import { BILLS } from '@/data/bills';
 import { VOTES } from '@/data/votes';
+import { EXECUTIVE_BRIEFS } from '@/data/executive_briefs';
 
 /**
  * Calculates and caches global platform statistics.
@@ -53,8 +54,13 @@ export async function getPoliticianDossier(id: string) {
   const bills = BILLS.filter(b => b.politicianId === politician.id);
   const votes = VOTES.filter(v => v.politicianId === politician.id);
   
-  // In a real implementation, we would also fetch evidence documents here
-  const evidence: unknown[] = []; 
+  const evidenceIds = new Set<string>();
+  promises.forEach(p => p.evidenceIds.forEach(id => evidenceIds.add(id)));
+  promises.forEach(p => p.timeline.forEach(t => t.evidenceIds.forEach(id => evidenceIds.add(id))));
+  bills.forEach(b => b.relatedPromiseIds?.forEach(id => evidenceIds.add(id)));
+  
+  const evidence = EVIDENCE.filter(e => evidenceIds.has(e.id));
+  const executiveBrief = EXECUTIVE_BRIEFS[id] || null;
 
   return {
     politician,
@@ -62,6 +68,7 @@ export async function getPoliticianDossier(id: string) {
     promises,
     bills,
     votes,
-    evidence
+    evidence,
+    executiveBrief
   };
 }
