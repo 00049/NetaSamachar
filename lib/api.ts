@@ -55,9 +55,13 @@ export async function getPoliticianDossier(id: string) {
   const votes = VOTES.filter(v => v.politicianId === politician.id);
   
   const evidenceIds = new Set<string>();
+  politician.evidenceIds?.forEach(id => evidenceIds.add(id));
   promises.forEach(p => p.evidenceIds.forEach(id => evidenceIds.add(id)));
   promises.forEach(p => p.timeline.forEach(t => t.evidenceIds.forEach(id => evidenceIds.add(id))));
-  bills.forEach(b => b.relatedPromiseIds?.forEach(id => evidenceIds.add(id)));
+  bills.forEach(b => {
+    // If bills had evidenceIds, we'd add them here
+    // b.evidenceIds?.forEach(id => evidenceIds.add(id));
+  });
   
   const evidence = EVIDENCE.filter(e => evidenceIds.has(e.id));
   const executiveBrief = EXECUTIVE_BRIEFS[id] || null;

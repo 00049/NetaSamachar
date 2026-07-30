@@ -32,7 +32,11 @@ export type EvidenceType =
   | 'completion_certificate'
   | 'academic'
   | 'news_wire'
-  | 'investigative_journalism';
+  | 'investigative_journalism'
+  | 'official_profile'
+  | 'social_media'
+  | 'news_report'
+  | 'encyclopedia';
 
 export interface Evidence {
   id: string;
@@ -157,6 +161,7 @@ export interface Politician {
 
   // Meta
   termsSince: number;
+  evidenceIds?: string[];
   verified: boolean;
   lastUpdated: string;
 }
