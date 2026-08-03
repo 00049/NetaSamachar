@@ -8,15 +8,18 @@ import { useSearchCache } from '@/lib/useSearchCache';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 interface SearchSlotProps {
+  idx: number;
   type: 'party' | 'state' | 'constituency' | 'politician';
   value: string | null;
   selectedIds: string[];
   onChange: (value: string | null) => void;
+  onRemove: () => void;
+  canRemove: boolean;
 }
 
-interface Option { id: string; title: string; subtitle?: string; }
+interface Option { id: string; title: string; subtitle?: string; initials: string; }
 
-export function SearchSlot({ type, value, selectedIds, onChange }: SearchSlotProps) {
+export function SearchSlot({ idx, type, value, selectedIds, onChange, onRemove, canRemove }: SearchSlotProps) {
   const [rawQuery, setRawQuery] = useState('');
   const debouncedQuery = useDebounce(rawQuery, 220);
   const isPending = rawQuery !== debouncedQuery;
@@ -41,13 +44,14 @@ export function SearchSlot({ type, value, selectedIds, onChange }: SearchSlotPro
   const allOptions = useMemo<Option[]>(() => {
     switch (type) {
       case 'party':
-        return PARTIES.map((p) => ({ id: p.id, title: p.name, subtitle: p.abbreviation }));
+        return PARTIES.map((p) => ({ id: p.id, title: p.name, subtitle: p.abbreviation, initials: p.abbreviation.substring(0,2) }));
       case 'state': {
         const states = Array.from(new Set(POLITICIANS.map((p) => p.state)));
         return states.map((s) => ({
           id: s.toLowerCase().replace(/\s+/g, '-'),
           title: s,
           subtitle: 'State',
+          initials: s.substring(0,2).toUpperCase()
         }));
       }
       case 'constituency': {
@@ -56,6 +60,7 @@ export function SearchSlot({ type, value, selectedIds, onChange }: SearchSlotPro
           id: c.toLowerCase().replace(/\s+/g, '-'),
           title: c,
           subtitle: 'Constituency',
+          initials: c.substring(0,2).toUpperCase()
         }));
       }
       case 'politician':
@@ -65,6 +70,7 @@ export function SearchSlot({ type, value, selectedIds, onChange }: SearchSlotPro
             id: p.id,
             title: p.name,
             subtitle: `${party?.abbreviation || p.partyId} • ${p.constituency}`,
+            initials: p.name.split(' ').map(n=>n[0]).join('').substring(0,2)
           };
         });
     }
@@ -108,81 +114,76 @@ export function SearchSlot({ type, value, selectedIds, onChange }: SearchSlotPro
     [onChange]
   );
 
-  if (selectedOption) {
-    return (
-      <div className="h-[60px] bg-white/[0.04] border border-white/[0.15] rounded-lg p-4 flex items-center justify-between">
-        <div className="flex flex-col truncate pr-4">
-          <span className="text-white font-semibold truncate">{selectedOption.title}</span>
-          <span className="text-[#A1A1AA] text-xs truncate">{selectedOption.subtitle}</span>
-        </div>
-        <button
-          onClick={() => onChange(null)}
-          className="p-1 hover:bg-white/[0.1] rounded-full text-[#A1A1AA] hover:text-white transition-colors shrink-0"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-    );
-  }
+  const slotLetter = String.fromCharCode(65 + idx);
 
   return (
-    <div className="relative" ref={containerRef}>
-      <div className="h-[60px] bg-white/[0.02] border border-white/[0.08] focus-within:border-white/[0.3] rounded-lg flex items-center px-4 transition-colors">
-        {/* Spinner while debounce is settling, search icon otherwise */}
-        {isPending ? (
-          <Loader2 className="w-4 h-4 text-[#71717A] mr-3 shrink-0 animate-spin" />
-        ) : (
-          <svg
-            className="w-4 h-4 text-[#71717A] mr-3 shrink-0"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+    <div className={`slot ${isOpen ? 'drag-over' : ''}`} ref={containerRef}>
+      <div className="slot-label-row">
+        <div className="slot-label">Slot {slotLetter}</div>
+        {canRemove && (
+          <button onClick={onRemove} className="remove-slot-btn">Remove</button>
         )}
-        <input
-          type="text"
-          className="bg-transparent border-none outline-none w-full text-white placeholder-[#71717A]"
-          placeholder={`Search ${type}...`}
-          value={rawQuery}
-          onChange={(e) => setRawQuery(e.target.value)}
-          onFocus={() => setIsOpen(true)}
-          autoComplete="off"
-        />
       </div>
 
-      {isOpen && (
-        <div
-          ref={dropdownRef}
-          className="absolute top-[calc(100%+8px)] left-0 right-0 max-h-[300px] overflow-y-auto bg-[#18181B] border border-white/[0.1] rounded-lg shadow-2xl z-50"
-        >
-          {filteredOptions.length === 0 ? (
-            <div className="p-4 text-[#71717A] text-sm text-center">No matches found.</div>
-          ) : (
-            <div style={{ height: `${rowVirtualizer.getTotalSize()}px`, position: 'relative' }}>
-              {rowVirtualizer.getVirtualItems().map((vRow) => {
-                const opt = filteredOptions[vRow.index];
-                return (
-                  <button
-                    key={vRow.key}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      transform: `translateY(${vRow.start}px)`,
-                      height: `${vRow.size}px`,
-                    }}
-                    onClick={() => handleSelect(opt.id)}
-                    className="w-full text-left px-4 border-b border-white/[0.04] hover:bg-white/[0.04] transition-colors last:border-b-0 flex flex-col justify-center"
-                  >
-                    <span className="text-white font-medium truncate">{opt.title}</span>
-                    <span className="text-[#71717A] text-xs mt-0.5 truncate">{opt.subtitle}</span>
-                  </button>
-                );
-              })}
+      {selectedOption ? (
+        <div className="slot-filled">
+          <div className="slot-person">
+            <div className="slot-avatar">{selectedOption.initials}</div>
+            <div>
+              <div className="slot-name">{selectedOption.title}</div>
+              <div className="slot-meta">{selectedOption.subtitle}</div>
+            </div>
+          </div>
+          <button onClick={() => onChange(null)} className="slot-remove">×</button>
+        </div>
+      ) : (
+        <div className="slot-empty relative">
+          <div className="filter-search" style={{ width: '100%', borderStyle: 'dashed' }}>
+            {isPending ? (
+              <Loader2 className="w-4 h-4 text-[var(--ink-faint)] mr-1 shrink-0 animate-spin" />
+            ) : (
+              <span>⌕</span>
+            )}
+            <input
+              type="text"
+              placeholder={`Search ${type}...`}
+              value={rawQuery}
+              onChange={(e) => setRawQuery(e.target.value)}
+              onFocus={() => setIsOpen(true)}
+              autoComplete="off"
+            />
+          </div>
+
+          {isOpen && (
+            <div
+              ref={dropdownRef}
+              className="absolute top-[calc(100%+12px)] left-0 right-0 max-h-[250px] overflow-y-auto bg-[var(--bg-elevated)] border border-[var(--border)] rounded-[var(--radius)] shadow-2xl z-50"
+            >
+              {filteredOptions.length === 0 ? (
+                <div className="p-4 text-[var(--ink-faint)] text-[13px] text-center font-mono">No matches found.</div>
+              ) : (
+                <div style={{ height: `${rowVirtualizer.getTotalSize()}px`, position: 'relative' }}>
+                  {rowVirtualizer.getVirtualItems().map((vRow) => {
+                    const opt = filteredOptions[vRow.index];
+                    return (
+                      <button
+                        key={vRow.key}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          transform: `translateY(${vRow.start}px)`,
+                          height: `${vRow.size}px`,
+                        }}
+                        onClick={() => handleSelect(opt.id)}
+                        className="w-full text-left px-4 border-b border-[var(--border-soft)] hover:bg-[var(--bg-secondary)] transition-colors last:border-b-0 flex flex-col justify-center"
+                      >
+                        <span className="text-[var(--ink)] font-semibold text-[14px] truncate">{opt.title}</span>
+                        <span className="text-[var(--ink-faint)] font-mono text-[11px] mt-0.5 truncate">{opt.subtitle}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
         </div>

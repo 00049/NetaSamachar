@@ -68,7 +68,7 @@ export default async function PoliticianProfilePage({ params }: Props) {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[var(--color-base)] overflow-x-hidden relative">
+    <div className="w-full min-h-screen bg-[#0B0E14] overflow-x-clip relative">
       <div className="w-full relative">
         {/* Background Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[400px] bg-[#3B82F6]/5 blur-[120px] rounded-full pointer-events-none" />

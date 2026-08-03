@@ -9,6 +9,31 @@ export const BILLS: Bill[] = [
     status: 'passed',
     sponsorRole: 'primary_sponsor',
     introducedDate: '2023-03-14',
+    
+    // Rich Data for new UI
+    type: 'Money Bill',
+    isGovernmentBill: true,
+    legislativeSession: 'Budget Session, 2023',
+    house: 'Himachal Pradesh Legislative Assembly',
+    ministerInCharge: 'Finance Department',
+    language: 'English',
+    passedDate: '2023-03-14',
+    assentDate: '2023-03-14',
+    gazetteDate: '2023-03-14',
+    imageUrl: '/hydro_dam_hero_1785755753076.png',
+    objectives: [
+      { title: 'Enhance State Revenue', description: 'Generate additional revenue for the State from utilization of water resources.' },
+      { title: 'Fair Compensation', description: 'Ensure fair compensation to the State for use of its natural water resources.' },
+      { title: 'Sustainable Management', description: 'Promote sustainable and responsible utilization of water resources.' },
+      { title: 'Transparency & Accountability', description: 'Create a transparent mechanism for assessment, collection and utilization of cess.' }
+    ],
+    keyProvisions: [
+      { title: 'Imposition of Water Cess', description: 'Water cess to be levied on every unit of electricity generated.' },
+      { title: 'Registration of Hydropower Projects', description: 'Every hydropower project must obtain registration.' },
+      { title: 'State Water Cess Commission', description: 'Constitution of a Commission to administer and regulate the cess.' },
+      { title: 'Collection and Payment', description: 'Cess to be collected and paid in the prescribed manner.' }
+    ],
+    
     votesFor: 40,
     votesAgainst: 25,
     votesAbstain: 3,

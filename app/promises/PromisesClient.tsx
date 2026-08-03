@@ -103,7 +103,7 @@ export function PromisesClient() {
       </div>
 
       {/* Sticky Filter Bar */}
-      <div className="sticky top-[72px] z-30 bg-[var(--color-base)]/80 backdrop-blur-xl border-b border-t border-[var(--color-border-subtle)] mb-16 py-6">
+      <div className="sticky top-[72px] z-30 bg-[#0B0E14]/80 backdrop-blur-xl border-b border-t border-white/5 mb-16 py-6">
         <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="flex-1 max-w-lg relative">
             <DebouncedSearchInput
@@ -117,29 +117,29 @@ export function PromisesClient() {
 
           <div className="flex items-center gap-8 overflow-x-auto no-scrollbar">
             {/* Category filter — shallow URL routing */}
-            <div className="flex items-center gap-3 pr-8 border-r border-[var(--color-border-subtle)]">
-              <Filter className="w-4 h-4 text-[var(--color-text-tertiary)]" />
+            <div className="flex items-center gap-3 pr-8 border-r border-white/5">
+              <Filter className="w-4 h-4 text-gray-500" />
               <select
                 value={activeCategory}
                 onChange={(e) => setActiveCategory(e.target.value)}
-                className="bg-transparent text-meta !text-[var(--color-text-primary)] focus:outline-none cursor-pointer"
+                className="bg-transparent text-meta !text-white focus:outline-none cursor-pointer"
               >
                 {categories.map((c) => (
-                  <option key={c} value={c} className="bg-[var(--color-raised)] text-[var(--color-text-primary)]">
+                  <option key={c} value={c} className="bg-[#1A1F2E] text-white">
                     {c.replace(/_/g, ' ')}
                   </option>
                 ))}
               </select>
             </div>
             <div className="flex items-center gap-3">
-              <ArrowUpDown className="w-4 h-4 text-[var(--color-text-tertiary)]" />
+              <ArrowUpDown className="w-4 h-4 text-gray-500" />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-transparent text-meta !text-[var(--color-text-primary)] focus:outline-none cursor-pointer"
+                className="bg-transparent text-meta !text-white focus:outline-none cursor-pointer"
               >
-                <option value="recent" className="bg-[var(--color-raised)] text-[var(--color-text-primary)]">Most Recent</option>
-                <option value="confidence" className="bg-[var(--color-raised)] text-[var(--color-text-primary)]">Highest Evidence</option>
+                <option value="recent" className="bg-[#1A1F2E] text-white">Most Recent</option>
+                <option value="confidence" className="bg-[#1A1F2E] text-white">Highest Evidence</option>
               </select>
             </div>
           </div>
@@ -150,7 +150,7 @@ export function PromisesClient() {
       <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
         {filteredPromises.length === 0 ? (
           <div className="py-32 text-center">
-            <div className="text-heading-lg text-[var(--color-text-secondary)]">
+            <div className="text-heading-lg text-[#A1A1AA]">
               No promises match your forensic criteria.
             </div>
           </div>

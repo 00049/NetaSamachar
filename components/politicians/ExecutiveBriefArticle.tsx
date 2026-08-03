@@ -6,14 +6,14 @@ import React from 'react';
 export function ExecutiveBriefArticle() {
   return (
     <div className="w-full">
-      <div className="max-w-[900px] mx-auto text-[var(--color-text-secondary)] text-base md:text-lg leading-relaxed">
+      <div className="max-w-[900px] mx-auto text-[#A1A1AA] text-base md:text-lg leading-relaxed">
         
-        <h2 className="text-[var(--color-text-primary)] font-serif text-3xl md:text-4xl font-bold mb-8 tracking-tight">
+        <h2 className="text-white font-serif text-3xl md:text-4xl font-bold mb-8 tracking-tight">
           Comprehensive Governance Assessment: Sukhvinder Singh Sukhu and the Legislative Trajectory of Himachal Pradesh (2022–2026)
         </h2>
         
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Introduction and Methodological Framework of the Assessment
           </h3>
           <p className="mb-6">
@@ -28,7 +28,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Historical Context and Institutional Architecture of Himachal Pradesh
           </h3>
           <p className="mb-6">
@@ -43,7 +43,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Biographical Genesis and Political Trajectory
           </h3>
           <p className="mb-6">
@@ -58,7 +58,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Empirical Performance Benchmarking and Qualitative Assessment
           </h3>
           <p className="mb-6">
@@ -73,7 +73,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Legislative Participation and Parliamentary Dynamics
           </h3>
           <p className="mb-6">
@@ -121,7 +121,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Executive Efficacy and the Implementation of Electoral Commitments
           </h3>
           <p className="mb-6">
@@ -136,7 +136,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Macroeconomic Stewardship and State Economic Policy
           </h3>
           <p className="mb-6">
@@ -180,7 +180,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Crisis Management, Intra-Party Dynamics, and Executive Authority
           </h3>
           <p className="mb-6">
@@ -195,7 +195,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Federal Friction, Jurisdictional Disputes, and Constitutional Sovereignty
           </h3>
           <p className="mb-6">
@@ -213,7 +213,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Financial Probity, Asset Evaluation, and Legal Declarations
           </h3>
           <p className="mb-6">
@@ -234,7 +234,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Public Perception and the Trust Deficit Paradigm
           </h3>
           <p className="mb-6">
@@ -279,7 +279,7 @@ export function ExecutiveBriefArticle() {
         </section>
 
         <section className="mb-12">
-          <h3 className="text-[var(--color-text-primary)] font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
+          <h3 className="text-white font-bold text-xl md:text-2xl mt-10 mb-6 uppercase tracking-wider text-xs border-b border-white/10 pb-4">
             Final Synthesis and Trajectory Assessment
           </h3>
           <p className="mb-6">

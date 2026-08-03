@@ -2,7 +2,8 @@
 
 import { Politician, Party } from '@/lib/types';
 import { QuickLookData } from '@/lib/scoring';
-import { BadgeCheck, MapPin, Calendar, Clock, Award, Info, ClipboardList, User, Gavel, IndianRupee, Users, Sparkles, Scale, History, Target, FileText } from 'lucide-react';
+import { IntelligenceOverview } from './IntelligenceOverview';
+import { BadgeCheck, MapPin, Calendar, Clock, Award, Info, ClipboardList, User, Gavel, IndianRupee, Users, Sparkles, Scale, History, Target, FileText, GraduationCap } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -18,7 +19,7 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
       {/* TOP ROW */}
       <div className="grid grid-cols-1 xl:grid-cols-[300px_1fr_400px] gap-[24px]">
         {/* COLUMN 1: PORTRAIT */}
-        <div className="relative overflow-hidden rounded-[24px] w-full h-full min-h-[400px] bg-[var(--color-base)] transition-all duration-[220ms] hover:translate-y-[-2px]">
+        <div className="relative overflow-hidden rounded-[24px] w-full h-full min-h-[400px] bg-[#0B0E14] transition-all duration-[220ms] hover:translate-y-[-2px]">
           <div className="absolute inset-0 z-0">
             <Image
               src={politician.photoUrl}
@@ -92,14 +93,14 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
             </div>
 
             <div className="mt-[24px] bg-white/[0.03] border border-white/10 rounded-[12px] p-[16px] flex items-center justify-between">
-               <div className="flex items-center gap-[8px]">
-                 <div className="w-2 h-2 rounded-full bg-[var(--color-accent-positive)]" />
-                 <span className="text-[#A1A1AA] text-[13px] uppercase tracking-wider font-semibold">Current Status</span>
-               </div>
-               <div className="flex items-center gap-[12px]">
-                 <span className="text-[var(--color-accent-positive)] font-semibold text-[15px]">In Office</span>
-                 <span className="text-[#A1A1AA] text-[14px]">Since {politician.termsSince}</span>
-               </div>
+              <div className="flex items-center gap-[8px]">
+                <div className="w-2 h-2 rounded-full bg-[var(--color-accent-positive)]" />
+                <span className="text-[#A1A1AA] text-[13px] uppercase tracking-wider font-semibold">Current Status</span>
+              </div>
+              <div className="flex items-center gap-[12px]">
+                <span className="text-[var(--color-accent-positive)] font-semibold text-[15px]">In Office</span>
+                <span className="text-[#A1A1AA] text-[14px]">Since {politician.termsSince}</span>
+              </div>
             </div>
           </div>
 
@@ -131,7 +132,7 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
             </div>
 
             <p className="text-center text-[#A1A1AA] text-[13px] leading-relaxed">
-              Performance is better than <br/><span className="text-white font-semibold">71% of politicians</span> in Himachal Pradesh
+              Performance is better than <br /><span className="text-white font-semibold">71% of politicians</span> in Himachal Pradesh
             </p>
           </div>
         </div>
@@ -199,38 +200,23 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
                 })()} vs prev cycle
               </div>            </Link>
 
-            {/* Public Trust */}
-            <Link href="#performance" className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer">
-              <div className="flex items-center justify-between mb-[12px]">
-                <Users className="w-[20px] h-[20px] text-[#60A5FA] group-hover:scale-110 transition-transform" />
-                <div className="text-white font-bold text-[20px]">81%</div>
+            {/* Education Level */}
+            <div className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all">
+              <div className="flex items-center justify-between mb-[8px]">
+                <GraduationCap className="w-[20px] h-[20px] text-[#60A5FA] group-hover:scale-110 transition-transform shrink-0" />
               </div>
-              <div className="text-[#A1A1AA] text-[13px] font-medium mb-[4px] group-hover:text-white transition-colors">Public Trust Score</div>
-              <div className="text-[#A1A1AA] text-[11px]">Based on surveys</div>
-            </Link>
+              <div className="text-white font-bold text-[14px] leading-tight line-clamp-2 mb-[4px]" title={politician.education}>{politician.education}</div>
+              <div className="text-[#A1A1AA] text-[13px] font-medium mb-[4px] group-hover:text-white transition-colors">Education Level</div>
+              <div className="text-[#A1A1AA] text-[11px]">Highest Qualification</div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* BOTTOM ROW */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-[24px]">
-        {/* AI SUMMARY */}
-        <div className="premium-card p-[24px] flex items-center justify-between">
-          <div className="flex-1 pr-[24px]">
-             <div className="flex items-center gap-[8px] mb-[12px]">
-               <Sparkles className="w-[16px] h-[16px] text-[#3B82F6]" />
-               <span className="text-[#3B82F6] text-[12px] uppercase tracking-wider font-bold">AI Summary</span>
-             </div>
-             <div className="text-[#A1A1AA] text-[15px] leading-relaxed">
-               {quickLook.verdictEn}
-             </div>
-          </div>
-          <div className="shrink-0">
-             <Link href={`/politicians/${politician.id}/executive-brief`} className="flex items-center justify-center border border-white/10 rounded-[8px] py-[10px] px-[20px] text-[#A1A1AA] text-[14px] font-medium hover:text-white hover:bg-white/5 transition-all duration-[220ms] whitespace-nowrap">
-               Read Full Summary <span className="ml-[8px]">&gt;</span>
-             </Link>
-          </div>
-        </div>
+        {/* AI SUMMARY / INTELLIGENCE OVERVIEW */}
+        <IntelligenceOverview politicianId={politician.id} />
 
         {/* QUICK LINKS */}
         <div className="premium-card p-[20px] grid grid-cols-2 gap-[12px]">
@@ -243,7 +229,7 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
               <div className="text-[#A1A1AA] text-[12px]">Politicians</div>
             </div>
           </Link>
-          
+
           <Link href="#timeline" className="flex items-center gap-[16px] group p-[12px] rounded-xl hover:bg-white/[0.04] transition-all">
             <div className="w-[40px] h-[40px] rounded-full bg-white/[0.03] flex items-center justify-center border border-white/5 group-hover:border-[var(--color-accent-positive)]/30 group-hover:bg-[var(--color-accent-positive)]/10 transition-all">
               <History className="w-[18px] h-[18px] text-[var(--color-accent-positive)] group-hover:text-green-400 transition-all" />

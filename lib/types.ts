@@ -109,15 +109,74 @@ interface CriminalCase {
   severity: 'cognizable' | 'non_cognizable' | 'heinous';
 }
 
+// ===== FINANCIAL DATA STRUCTURES =====
+export interface AssetComposition {
+  cash?: number;
+  bankDeposits?: number;
+  investments?: number;
+  shares?: number;
+  mutualFunds?: number;
+  gold?: number;
+  jewellery?: number;
+  vehicles?: number;
+  otherMovable?: number;
+  
+  agriculturalLand?: number;
+  commercialProperty?: number;
+  residentialProperty?: number;
+  otherImmovable?: number;
+}
+
+export interface LiabilityBreakdown {
+  housingLoan?: number;
+  vehicleLoan?: number;
+  businessLoan?: number;
+  taxDues?: number;
+  governmentDues?: number;
+  otherLiabilities?: number;
+}
+
+export interface IncomeSource {
+  salary?: number;
+  agriculture?: number;
+  business?: number;
+  professionalIncome?: number;
+  rentalIncome?: number;
+  interest?: number;
+  dividends?: number;
+  otherSources?: number;
+}
+
+export interface PoliticalOffice {
+  title: string;
+  startYear: number;
+  endYear?: number | 'Present';
+  party?: string;
+  constituency?: string;
+  government?: string;
+}
+
 // ===== ASSET DECLARATION =====
-interface AssetDeclaration {
+export interface AssetDeclaration {
   year: number; // election year of affidavit
+  electionType?: string;
+  party?: string;
+  constituency?: string;
+  winner?: boolean;
+  margin?: number;
+  runnerUp?: string;
+  
   totalAssets: number; // in rupees
   totalLiabilities: number;
   movableAssets: number;
   immovableAssets: number;
   spouseAssets: number;
   growthPercent?: number; // vs previous declaration
+  
+  declaredIncome?: number;
+  assetComposition?: AssetComposition;
+  liabilityBreakdown?: LiabilityBreakdown;
+  incomeSources?: IncomeSource;
 }
 
 // ===== POLITICIAN =====
@@ -134,6 +193,7 @@ export interface Politician {
   education: string;
   age: number;
   yearsInPolitics: number;
+  careerTimeline?: PoliticalOffice[];
 
   // Performance metrics
   attendancePercent: number;
@@ -177,6 +237,23 @@ export interface Bill {
   status: BillStatus;
   sponsorRole: 'primary_sponsor' | 'co_sponsor';
   introducedDate: string;
+  
+  // Extended fields for rich UI
+  type?: string; // e.g., 'Money Bill'
+  isGovernmentBill?: boolean;
+  legislativeSession?: string;
+  house?: string;
+  ministerInCharge?: string;
+  language?: string;
+  
+  passedDate?: string;
+  assentDate?: string;
+  gazetteDate?: string;
+  
+  objectives?: { title: string; description: string }[];
+  keyProvisions?: { title: string; description: string }[];
+  imageUrl?: string;
+  
   votesFor?: number;
   votesAgainst?: number;
   votesAbstain?: number;

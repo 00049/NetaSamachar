@@ -85,7 +85,7 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
   }
 
   const urgencyColors = {
-    neutral: 'text-[var(--color-text-secondary)]',
+    neutral: 'text-[#A1A1AA]',
     current: 'text-[var(--color-accent-warning)]',
     overdue: 'text-[var(--color-accent-negative)]'
   } as const;
@@ -111,9 +111,9 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
               {promise.category.replace(/_/g, ' ')}
             </span>
 
-            <span className="ml-auto font-mono font-bold text-[var(--color-text-secondary)] text-sm">
-              <span className="font-sans mr-2 text-[10px] uppercase tracking-[0.08em] text-[var(--color-text-tertiary)] hidden sm:inline">CONFIDENCE</span>
-              {promise.confidenceScore}<span className="text-[var(--color-text-tertiary)]">/100</span>
+            <span className="ml-auto font-mono font-bold text-[#A1A1AA] text-sm">
+              <span className="font-sans mr-2 text-[10px] uppercase tracking-[0.08em] text-gray-500 hidden sm:inline">CONFIDENCE</span>
+              {promise.confidenceScore}<span className="text-gray-500">/100</span>
             </span>
           </div>
 
@@ -128,14 +128,14 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
           </p>
 
           {/* Footer */}
-          <div className="mt-auto flex items-center justify-between border-t border-[var(--color-border-subtle)] pt-6">
+          <div className="mt-auto flex items-center justify-between border-t border-white/5 pt-6">
             {politicianProfileMode ? (
-              <Link href={`?tab=timeline&promiseId=${promise.id}`} className="inline-flex items-center text-[var(--color-text-primary)] text-meta group-focus-visible:ring-2 ring-white/50 ring-offset-4 ring-offset-[var(--color-base)]">
+              <Link href={`?tab=timeline&promiseId=${promise.id}`} className="inline-flex items-center text-white text-meta group-focus-visible:ring-2 ring-white/50 ring-offset-4 ring-offset-[var(--color-base)]">
                 VIEW TIMELINE
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 ease-out group-hover:translate-x-1" />
               </Link>
             ) : (
-              <div className="inline-flex items-center text-[var(--color-text-primary)] text-meta group-focus-visible:ring-2 ring-white/50 ring-offset-4 ring-offset-[var(--color-base)]">
+              <div className="inline-flex items-center text-white text-meta group-focus-visible:ring-2 ring-white/50 ring-offset-4 ring-offset-[var(--color-base)]">
                 VIEW INVESTIGATION
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 ease-out group-hover:translate-x-1" />
               </div>
@@ -156,36 +156,36 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
   return (
     <div className="card-glass card-hover group flex flex-col md:flex-row mb-8 p-0 overflow-hidden">
       {/* ── Left: Vertical Audit Trail (35%) ─────────────────── */}
-      <div className="md:w-[35%] border-b md:border-b-0 md:border-r border-[var(--color-border-subtle)] p-8 md:p-10 flex-shrink-0 bg-[var(--color-raised)]">
+      <div className="md:w-[35%] border-b md:border-b-0 md:border-r border-white/5 p-8 md:p-10 flex-shrink-0 bg-[#1A1F2E]">
         <div className="text-meta mb-8 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-[var(--color-text-tertiary)]" />
+          <Clock className="w-4 h-4 text-gray-500" />
           Audit Trail
         </div>
 
-        <div className="relative border-l border-[var(--color-border-strong)] ml-2 space-y-0">
+        <div className="relative border-l border-white/20 ml-2 space-y-0">
           {recentEvents.length === 0 && (
-            <div className="pl-6 pb-4 text-body-sm text-[var(--color-text-tertiary)]">
+            <div className="pl-6 pb-4 text-body-sm text-gray-500">
               No updates recorded.
             </div>
           )}
           {recentEvents.map((event, idx) => (
             <div key={idx} className="relative pl-6 pb-6 last:pb-0">
               <div className="absolute -left-[5px] top-[4px] w-2.5 h-2.5 rounded-full bg-[var(--color-text-tertiary)] ring-4 ring-[var(--color-raised)]" />
-              <div className="text-meta mb-1 !text-[var(--color-text-secondary)]">
+              <div className="text-meta mb-1 !text-[#A1A1AA]">
                 {new Date(event.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
               </div>
               <div className="text-body-sm line-clamp-2">
                 {event.description}
               </div>
-              <Link href={`/promises/${promise.id}`} className="text-meta !text-[var(--color-text-tertiary)] hover:!text-[var(--color-text-primary)] mt-2 inline-block">
+              <Link href={`/promises/${promise.id}`} className="text-meta !text-gray-500 hover:!text-white mt-2 inline-block">
                 Read more &rarr;
               </Link>
             </div>
           ))}
           {promise.timeline.length > 3 && (
             <div className="relative pl-6 mt-6">
-              <div className="absolute -left-[5px] top-[4px] w-2.5 h-2.5 rounded-full bg-transparent border-2 border-[var(--color-border-strong)]" />
-              <div className="text-meta !text-[var(--color-text-tertiary)]">
+              <div className="absolute -left-[5px] top-[4px] w-2.5 h-2.5 rounded-full bg-transparent border-2 border-white/20" />
+              <div className="text-meta !text-gray-500">
                 +{promise.timeline.length - 3} earlier events
               </div>
             </div>
@@ -213,7 +213,7 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
           </span>
 
           <div className="flex items-center gap-1.5 badge-meta">
-            <FileText className="w-3.5 h-3.5 text-[var(--color-text-tertiary)]" />
+            <FileText className="w-3.5 h-3.5 text-gray-500" />
             {promise.evidenceIds.length} DOCS
           </div>
 
@@ -228,9 +228,9 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
             </div>
           )}
 
-          <span className="ml-auto font-mono font-bold text-[var(--color-text-secondary)] text-sm">
-            <span className="font-sans mr-2 text-[10px] uppercase tracking-[0.08em] text-[var(--color-text-tertiary)] hidden sm:inline">CONFIDENCE</span>
-            {promise.confidenceScore}<span className="text-[var(--color-text-tertiary)]">/100</span>
+          <span className="ml-auto font-mono font-bold text-[#A1A1AA] text-sm">
+            <span className="font-sans mr-2 text-[10px] uppercase tracking-[0.08em] text-gray-500 hidden sm:inline">CONFIDENCE</span>
+            {promise.confidenceScore}<span className="text-gray-500">/100</span>
           </span>
         </div>
 
@@ -266,14 +266,14 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
         </div>
 
         {/* Footer row */}
-        <div className="mt-auto flex items-center justify-between flex-wrap gap-4 pt-8 border-t border-[var(--color-border-subtle)]">
+        <div className="mt-auto flex items-center justify-between flex-wrap gap-4 pt-8 border-t border-white/5">
           <div className="flex items-center gap-4">
             {politicianProfileMode ? (
-              <Link href={`?tab=timeline&promiseId=${promise.id}`} className="flex items-center text-meta text-[var(--color-text-primary)] hover:text-[var(--color-accent-info)] transition-colors">
+              <Link href={`?tab=timeline&promiseId=${promise.id}`} className="flex items-center text-meta text-white hover:text-[var(--color-accent-info)] transition-colors">
                 View Timeline <ArrowRight className="w-4 h-4 ml-1.5" />
               </Link>
             ) : (
-              <span className="text-meta !text-[var(--color-text-secondary)]">
+              <span className="text-meta !text-[#A1A1AA]">
                 {politician?.name || 'Unknown'}
               </span>
             )}

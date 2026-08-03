@@ -1,33 +1,11 @@
 'use client';
-/* eslint-disable react/no-unescaped-entities, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, type Variants } from 'framer-motion';
-import { POLITICIANS } from '@/data/politicians';
-import { PROMISES, EVIDENCE } from '@/data/promises';
-import { PromiseCard } from '@/components/promises/PromiseCard';
-import { PoliticianCard } from '@/components/politicians/PoliticianCard';
-import { CommandPaletteUI } from '@/components/home/CommandPaletteUI';
-import { EvidenceSpotlight } from '@/components/home/EvidenceSpotlight';
-import { BrowseByDimension } from '@/components/home/BrowseByDimension';
-import { StaggeredRevealGrid, ScrollReveal } from '@/components/ui/ScrollReveal';
-import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
-import { ArrowRight, ShieldCheck, Search, Scale, FileSignature, Landmark } from 'lucide-react';
-
-const featuredPromises   = PROMISES.slice(0, 3);
-const featuredPoliticians = POLITICIANS.slice(0, 4);
-
-const section: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
-};
-
-const stagger: Variants = {
-  hidden: {},
-  // 70ms between children — caps simultaneous animating DOM elements
-  // to avoid a wave of 12 cards all firing in the same frame
-  show: { transition: { staggerChildren: 0.07 } },
-};
+import { ArrowRight, User, Flag, Search, Scale, Archive, LineChart } from 'lucide-react';
+import Image from 'next/image';
 
 const heroItem: Variants = {
   hidden: { opacity: 0, y: 12 },
@@ -39,236 +17,222 @@ const heroContainer: Variants = {
   show: { transition: { staggerChildren: 0.08 } }
 };
 
-const CREDIBILITY = [
+const cards = [
   {
-    icon: <Landmark size={28} strokeWidth={1.5} color="var(--text-secondary)" />,
-    title: 'Primary Source Dependency',
-    desc:  'Every claim is traced directly to official government gazettes, court orders, or tier-1 wire agencies. No derivative reporting is admitted without corroboration.',
+    title: 'Politicians',
+    desc: 'Explore verified profiles, performance, promises, financials and more.',
+    href: '/politicians',
+    icon: <User className="w-12 h-12 text-[#e6b16a]" strokeWidth={1.2} />,
   },
   {
-    icon: <ShieldCheck size={28} strokeWidth={1.5} color="var(--text-secondary)" />,
-    title: 'Cryptographic Hashing',
-    desc:  'SHA-256 fingerprints applied to all ingested documents to detect and prove post-facto tampering. Every document is immutable.',
+    title: 'Parties',
+    desc: 'Track parties, ideologies, manifestos, affiliations and election history.',
+    href: '/parties',
+    icon: <Flag className="w-12 h-12 text-[#e6b16a]" strokeWidth={1.2} />,
   },
   {
-    icon: <FileSignature size={28} strokeWidth={1.5} color="var(--text-secondary)" />,
-    title: 'Immutable Audit Trail',
-    desc:  'Errors are logged publicly. Version history is never silently rewritten or deleted. Every correction is timestamped.',
+    title: 'Compare',
+    desc: 'Compare politicians and parties on data that actually matters.',
+    href: '/compare',
+    icon: <Scale className="w-12 h-12 text-[#e6b16a]" strokeWidth={1.2} />,
   },
   {
-    icon: <Scale size={28} strokeWidth={1.5} color="#A1A1AA" />,
-    title: 'Non-Partisan Metrics',
-    desc:  'Identical evidentiary standards applied uniformly across all political entities without qualitative bias or editorial interpretation.',
+    title: 'Archive',
+    desc: 'Access historical records, election data, bills, reports and more.',
+    href: '/archive',
+    icon: <Archive className="w-12 h-12 text-[#e6b16a]" strokeWidth={1.2} />,
   },
 ];
 
-export function HomeClient({ stats }: { stats: any }) {
-  const dynamicStats = [
-    { label: 'Promises Tracked',   value: stats.promisesTracked, color: 'var(--text-primary)' },
-    { label: 'Evidence Documents', value: stats.evidenceDocuments, color: 'var(--text-primary)' },
-    { label: 'Verified Complete',  value: stats.verifiedComplete, suffix: '%', color: 'var(--accent-positive)' },
-    { label: 'Pending Scrutiny',   value: stats.pendingScrutiny, color: 'var(--accent-warning)' },
-  ];
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+export function HomeClient({ stats }: { stats?: any }) {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
-
+    <div className="min-h-screen bg-[#090b10]">
       {/* ═══════════════════════════════════════════════════
-          HERO (80vh)
+          HERO
       ══════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[640px] flex flex-col justify-center px-6 md:px-10 xl:px-20 overflow-hidden bg-section-gradient py-24">
+      <section className="relative min-h-[85vh] flex flex-col justify-center px-6 md:px-10 xl:px-20 overflow-hidden pt-[80px]">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/reference.png"
+            alt="Parliament Background"
+            fill
+            className="object-contain object-[right_center]"
+            priority
+          />
+          {/* Custom horizontal gradient to fade out left side for text readability */}
+          <div className="absolute inset-0" style={{
+            background: 'linear-gradient(90deg, rgba(5,6,10,0.98) 0%, rgba(5,6,10,0.92) 35%, rgba(5,6,10,0.72) 55%, rgba(5,6,10,0.15) 75%, transparent 100%)'
+          }} />
+          {/* Bottom fade into the background color */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#090b10]/40 to-[#090b10]" />
+        </div>
+
         <motion.div 
-          className="relative z-10 max-w-[1440px] mx-auto w-full"
+          className="relative z-10 w-full mx-auto"
           variants={heroContainer}
           initial="hidden"
           animate="show"
         >
-          <div className="max-w-[920px]">
+          <div className="max-w-[720px]">
             {/* Eyebrow */}
-            <motion.div variants={heroItem} className="flex items-center gap-4 text-[var(--text-secondary)] text-[13px] uppercase font-medium tracking-[0.12em] mb-6">
-              <div className="w-6 h-[1px] bg-[var(--text-secondary)]" />
-              INDIA'S POLITICAL ACCOUNTABILITY ARCHIVE
+            <motion.div variants={heroItem} className="flex items-center gap-4 text-white/50 text-[11px] uppercase font-bold tracking-[0.15em] mb-6">
+              <div className="w-12 h-[1px] bg-[#e6b16a]" />
+              INDIA'S MOST COMPREHENSIVE
             </motion.div>
 
             {/* Headline */}
-            <motion.h1 variants={heroItem} className="font-serif text-[var(--text-primary)] tracking-tight mb-5 text-[40px] md:text-[56px] xl:text-[72px] leading-[1]">
-              The Truth, <span className="italic text-white">Archived.</span>
+            <motion.h1 variants={heroItem} className="font-serif text-white tracking-tight mb-6 text-[48px] md:text-[64px] xl:text-[84px] leading-[1.05]">
+              India's Political <br />
+              Intelligence <br />
+              <span className="italic text-[#e6b16a]">Platform</span>
             </motion.h1>
 
             {/* Body */}
-            <motion.p variants={heroItem} className="text-[var(--text-secondary)] text-[18px] leading-[1.6] max-w-[640px] mb-2">
-              {stats.evidenceDocuments.toLocaleString()} verified documents tracking {stats.promisesTracked.toLocaleString()} political promises. <Link href="/promises" className="text-[var(--text-primary)] hover:underline ml-1">Browse full database &rarr;</Link>
+            <motion.p variants={heroItem} className="text-white/70 text-[16px] md:text-[18px] leading-[1.6] max-w-[560px] mb-10">
+              <strong className="text-white/90 font-semibold block mb-1">Every Politician. Every Record. One Platform.</strong>
+              Explore verified profiles, election history, assets, liabilities, criminal cases, parliamentary activity, promises, government records, and official documents—all connected in one place.
             </motion.p>
 
-            {/* Coverage Transparency */}
-            <motion.div variants={heroItem} className="text-[#71717A] text-[13px] mb-8">
-              {(() => {
-                const activeStates = Array.from(new Set(POLITICIANS.map(p => p.state)));
-                if (activeStates.length === 1) {
-                  return `Currently tracking ${activeStates[0]} in full depth, expanding nationwide.`;
-                }
-                return `Currently tracking ${activeStates.length} states in full depth, expanding nationwide.`;
-              })()}
-            </motion.div>
-
-            {/* CTA Row & Search Input Container */}
-            <motion.div variants={heroItem} className="flex flex-col gap-[12px] w-full max-w-[920px]">
-              {/* Search */}
-              <CommandPaletteUI />
-              
-              {/* Dimensions Filter */}
-              <BrowseByDimension />
-            </motion.div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          PLATFORM METRICS
-      ══════════════════════════════════════════════════════ */}
-      <motion.section
-        variants={stagger}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: '-100px' }}
-        className="max-w-[1440px] mx-auto px-6 md:px-10 xl:px-20 py-32 lg:py-40"
-      >
-        <motion.div variants={section} className="mb-14">
-          <div className="section-label">Platform Coverage</div>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-white/8 border border-white/8">
-          {dynamicStats.map((stat, i) => (
-            <motion.div
-              key={i}
-              variants={section}
-              className="px-[32px] py-[40px] bg-[var(--bg-base)]"
-            >
-              <div className="text-[12px] uppercase tracking-[0.1em] text-[var(--text-tertiary)] mb-3">
-                {stat.label}
-              </div>
-              <div 
-                className="text-[56px] font-semibold leading-none"
-                style={{ color: stat.color, fontVariantNumeric: 'tabular-nums' }}
+            {/* Search Input Container */}
+            <motion.div variants={heroItem} className="flex flex-col gap-[16px] w-full max-w-[640px]">
+              <form 
+                onSubmit={handleSearch}
+                className="relative flex items-center w-full h-[60px] bg-[#0f131a]/80 backdrop-blur-md border border-white/10 hover:border-white/20 rounded-full px-6 focus-within:border-[#e6b16a]/50 focus-within:bg-[#0f131a] transition-all duration-300 shadow-2xl"
               >
-                <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                <Search className="w-[18px] h-[18px] text-white/40 flex-shrink-0" />
+                <input 
+                  type="text" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search politicians, constituencies, parties, elections, bills, or issues..."
+                  className="w-full bg-transparent text-[15px] text-white placeholder-white/40 focus:outline-none ml-4"
+                />
+                <button type="submit" className="w-[40px] h-[40px] rounded-full bg-[#e6b16a] flex items-center justify-center hover:bg-[#e6b16a]/90 transition-colors flex-shrink-0 text-black ml-2 group">
+                  <ArrowRight className="w-[18px] h-[18px] group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              </form>
+              
+              <div className="flex items-center flex-wrap gap-x-4 gap-y-2 text-[13px] ml-4">
+                <span className="text-white/40">Trending:</span>
+                {['Narendra Modi', 'Rahul Gandhi', 'Arvind Kejriwal', 'Mamata Banerjee', 'Amit Shah'].map((name) => (
+                  <Link key={name} href="#" className="text-white/60 hover:text-[#e6b16a] hover:underline transition-colors">
+                    {name}
+                  </Link>
+                ))}
               </div>
             </motion.div>
-          ))}
-        </div>
-      </motion.section>
+          </div>
+        </motion.div>
+      </section>
 
       {/* ═══════════════════════════════════════════════════
-          TRENDING INVESTIGATIONS (bg-section-subtle)
+          FEATURE CARDS
       ══════════════════════════════════════════════════════ */}
-      <section className="bg-section-subtle">
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-100px' }}
-          className="max-w-[1440px] mx-auto px-6 md:px-10 xl:px-20 py-32 lg:py-40"
-        >
-          <motion.div
-            variants={section}
-            className="flex items-end justify-between mb-16"
-          >
-            <div>
-              <div className="section-label">Active Monitoring</div>
-              <h2 className="font-serif font-black text-[var(--text-primary)] text-4xl lg:text-5xl tracking-tight">
-                Trending Investigations
-              </h2>
-            </div>
-            <Link href="/promises" className="btn-ghost hidden sm:flex items-center gap-1 text-sm">
-              View All Investigations <ArrowRight className="w-4 h-4 ml-1" />
+      <section className="relative z-10 w-full mx-auto px-6 md:px-10 xl:px-20 pb-20 -mt-12">
+        <div className="mb-10 text-center md:text-left">
+          <h2 className="text-white text-3xl font-serif mb-3 tracking-tight">Navigate Neta Samachar</h2>
+          <p className="text-white/50 text-sm md:text-base max-w-2xl">
+            A comprehensive overview of what we are doing to bring accountability and transparency to Indian politics. Dive into verified data, track political promises, and compare leaders objectively.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6 xl:gap-8">
+          {cards.map((card, i) => (
+            <Link key={card.title} href={card.href} className="group h-full">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + i * 0.1 }}
+                className="h-full flex flex-col bg-[#0f1218] border border-white/[0.04] rounded-2xl p-7 hover:border-[#e6b16a]/30 hover:bg-[#12161d] hover:shadow-[0_8px_30px_rgba(230,177,106,0.04)] transition-all duration-300"
+              >
+                <div className="mb-6">
+                  {card.icon}
+                </div>
+                <h3 className="text-white font-semibold text-[17px] mb-3">
+                  {card.title}
+                </h3>
+                <p className="text-white/50 text-[13px] leading-relaxed mb-6 flex-grow">
+                  {card.desc}
+                </p>
+                <div className="mt-auto">
+                  <ArrowRight className="w-5 h-5 text-[#e6b16a] opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                </div>
+              </motion.div>
             </Link>
-          </motion.div>
-
-          {/* Promise cards — IntersectionObserver-based, staggered 70ms apart */}
-          <StaggeredRevealGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredPromises.map((promise, i) => (
-              <ScrollReveal key={promise.id} staggerIndex={i}>
-                <PromiseCard promise={promise} viewMode="compact" />
-              </ScrollReveal>
-            ))}
-          </StaggeredRevealGrid>
-        </motion.div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════
-          FEATURED POLITICIANS
-      ══════════════════════════════════════════════════════ */}
-      <motion.section
-        variants={stagger}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: '-100px' }}
-        className="max-w-[1440px] mx-auto px-6 md:px-10 xl:px-20 py-32 lg:py-40"
-      >
-        <motion.div variants={section} className="flex items-end justify-between mb-16">
-          <div>
-            <div className="section-label">Dossier Directory</div>
-            <h2 className="font-serif font-black text-[var(--text-primary)] text-4xl lg:text-5xl tracking-tight">
-              Under Scrutiny
-            </h2>
-          </div>
-          <Link href="/politicians" className="btn-ghost hidden sm:flex items-center gap-1 text-sm">
-            Full Directory <ArrowRight className="w-4 h-4 ml-1" />
-          </Link>
-        </motion.div>
-
-        {/* Politician cards — staggered IntersectionObserver reveals */}
-        <StaggeredRevealGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {featuredPoliticians.map((pol, i) => (
-            <ScrollReveal key={pol.id} staggerIndex={i}>
-              <PoliticianCard politician={pol} viewMode="compact" />
-            </ScrollReveal>
           ))}
-        </StaggeredRevealGrid>
-      </motion.section>
-
-      {/* ═══════════════════════════════════════════════════
-          EVIDENCE SPOTLIGHT (bg-section-subtle)
-      ══════════════════════════════════════════════════════ */}
-      <section className="bg-section-subtle">
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-100px' }}
-          className="max-w-[1440px] mx-auto px-6 md:px-10 xl:px-20 py-32 lg:py-40"
-        >
-          <motion.div variants={section}>
-            <div className="section-label mb-16">Evidence Spotlight</div>
-            <EvidenceSpotlight evidence={EVIDENCE[0]} />
-          </motion.div>
-        </motion.div>
+        </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          INLINE TRUST STRIP
+          TRUST STRIP
       ══════════════════════════════════════════════════════ */}
-      <Link href="/methodology" className="block w-full bg-[var(--bg-card)] border-y border-[var(--border-subtle)] py-[24px] px-[24px] md:px-[80px] hover:bg-white/[0.04] transition-colors duration-200">
-        <div className="max-w-[1440px] mx-auto flex flex-wrap items-center justify-center gap-4 md:gap-8 text-[13px] uppercase font-medium text-[var(--text-secondary)] tracking-[0.1em]">
-          <div className="flex items-center gap-2 whitespace-nowrap">
-            <span className="text-[20px]">🏛</span> PRIMARY SOURCE ONLY
+      <div className="border-t border-white/5 bg-[#05060a]/80 backdrop-blur-md relative z-10">
+        <div className="w-full mx-auto px-6 md:px-10 xl:px-20 py-8 flex flex-col lg:flex-row items-center justify-between gap-10">
+          <div className="flex flex-col text-center lg:text-left">
+            <span className="text-white/40 text-[11px] uppercase tracking-[0.1em] font-medium mb-1">TRUSTED SOURCES.</span>
+            <span className="text-white/80 text-[12px] uppercase tracking-[0.1em] font-bold">ZERO COMPROMISES.</span>
           </div>
-          <div className="hidden md:block w-[1px] h-[16px] bg-white/10" />
-          <div className="flex items-center gap-2 whitespace-nowrap">
-            <span className="text-[20px]">🛡</span> SHA-256 VERIFIED
-          </div>
-          <div className="hidden lg:block w-[1px] h-[16px] bg-white/10" />
-          <div className="flex items-center gap-2 whitespace-nowrap">
-            <span className="text-[20px]">📝</span> IMMUTABLE AUDIT TRAIL
-          </div>
-          <div className="hidden md:block w-[1px] h-[16px] bg-white/10" />
-          <div className="flex items-center gap-2 whitespace-nowrap">
-            <span className="text-[20px]">⚖</span> NON-PARTISAN
+          
+          <div className="flex flex-wrap items-center justify-center lg:justify-end gap-x-12 gap-y-6 text-white/50 text-[13px] font-medium grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 flex items-center justify-center opacity-80 mix-blend-screen">
+                <Image src="/favicon.ico" alt="Gov" width={24} height={24} className="opacity-50" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] leading-tight">भारत सरकार</span>
+                <span className="text-[10px] leading-tight font-semibold tracking-wide">GOVERNMENT OF INDIA</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 flex items-center justify-center opacity-80 mix-blend-screen">
+                <Image src="/favicon.ico" alt="ECI" width={24} height={24} className="opacity-50" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] leading-tight font-semibold tracking-wide">ELECTION COMMISSION</span>
+                <span className="text-[9px] leading-tight">OF INDIA</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 flex items-center justify-center font-serif text-[18px] font-bold opacity-80">prs</div>
+              <div className="flex flex-col">
+                <span className="text-[10px] leading-tight font-semibold tracking-wide">PRS LEGISLATIVE</span>
+                <span className="text-[9px] leading-tight">RESEARCH</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 flex items-center justify-center font-serif text-[18px] font-bold opacity-80">⚖️</div>
+              <div className="flex flex-col">
+                <span className="text-[10px] leading-tight font-semibold tracking-wide">eCOURTS</span>
+                <span className="text-[9px] leading-tight">SERVICES</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 flex items-center justify-center opacity-80 mix-blend-screen">
+                <Image src="/favicon.ico" alt="Lok Sabha" width={24} height={24} className="opacity-50" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] leading-tight">लोक सभा</span>
+                <span className="text-[10px] leading-tight font-semibold tracking-wide">LOK SABHA</span>
+              </div>
+            </div>
           </div>
         </div>
-      </Link>
-
-
+      </div>
 
     </div>
   );

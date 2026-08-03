@@ -304,7 +304,7 @@ export function EvidenceSidePanel({ evidence, isOpen, onClose }: Props) {
                   <div className="w-[85%] h-2 bg-gray-300 rounded-sm mb-12 opacity-40" />
                   
                   <div className="w-full h-32 bg-gray-200 border border-gray-300 mb-8 flex items-center justify-center opacity-40">
-                    <span className="text-gray-400 font-serif text-sm">[Table Data]</span>
+                    <span className="text-[#A1A1AA] font-serif text-sm">[Table Data]</span>
                   </div>
 
                   <div className="w-full h-2 bg-gray-300 rounded-sm mb-3 opacity-40" />

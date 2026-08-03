@@ -85,7 +85,7 @@ export default async function PromiseDetailPage({ params }: Props) {
     <div className="min-h-screen bg-[var(--bg-base)] text-white">
       
       {/* HEADER BAR (Breadcrumbs & Actions) */}
-      <div className="w-full border-b border-white/5 bg-[var(--color-panel)]/50 backdrop-blur-xl">
+      <div className="w-full border-b border-white/5 bg-[#131722]/50 backdrop-blur-xl">
         <div className="max-w-[1440px] mx-auto px-[24px] lg:px-[40px] h-[64px] flex items-center justify-between">
           <div className="flex items-center gap-[8px] text-[12px] font-medium text-[#A1A1AA]">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>

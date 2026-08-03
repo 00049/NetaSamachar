@@ -1,3 +1,4 @@
+import './compare.css';
 import { ComparePageClient } from './ComparePageClient';
 import type { Metadata } from 'next';
 
@@ -13,7 +14,7 @@ export default function ComparePage({
   searchParams: { type?: string; a?: string; b?: string; c?: string };
 }) {
   return (
-    <main className="min-h-screen bg-[var(--bg-base)]">
+    <main className="compare-workspace">
       <ComparePageClient initialSearchParams={searchParams} />
     </main>
   );

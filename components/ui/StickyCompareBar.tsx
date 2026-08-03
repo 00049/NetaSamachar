@@ -54,7 +54,7 @@ export function StickyCompareBar() {
           
           <button 
             onClick={handleCompare}
-            className="flex items-center text-xs font-bold uppercase tracking-wider bg-white text-black px-6 py-2 rounded hover:bg-white/90 transition-colors"
+            className="flex items-center text-xs font-bold uppercase tracking-wider bg-white text-black px-6 py-2 rounded hover:bg-black/80 transition-colors"
           >
             Compare {names.length} {type}s <ArrowRight className="w-4 h-4 ml-2" />
           </button>

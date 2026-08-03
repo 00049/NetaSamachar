@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { SearchSlot } from './SearchSlot';
 import { CompareTable } from './CompareTable';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import Image from 'next/image';
+import { POLITICIANS, PARTIES } from '@/data/politicians';
 
 export type CompareType = 'party' | 'state' | 'constituency' | 'politician';
 
@@ -31,6 +32,15 @@ export function CompareBuilder({ initialSearchParams }: { initialSearchParams: {
     initialSearchParams.c || null,
   ].slice(0, initialSearchParams.c ? 3 : 2));
 
+  const [quickAddFilter, setQuickAddFilter] = useState<'All Parties' | 'INC' | 'BJP' | 'Independent'>('All Parties');
+  const [quickAddSearch, setQuickAddSearch] = useState('');
+
+  const filledSlots = slots.filter(s => s !== null) as string[];
+
+  const [compareState, setCompareState] = useState<'disabled' | 'enabled' | 'loading' | 'compared'>(
+    filledSlots.length >= 2 ? 'enabled' : 'disabled'
+  );
+
   // Sync state to URL when changed (shallow routing)
   useEffect(() => {
     const params = new URLSearchParams();
@@ -46,12 +56,20 @@ export function CompareBuilder({ initialSearchParams }: { initialSearchParams: {
     if (newType === compareType) return;
     setCompareType(newType);
     setSlots([null, null]); // reset slots on type change
+    setCompareState('disabled');
   };
 
   const handleSlotSelect = (index: number, id: string | null) => {
     const newSlots = [...slots];
     newSlots[index] = id;
     setSlots(newSlots);
+    
+    const newFilled = newSlots.filter(s => s !== null);
+    if (newFilled.length < 2) {
+      setCompareState('disabled');
+    } else {
+      setCompareState('enabled');
+    }
   };
 
   const addSlot = () => {
@@ -66,114 +84,196 @@ export function CompareBuilder({ initialSearchParams }: { initialSearchParams: {
     // Ensure we always have at least 2 slots
     while (newSlots.length < 2) newSlots.push(null);
     setSlots(newSlots);
+
+    const newFilled = newSlots.filter(s => s !== null);
+    if (newFilled.length < 2) {
+      setCompareState('disabled');
+    } else {
+      setCompareState('enabled');
+    }
   };
 
-  const filledSlots = slots.filter(s => s !== null) as string[];
+  const handleQuickAdd = (id: string) => {
+    // Find first empty slot
+    const firstEmptyIndex = slots.findIndex(s => s === null);
+    if (firstEmptyIndex !== -1) {
+      handleSlotSelect(firstEmptyIndex, id);
+    } else if (slots.length < 3) {
+      // Add a 3rd slot if possible and populate it
+      const newSlots = [...slots, id];
+      setSlots(newSlots);
+      
+      const newFilled = newSlots.filter(s => s !== null);
+      if (newFilled.length >= 2) setCompareState('enabled');
+    }
+  };
+
+  const handleCompareClick = () => {
+    if (compareState !== 'enabled') return;
+    setCompareState('loading');
+    setTimeout(() => {
+      setCompareState('compared');
+      setTimeout(() => {
+        document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }, 600);
+  };
+
+  const filteredPoliticians = useMemo(() => {
+    return POLITICIANS.filter(p => {
+      if (quickAddFilter !== 'All Parties' && PARTIES.find(pty => pty.id === p.partyId)?.abbreviation !== quickAddFilter) return false;
+      if (quickAddSearch && !p.name.toLowerCase().includes(quickAddSearch.toLowerCase())) return false;
+      return true;
+    }).slice(0, 4); // Just show top 4 for the quick add tray
+  }, [quickAddFilter, quickAddSearch]);
 
   return (
-    <div className="max-w-[1440px] mx-auto px-6 md:px-10 xl:px-20 py-32 lg:py-40">
-      
-      {/* Header & Type Selector */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-16 gap-6">
-        <div>
-          <div className="section-label">Comparison Engine</div>
-          <h1 className="font-serif font-black text-[var(--text-primary)] text-4xl lg:text-5xl tracking-tight">
-            Side-by-Side
-          </h1>
+    <>
+      <section className="hero">
+        <div className="hero-bg" aria-hidden="true">
+          <Image
+            src="/images/reference.png"
+            alt="Compare Background"
+            fill
+            className="hero-bg-photo"
+            priority
+          />
         </div>
-        
-        {/* Type Selector (Segmented Control style) */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 shrink-0 mt-4 md:mt-0">
-          <span className="text-[11px] uppercase tracking-widest font-semibold text-[#71717A]">
-            Compare By
-          </span>
-          <div className="flex flex-wrap items-center gap-2">
-            {TYPES.map((t) => {
-              const isActive = compareType === t.id;
-              return (
+        <div className="wrap">
+          <div className="eyebrow">Comparison Engine</div>
+          <h1 className="headline">Side-by-<em>Side</em></h1>
+          
+          <div className="compareby-row">
+            <div className="compareby-label">Compare By</div>
+            <div className="toggle-group">
+              {TYPES.map((t) => (
                 <button
                   key={t.id}
                   onClick={() => handleTypeChange(t.id)}
-                  className={`relative h-[36px] px-4 text-[13px] uppercase font-semibold rounded-[18px] transition-all duration-150 flex items-center justify-center ${
-                    isActive 
-                      ? 'bg-white text-black border border-transparent shadow-sm' 
-                      : 'bg-transparent text-[#A1A1AA] border border-white/[0.12] hover:border-white/[0.3] hover:text-[#D4D4D8]'
-                  }`}
+                  className={`toggle-btn ${compareType === t.id ? 'active' : ''}`}
                 >
-                  <span className="relative z-10">{t.label}</span>
+                  {t.label}
                 </button>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Slots Picker Area */}
-      <div className="flex flex-col md:flex-row gap-6 mb-16">
-        <AnimatePresence>
-          {slots.map((slotValue, idx) => (
-            <motion.div 
-              key={`slot-${idx}`}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="flex-1 relative overflow-visible"
-            >
-              <div className="text-xs uppercase tracking-widest text-[#71717A] mb-3 font-semibold">
-                Slot {String.fromCharCode(65 + idx)}
-              </div>
+          <div className="slots-row">
+            {slots.map((slotValue, idx) => (
               <SearchSlot 
+                key={`slot-${idx}`}
+                idx={idx}
                 type={compareType} 
                 value={slotValue}
                 selectedIds={filledSlots} 
                 onChange={(val) => handleSlotSelect(idx, val)} 
+                onRemove={() => removeSlot(idx)}
+                canRemove={idx === 2}
               />
-              
-              {/* Only allow removing slot C (idx 2) */}
-              {idx === 2 && (
-                <button 
-                  onClick={() => removeSlot(idx)}
-                  className="absolute top-0 right-0 p-1 text-[#71717A] hover:text-white"
-                >
-                  <X className="w-4 h-4" />
+            ))}
+            
+            {/* Add 3rd Slot Button */}
+            {slots.length < 3 && (
+              <div>
+                <button onClick={addSlot} className="add-slot">
+                  <span>+</span> Add Slot
                 </button>
-              )}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-        
-        {/* Add 3rd Slot Button */}
-        {slots.length < 3 && (
-          <div className="flex-1 flex flex-col pt-[32px] md:pt-[28px] max-w-[200px]">
+              </div>
+            )}
+          </div>
+          
+          <div className="slot-help">Drag a <b>{compareType}</b> from the tray below into a slot — or tap <b>+ Add</b> on any card.</div>
+          
+          <div className="compare-cta">
             <button 
-              onClick={addSlot}
-              className="h-[60px] border border-dashed border-white/[0.15] hover:border-white/[0.4] rounded-lg text-sm uppercase tracking-wider text-[#A1A1AA] hover:text-white transition-colors flex items-center justify-center gap-2"
+              className={`cta-btn ${compareState === 'disabled' ? 'state-disabled' : compareState === 'loading' ? 'state-loading' : compareState === 'compared' ? 'state-compared' : ''}`}
+              disabled={compareState === 'disabled' || compareState === 'loading'}
+              onClick={handleCompareClick}
             >
-              <Plus className="w-4 h-4" /> Add Slot
+              {compareState === 'disabled' ? 'Select at least two' : compareState === 'loading' ? 'Preparing Comparison...' : compareState === 'compared' ? 'Compared' : 'Compare Politicians'}
             </button>
           </div>
-        )}
-      </div>
+        </div>
+      </section>
 
-      {/* Empty / Partial States */}
-      {filledSlots.length === 0 && (
-        <div className="text-center text-[#71717A] italic py-20 border-t border-white/[0.06]">
-          Use the search slots above to select {compareType}s to compare.
-        </div>
-      )}
-      
-      {filledSlots.length === 1 && (
-        <div className="text-center text-[#71717A] italic py-20 border-t border-white/[0.06]">
-          Select a second {compareType} to compare &rarr;
-        </div>
+      {/* Quick Add Tray */}
+      {compareType === 'politician' && (
+        <section className="block wrap">
+          <div className="block-head">
+            <div>
+              <h2 className="block-title">Quick Add — Politicians</h2>
+              <div className="block-sub">Drag a card into a slot above, or tap Add. Sourced from your active dataset.</div>
+            </div>
+            <div className="filter-search">⌕<input type="text" placeholder="Filter by name or party..." value={quickAddSearch} onChange={(e) => setQuickAddSearch(e.target.value)} /></div>
+          </div>
+
+          <div className="party-pills">
+            {['All Parties', 'INC', 'BJP', 'Independent'].map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setQuickAddFilter(filter as any)}
+                className={`party-pill ${quickAddFilter === filter ? 'active' : ''}`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+
+          <div className="politician-grid">
+            {filteredPoliticians.map(p => {
+              const pty = PARTIES.find(pt => pt.id === p.partyId);
+              const score = Math.round((p.promisesFulfilled / p.promisesTotal) * 100) || 50;
+              const initials = p.name.split(' ').map(n => n[0]).join('').substring(0,2);
+              
+              return (
+                <div key={p.id} className="poli-card">
+                  <div className="poli-top">
+                    <div className="poli-avatar">{initials}</div>
+                    <div>
+                      <h3 className="poli-name">{p.name}</h3>
+                      <div className="poli-meta">{pty?.abbreviation} • {p.state}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="poli-meter-top">
+                    <span>Fulfillment</span>
+                    <b>{score}%</b>
+                  </div>
+                  <div className="meter-track">
+                    <div className="meter-fill" style={{ width: `${score}%` }}></div>
+                  </div>
+                  
+                  <div className="poli-foot">
+                    <span className="drag-hint">⋮⋮ DRAG</span>
+                    <button onClick={() => handleQuickAdd(p.id)} className="add-btn">+ ADD</button>
+                  </div>
+                </div>
+              );
+            })}
+            
+            {filteredPoliticians.length === 0 && (
+              <div className="col-span-full py-10 text-center text-[var(--ink-faint)] text-[14px]">
+                No politicians found matching your filters.
+              </div>
+            )}
+          </div>
+        </section>
       )}
 
       {/* Data Table */}
-      {filledSlots.length >= 2 && (
+      {compareState === 'compared' && filledSlots.length >= 2 ? (
         <CompareTable type={compareType} entityIds={filledSlots} />
+      ) : (
+        <section className="block" id="resultsGate">
+          <div className="wrap">
+            <div className="gate-empty">
+              {compareState === 'disabled' ? 'Select at least two to begin comparison.' : 
+               compareState === 'loading' ? 'Preparing Comparison...' : 
+               'Ready — click Compare above to view results.'}
+            </div>
+          </div>
+        </section>
       )}
-      
-    </div>
+    </>
   );
 }

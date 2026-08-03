@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Search } from 'lucide-react';
@@ -9,16 +9,16 @@ import { Menu, X, Search } from 'lucide-react';
 const NAV_ITEMS = [
   { href: '/politicians',  label: 'Politicians' },
   { href: '/parties',      label: 'Parties' },
-  { href: '/investigations', label: 'Investigations' },
   { href: '/compare',      label: 'Compare' },
   { href: '/archive',      label: 'Archive' },
-  { href: '/live-data',    label: 'Live Data' },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 24);
@@ -30,6 +30,15 @@ export function Navbar() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMenuOpen(false); 
   }, [pathname]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setMenuOpen(false);
+      setSearchQuery('');
+    }
+  };
 
   return (
     <>
@@ -91,14 +100,20 @@ export function Navbar() {
           <div className="flex items-center gap-[20px] md:gap-[32px]">
             
             {/* Search Bar */}
-            <div className="hidden lg:flex items-center w-[320px] xl:w-[420px] h-[52px] bg-white/[0.03] border border-white/20 hover:border-white/30 rounded-full px-6 focus-within:border-white/50 focus-within:bg-white/[0.06] focus-within:shadow-[0_0_24px_rgba(255,255,255,0.05)] transition-all duration-300 group">
+            <form 
+              onSubmit={handleSearch}
+              className="hidden lg:flex items-center w-[320px] xl:w-[420px] h-[52px] bg-white/[0.03] border border-white/20 hover:border-white/30 rounded-full px-6 focus-within:border-white/50 focus-within:bg-white/[0.06] focus-within:shadow-[0_0_24px_rgba(255,255,255,0.05)] transition-all duration-300 group"
+            >
               <Search className="w-[20px] h-[20px] text-white/60 group-focus-within:text-white flex-shrink-0 transition-colors duration-300" />
               <input 
-                type="text" 
+                type="search" 
+                name="q"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search politicians, parties, issues..."
                 className="w-full bg-transparent text-[16px] text-white placeholder-white/50 focus:outline-none ml-4"
               />
-            </div>
+            </form>
 
             {/* Language Toggle */}
             <button className="hidden sm:block text-white/80 hover:text-white font-medium text-[14px] transition-colors whitespace-nowrap">
@@ -143,16 +158,19 @@ export function Navbar() {
                 
                 {/* Mobile Search */}
                 <div className="pt-6 pb-2">
-                  <div className="relative">
+                  <form onSubmit={handleSearch} className="relative">
                     <div className="absolute left-[16px] top-1/2 -translate-y-1/2">
                       <Search className="w-[18px] h-[18px] text-white/50" />
                     </div>
                     <input 
-                      type="text" 
+                      type="search" 
+                      name="q"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search..."
                       className="w-full h-[48px] bg-white/5 border border-white/10 rounded-full pl-[48px] pr-[20px] text-white placeholder-white/40 focus:outline-none"
                     />
-                  </div>
+                  </form>
                 </div>
               </nav>
             </motion.div>

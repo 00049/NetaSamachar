@@ -18,7 +18,9 @@ import {
   FileText, 
   Clock,
   Info,
-  Lightbulb
+  Lightbulb,
+  MapPin,
+  GraduationCap
 } from 'lucide-react';
 
 interface Props {
@@ -84,15 +86,15 @@ export function PerformanceTab({ politician, quickLook }: Props) {
           <div className="text-[#A1A1AA] text-[11px]">{(politician.assetDeclarations?.[0]?.growthPercent && politician.assetDeclarations[0].growthPercent > 0) ? `+${politician.assetDeclarations[0].growthPercent}%` : (politician.assetDeclarations?.[0]?.growthPercent || 0)}% vs prev cycle</div>
         </Link>
 
-        {/* Public Trust */}
-        <Link href="#performance" className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer">
-          <div className="flex items-center justify-between mb-[12px]">
-            <Users className="w-[24px] h-[24px] text-[#60A5FA] group-hover:scale-110 transition-transform" />
-            <div className="text-white font-bold text-[24px]">81%</div>
+        {/* Education Level */}
+        <div className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all">
+          <div className="flex items-center justify-between mb-[8px]">
+            <GraduationCap className="w-[24px] h-[24px] text-[#60A5FA] group-hover:scale-110 transition-transform shrink-0" />
           </div>
-          <div className="text-[#A1A1AA] text-[13px] font-medium mb-[4px] group-hover:text-white transition-colors">Public Trust Score</div>
-          <div className="text-[#A1A1AA] text-[11px]">Based on surveys</div>
-        </Link>
+          <div className="text-white font-bold text-[14px] leading-tight line-clamp-2 mb-[4px]" title={politician.education}>{politician.education}</div>
+          <div className="text-[#A1A1AA] text-[13px] font-medium mb-[4px] group-hover:text-white transition-colors">Education Level</div>
+          <div className="text-[#A1A1AA] text-[11px]">Highest Qualification</div>
+        </div>
       </div>
 
       {/* 3-COLUMN CHARTS SECTION */}
@@ -323,7 +325,7 @@ export function PerformanceTab({ politician, quickLook }: Props) {
       </div>
 
       {/* FOOTER NOTE */}
-      <div className="flex items-center justify-between py-[16px] px-[24px] bg-[var(--color-panel)]/50 border border-white/5 rounded-[16px] mt-[-8px]">
+      <div className="flex items-center justify-between py-[16px] px-[24px] bg-[#131722]/50 border border-white/5 rounded-[16px] mt-[-8px]">
         <div className="flex items-center gap-[12px]">
           <Lightbulb className="w-[16px] h-[16px] text-yellow-500" />
           <span className="text-[#A1A1AA] text-[13px]">

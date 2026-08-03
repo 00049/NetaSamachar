@@ -75,7 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
 
         {/* ── Footer ── */}
-        <footer className="border-t border-[var(--color-border-subtle)] mt-32">
+        <footer className="border-t border-white/5 mt-32">
           <div className="max-w-[1440px] mx-auto px-6 md:px-10 xl:px-20 py-24">
             <NewsletterForm />
             
@@ -83,7 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="md:col-span-4">
                 <LiveIndicator label="Primary Source Mandate Active" className="mb-10" />
                 <div className="mb-6">
-                  <div className="font-serif font-bold text-[var(--color-text-primary)] text-lg tracking-tight mb-1">
+                  <div className="font-serif font-bold text-white text-lg tracking-tight mb-1">
                     NETA SAMACHAR
                   </div>
                   <div className="text-meta">
@@ -103,7 +103,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className="text-body-base hover:text-[var(--color-text-primary)] transition-colors duration-200 hover-underline"
+                        className="text-body-base hover:text-white transition-colors duration-200 hover-underline"
                       >
                         {item.label}
                       </Link>
@@ -127,7 +127,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </div>
 
-            <div className="pt-8 border-t border-[var(--color-border-subtle)] flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+            <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
               <p className="text-body-sm">
                 © 2026 Neta Samachar. Data sourced from the Election Commission of India, Parliament Archives, and Official Gazettes.
               </p>
