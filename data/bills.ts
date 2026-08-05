@@ -2,6 +2,42 @@ import { Bill } from '../lib/types';
 
 export const BILLS: Bill[] = [
   {
+    id: 'b-bihar-med-001',
+    politicianId: 'nishant-kumar',
+    title: 'The Bihar Medical Amendment Bill, 2026',
+    summary: 'A bill to modernize the framework for registering complaints against medical practitioners and formalize mechanisms to ensure the physical safety of doctors operating in rural areas.',
+    status: 'passed',
+    sponsorRole: 'primary_sponsor',
+    introducedDate: '2026-07-15',
+    
+    // Rich Data for new UI
+    type: 'Ordinary Bill',
+    isGovernmentBill: true,
+    legislativeSession: 'Monsoon Session, 2026',
+    house: 'Bihar Legislative Assembly',
+    ministerInCharge: 'Health Department',
+    language: 'Hindi & English',
+    passedDate: '2026-07-28',
+    assentDate: '2026-08-01',
+    gazetteDate: '2026-08-02',
+    imageUrl: '/images/reference.png',
+    objectives: [
+      { title: 'Ensure Doctor Safety', description: 'Formalize robust mechanisms to protect medical practitioners operating in rural areas.' },
+      { title: 'Modernize Complaints', description: 'Streamline and digitize the framework for registering medical negligence complaints.' },
+      { title: 'Deter Violence', description: 'Introduce stringent punitive measures against individuals assaulting healthcare workers.' }
+    ],
+    keyProvisions: [
+      { title: 'Mandatory Security Protocols', description: 'Requires state-funded security personnel deployment at all primary and community health centers in vulnerable districts.' },
+      { title: 'Fast-Track Tribunals', description: 'Establishes specialized tribunals for rapid adjudication of violence cases against medical staff.' }
+    ],
+    votingRecord: { aye: 220, no: 0, abstain: 23, totalVotes: 243, passed: true },
+    timeline: [
+      { date: '2026-07-15', title: 'Introduced', description: 'Bill tabled in the Bihar Legislative Assembly by Health Minister Nishant Kumar.', status: 'completed' },
+      { date: '2026-07-28', title: 'Passed', description: 'Passed unanimously by the Assembly.', status: 'completed' },
+      { date: '2026-08-01', title: 'Assent', description: 'Received assent from the Governor.', status: 'completed' }
+    ]
+  },
+  {
     id: 'b-hp-001',
     politicianId: 'sukhvinder-singh-sukhu',
     title: 'The Himachal Pradesh Water Cess on Hydropower Generation Bill, 2023',

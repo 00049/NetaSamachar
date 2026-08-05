@@ -89,44 +89,43 @@ export function HomeClient({ stats }: { stats?: any }) {
             {/* Eyebrow */}
             <motion.div variants={heroItem} className="flex items-center gap-4 text-white/50 text-[11px] uppercase font-bold tracking-[0.15em] mb-6">
               <div className="w-12 h-[1px] bg-[#e6b16a]" />
-              INDIA'S MOST COMPREHENSIVE
+              NETA SAMACHAR
             </motion.div>
 
             {/* Headline */}
             <motion.h1 variants={heroItem} className="font-serif text-white tracking-tight mb-6 text-[48px] md:text-[64px] xl:text-[84px] leading-[1.05]">
-              India's Political <br />
-              Intelligence <br />
-              <span className="italic text-[#e6b16a]">Platform</span>
+              KNOW THE <br />
+              <span className="italic text-[#e6b16a]">TRUTH.</span>
             </motion.h1>
 
             {/* Body */}
             <motion.p variants={heroItem} className="text-white/70 text-[16px] md:text-[18px] leading-[1.6] max-w-[560px] mb-10">
-              <strong className="text-white/90 font-semibold block mb-1">Every Politician. Every Record. One Platform.</strong>
-              Explore verified profiles, election history, assets, liabilities, criminal cases, parliamentary activity, promises, government records, and official documents—all connected in one place.
+              <strong className="text-white/90 font-semibold block mb-1">About Every Public Leader in India.</strong>
+              Search verified records, election history, assets, criminal cases, attendance, promises, and official documents—all in one place.
             </motion.p>
 
             {/* Search Input Container */}
-            <motion.div variants={heroItem} className="flex flex-col gap-[16px] w-full max-w-[640px]">
+            <motion.div variants={heroItem} className="flex flex-col gap-[20px] w-full max-w-[840px]">
               <form 
                 onSubmit={handleSearch}
-                className="relative flex items-center w-full h-[60px] bg-[#0f131a]/80 backdrop-blur-md border border-white/10 hover:border-white/20 rounded-full px-6 focus-within:border-[#e6b16a]/50 focus-within:bg-[#0f131a] transition-all duration-300 shadow-2xl"
+                className="relative flex items-center w-full h-[88px] bg-[#0f131a]/80 backdrop-blur-md border border-white/10 hover:border-white/20 rounded-full px-8 focus-within:border-[#e6b16a]/50 focus-within:bg-[#0f131a] transition-all duration-300 shadow-2xl"
               >
-                <Search className="w-[18px] h-[18px] text-white/40 flex-shrink-0" />
+                <Search className="w-[28px] h-[28px] text-white/40 flex-shrink-0 ml-2" />
                 <input 
                   type="text" 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search politicians, constituencies, parties, elections, bills, or issues..."
-                  className="w-full bg-transparent text-[15px] text-white placeholder-white/40 focus:outline-none ml-4"
+                  className="w-full bg-transparent text-[22px] text-white placeholder-white/40 focus:outline-none ml-6"
                 />
-                <button type="submit" className="w-[40px] h-[40px] rounded-full bg-[#e6b16a] flex items-center justify-center hover:bg-[#e6b16a]/90 transition-colors flex-shrink-0 text-black ml-2 group">
-                  <ArrowRight className="w-[18px] h-[18px] group-hover:translate-x-0.5 transition-transform" />
+                <button type="submit" className="w-[64px] h-[64px] rounded-full bg-[#e6b16a] flex items-center justify-center hover:bg-[#e6b16a]/90 transition-colors flex-shrink-0 text-black ml-4 group shadow-lg">
+                  <ArrowRight className="w-[28px] h-[28px] group-hover:translate-x-1.5 transition-transform" />
                 </button>
               </form>
               
-              <div className="flex items-center flex-wrap gap-x-4 gap-y-2 text-[13px] ml-4">
+              <div className="flex items-center flex-wrap gap-x-5 gap-y-2 text-[15px] ml-8">
                 <span className="text-white/40">Trending:</span>
-                {['Narendra Modi', 'Rahul Gandhi', 'Arvind Kejriwal', 'Mamata Banerjee', 'Amit Shah'].map((name) => (
+                {['Tejashwi Yadav', 'Prashant Kishor', 'Nishant Kumar', 'Shambhuraj Desai', 'Rajesh Kumar', 'Keshab Mahanta'].map((name) => (
                   <Link key={name} href="#" className="text-white/60 hover:text-[#e6b16a] hover:underline transition-colors">
                     {name}
                   </Link>

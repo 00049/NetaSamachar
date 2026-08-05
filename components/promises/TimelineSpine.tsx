@@ -156,7 +156,7 @@ export function TimelineSpine({ promise }: Props) {
                     No verified {stage.label.toLowerCase()} on record — this stage would normally precede the reported outcome below, but we have not located the primary document yet.
                   </p>
                   <Link
-                    href="/promises"
+                    href="#"
                     className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-[#FBBF24] hover:text-white transition-colors mt-2"
                   >
                     Have a source? Submit evidence <ArrowRight className="w-3.5 h-3.5" />

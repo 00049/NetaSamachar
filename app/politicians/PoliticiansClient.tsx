@@ -41,7 +41,7 @@ function sortPoliticians(list: Politician[], sortBy: SortOption): Politician[] {
   });
 }
 
-function filterPoliticians(list: Politician[], query: string, filter: FilterOption, fState: string, fConst: string): Politician[] {
+function filterPoliticians(list: Politician[], query: string, filter: FilterOption, fState: string, fConst: string, discoverMode: 'all' | 'trending' | 'new' | 'featured'): Politician[] {
   let result = list;
   if (query) {
     const q = query.toLowerCase();
@@ -58,6 +58,16 @@ function filterPoliticians(list: Politician[], query: string, filter: FilterOpti
   }
   if (fState) result = result.filter(p => p.state === fState);
   if (fConst) result = result.filter(p => p.constituency === fConst);
+
+  // Apply discover mode
+  if (discoverMode === 'trending') {
+    result = [...result].sort((a, b) => b.debatesParticipated - a.debatesParticipated);
+  } else if (discoverMode === 'new') {
+    result = [...result].sort((a, b) => a.yearsInPolitics - b.yearsInPolitics);
+  } else if (discoverMode === 'featured') {
+    result = result.filter(p => p.verified).sort((a, b) => (b.promisesTotal || 0) - (a.promisesTotal || 0));
+  }
+
   return result;
 }
 
@@ -65,6 +75,7 @@ export function PoliticiansClient() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [inputValue, setInputValue] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [discoverMode, setDiscoverMode] = useState<'all' | 'trending' | 'new' | 'featured'>('all');
 
   const [filterState, setFilterState] = useState('');
   const [filterConst, setFilterConst] = useState('');
@@ -91,14 +102,14 @@ export function PoliticiansClient() {
   const cache = useSearchCache<Politician[]>('politicians');
 
   const filteredAndSorted = useMemo(() => {
-    const cacheKey = `${debouncedQuery}|${activeFilter}|${sortBy}|${filterState}|${filterConst}`;
+    const cacheKey = `${debouncedQuery}|${activeFilter}|${sortBy}|${filterState}|${filterConst}|${discoverMode}`;
     const cached = cache.get(cacheKey);
     if (cached) return cached;
-    const filtered = filterPoliticians(POLITICIANS, debouncedQuery, activeFilter as FilterOption, filterState, filterConst);
-    const sorted = sortPoliticians(filtered, sortBy as SortOption);
+    const filtered = filterPoliticians(POLITICIANS, debouncedQuery, activeFilter as FilterOption, filterState, filterConst, discoverMode);
+    const sorted = discoverMode === 'all' ? sortPoliticians(filtered, sortBy as SortOption) : filtered;
     cache.set(cacheKey, sorted);
     return sorted;
-  }, [debouncedQuery, activeFilter, sortBy, filterState, filterConst, cache]);
+  }, [debouncedQuery, activeFilter, sortBy, filterState, filterConst, discoverMode, cache]);
 
   // Trending (mocked to just top 5 of the list for now)
   const trending = POLITICIANS.slice(0, 5);
@@ -162,42 +173,94 @@ export function PoliticiansClient() {
             <div className="mb-4 text-[11px] uppercase tracking-widest font-bold text-white/40 px-2">Search & Discover</div>
             
             <div className="flex flex-col gap-2 mb-8">
-              <button className="flex items-center gap-4 w-full p-2.5 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03] hover:bg-emerald-500/[0.08] transition-all text-left group">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-                  <User className="w-6 h-6 text-emerald-500" />
+              <button 
+                onClick={() => setDiscoverMode('all')}
+                className={clsx(
+                  "flex items-center gap-4 w-full p-2.5 rounded-2xl border transition-all text-left group",
+                  discoverMode === 'all' 
+                    ? "border-emerald-500/20 bg-emerald-500/[0.03]" 
+                    : "border-transparent hover:bg-white/[0.04]"
+                )}
+              >
+                <div className={clsx(
+                  "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 shadow-sm",
+                  discoverMode === 'all'
+                    ? "bg-emerald-500/10 border border-emerald-500/20"
+                    : "bg-[#0a0c12] border border-white/5 group-hover:bg-white/5 group-hover:scale-105"
+                )}>
+                  <User className={clsx("w-6 h-6 transition-colors", discoverMode === 'all' ? "text-emerald-500" : "text-white/50 group-hover:text-white")} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[15px] font-bold text-white truncate">All Politicians</div>
+                  <div className="text-[15px] font-bold text-white truncate transition-colors">All Politicians</div>
                   <div className="text-[12px] text-white/50 mt-0.5 truncate">Browse the complete database</div>
                 </div>
               </button>
               
-              <button className="flex items-center gap-4 w-full p-2.5 rounded-2xl border border-transparent hover:bg-white/[0.04] transition-all text-left group">
-                <div className="w-12 h-12 rounded-xl bg-[#0a0c12] border border-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/5 group-hover:scale-105 transition-all duration-300 shadow-sm">
-                  <TrendingUp className="w-6 h-6 text-white/50 group-hover:text-white transition-colors" />
+              <button 
+                onClick={() => setDiscoverMode('trending')}
+                className={clsx(
+                  "flex items-center gap-4 w-full p-2.5 rounded-2xl border transition-all text-left group",
+                  discoverMode === 'trending' 
+                    ? "border-emerald-500/20 bg-emerald-500/[0.03]" 
+                    : "border-transparent hover:bg-white/[0.04]"
+                )}
+              >
+                <div className={clsx(
+                  "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 shadow-sm",
+                  discoverMode === 'trending'
+                    ? "bg-emerald-500/10 border border-emerald-500/20"
+                    : "bg-[#0a0c12] border border-white/5 group-hover:bg-white/5 group-hover:scale-105"
+                )}>
+                  <TrendingUp className={clsx("w-6 h-6 transition-colors", discoverMode === 'trending' ? "text-emerald-500" : "text-white/50 group-hover:text-white")} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[15px] font-bold text-white group-hover:text-white truncate transition-colors">Trending Now</div>
+                  <div className="text-[15px] font-bold text-white truncate transition-colors">Trending Now</div>
                   <div className="text-[12px] text-white/40 mt-0.5 truncate">Most viewed this week</div>
                 </div>
               </button>
               
-              <button className="flex items-center gap-4 w-full p-2.5 rounded-2xl border border-transparent hover:bg-white/[0.04] transition-all text-left group">
-                <div className="w-12 h-12 rounded-xl bg-[#0a0c12] border border-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/5 group-hover:scale-105 transition-all duration-300 shadow-sm">
-                  <Clock className="w-6 h-6 text-white/50 group-hover:text-white transition-colors" />
+              <button 
+                onClick={() => setDiscoverMode('new')}
+                className={clsx(
+                  "flex items-center gap-4 w-full p-2.5 rounded-2xl border transition-all text-left group",
+                  discoverMode === 'new' 
+                    ? "border-emerald-500/20 bg-emerald-500/[0.03]" 
+                    : "border-transparent hover:bg-white/[0.04]"
+                )}
+              >
+                <div className={clsx(
+                  "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 shadow-sm",
+                  discoverMode === 'new'
+                    ? "bg-emerald-500/10 border border-emerald-500/20"
+                    : "bg-[#0a0c12] border border-white/5 group-hover:bg-white/5 group-hover:scale-105"
+                )}>
+                  <Clock className={clsx("w-6 h-6 transition-colors", discoverMode === 'new' ? "text-emerald-500" : "text-white/50 group-hover:text-white")} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[15px] font-bold text-white group-hover:text-white truncate transition-colors">Newly Added</div>
+                  <div className="text-[15px] font-bold text-white truncate transition-colors">Newly Added</div>
                   <div className="text-[12px] text-white/40 mt-0.5 truncate">Recently added profiles</div>
                 </div>
               </button>
               
-              <button className="flex items-center gap-4 w-full p-2.5 rounded-2xl border border-transparent hover:bg-white/[0.04] transition-all text-left group">
-                <div className="w-12 h-12 rounded-xl bg-[#0a0c12] border border-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/5 group-hover:scale-105 transition-all duration-300 shadow-sm">
-                  <Star className="w-6 h-6 text-white/50 group-hover:text-white transition-colors" />
+              <button 
+                onClick={() => setDiscoverMode('featured')}
+                className={clsx(
+                  "flex items-center gap-4 w-full p-2.5 rounded-2xl border transition-all text-left group",
+                  discoverMode === 'featured' 
+                    ? "border-emerald-500/20 bg-emerald-500/[0.03]" 
+                    : "border-transparent hover:bg-white/[0.04]"
+                )}
+              >
+                <div className={clsx(
+                  "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 shadow-sm",
+                  discoverMode === 'featured'
+                    ? "bg-emerald-500/10 border border-emerald-500/20"
+                    : "bg-[#0a0c12] border border-white/5 group-hover:bg-white/5 group-hover:scale-105"
+                )}>
+                  <Star className={clsx("w-6 h-6 transition-colors", discoverMode === 'featured' ? "text-emerald-500" : "text-white/50 group-hover:text-white")} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[15px] font-bold text-white group-hover:text-white truncate transition-colors">Featured Profiles</div>
+                  <div className="text-[15px] font-bold text-white truncate transition-colors">Featured Profiles</div>
                   <div className="text-[12px] text-white/40 mt-0.5 truncate">Editorially curated</div>
                 </div>
               </button>
@@ -289,7 +352,7 @@ export function PoliticiansClient() {
 
               <div className="flex justify-center mt-2">
                 <button 
-                  onClick={() => { setInputValue(''); setFilterState(''); setFilterConst(''); setActiveFilter('All'); }}
+                  onClick={() => { setInputValue(''); setFilterState(''); setFilterConst(''); setFilterCountry(''); setActiveFilter('All'); setDiscoverMode('all'); }}
                   className="text-emerald-500 text-[13px] font-bold hover:text-emerald-400 px-6 py-2 rounded-full hover:bg-emerald-500/10 transition-colors"
                 >
                   Reset all filters

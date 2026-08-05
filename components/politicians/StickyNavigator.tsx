@@ -104,7 +104,7 @@ export function StickyNavigator() {
         </div>
 
         {/* ROW 2: Navigation Tabs */}
-        <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar relative">
+        <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar relative pt-2">
           {PAGE_SECTIONS.map((section, index) => {
             const isActive = activeSection === section.id;
             const Icon = section.icon;
