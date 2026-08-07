@@ -63,7 +63,7 @@ export function StatusPill({ status, label, size = 'sm' }: StatusPillProps) {
   return (
     <div 
       className={clsx(
-        "inline-flex items-center gap-[6px] rounded-[3px]",
+        "inline-flex items-center gap-[6px] rounded-sm",
         size === 'sm' ? "h-[24px] px-[10px]" : "h-[28px] px-[12px]"
       )}
       style={{ backgroundColor: bg }}

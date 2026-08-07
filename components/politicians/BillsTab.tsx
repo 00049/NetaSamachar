@@ -86,7 +86,7 @@ const getBillIcon = (title: string, type: string) => {
 export function BillsTab({ politician, bills }: Props) {
   if (bills.length === 0) {
     return (
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-[16px] bg-white/[0.02]">
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-md bg-white/[0.02]">
         <h3 className="text-white font-bold mb-2">No Legislative Records</h3>
         <p className="text-[#A1A1AA] text-[13px]">No legislative records are currently available for this politician.</p>
       </div>
@@ -128,7 +128,7 @@ export function BillsTab({ politician, bills }: Props) {
             <div className="text-white font-bold text-[28px] leading-none mb-[8px]">{totalBills}</div>
             <div className="text-[#A1A1AA] text-[10px] uppercase tracking-wider">Introduced / Sponsored</div>
           </div>
-          <div className="w-[48px] h-[48px] rounded-[12px] bg-white/[0.05] border border-white/10 flex items-center justify-center">
+          <div className="w-[48px] h-[48px] rounded-sm bg-white/[0.05] border border-white/10 flex items-center justify-center">
             <FileText className="w-[24px] h-[24px] text-[var(--color-accent-positive)]" />
           </div>
         </div>
@@ -199,34 +199,34 @@ export function BillsTab({ politician, bills }: Props) {
             <input
               type="text"
               placeholder="Search laws or bills..."
-              className="w-full bg-[#111111] border border-white/10 rounded-[8px] pl-[36px] pr-[12px] py-[8px] text-[13px] text-white focus:outline-none focus:border-white/20 transition-colors placeholder:text-white/20"
+              className="w-full bg-[#111111] border border-white/10 rounded-xs pl-[36px] pr-[12px] py-[8px] text-[13px] text-white focus:outline-none focus:border-white/20 transition-colors placeholder:text-white/20"
             />
           </div>
 
-          <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
+          <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
             Status <ChevronDown className="w-[14px] h-[14px]" />
           </button>
-          <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
+          <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
             Title <ChevronDown className="w-[14px] h-[14px]" />
           </button>
-          <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
+          <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
             House <ChevronDown className="w-[14px] h-[14px]" />
           </button>
-          <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
+          <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
             Year <ChevronDown className="w-[14px] h-[14px]" />
           </button>
 
-          <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors ml-auto xl:ml-0">
+          <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors ml-auto xl:ml-0">
             More Filters <Filter className="w-[14px] h-[14px]" />
           </button>
         </div>
 
         <div className="flex items-center gap-[12px] shrink-0">
-          <button className="flex items-center gap-[6px] px-[16px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
+          <button className="flex items-center gap-[6px] px-[16px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
             Sort by: Latest <ChevronDown className="w-[14px] h-[14px]" />
           </button>
 
-          <div className="flex items-center rounded-[8px] border border-white/10 bg-[#111111] overflow-hidden">
+          <div className="flex items-center rounded-xs border border-white/10 bg-[#111111] overflow-hidden">
             <button className="p-[8px] text-[var(--color-accent-positive)] hover:bg-white/5 transition-colors border-r border-white/10">
               <LayoutGrid className="w-[16px] h-[16px]" />
             </button>
@@ -267,7 +267,7 @@ export function BillsTab({ politician, bills }: Props) {
 
                     {/* Bill Name */}
                     <div className="col-span-4 flex gap-[12px] items-start pr-[24px]">
-                      <div className="w-[40px] h-[40px] shrink-0 rounded-[12px] bg-white/[0.02] border border-white/10 flex items-center justify-center group-hover:border-white/20 transition-colors mt-[2px]">
+                      <div className="w-[40px] h-[40px] shrink-0 rounded-sm bg-white/[0.02] border border-white/10 flex items-center justify-center group-hover:border-white/20 transition-colors mt-[2px]">
                         {getBillIcon(bill.title, type)}
                       </div>
                       <div>
@@ -278,7 +278,7 @@ export function BillsTab({ politician, bills }: Props) {
 
                     {/* Type */}
                     <div className="col-span-1 flex items-center">
-                      <span className={clsx("px-[6px] py-[2px] rounded-[4px] text-[10px] font-bold whitespace-nowrap", getBillTypeColor(type))}>
+                      <span className={clsx("px-[6px] py-[2px] rounded-sm text-[10px] font-bold whitespace-nowrap", getBillTypeColor(type))}>
                         {type}
                       </span>
                     </div>
@@ -462,9 +462,9 @@ export function BillsTab({ politician, bills }: Props) {
               })}
             </div>
 
-            <Link href="#" className="flex items-center gap-[4px] text-[var(--color-accent-positive)] hover:text-green-400 transition-colors text-[12px] font-medium mt-[24px]">
+            <span className="flex items-center gap-[4px] text-[var(--color-accent-positive)] text-[12px] font-medium mt-[24px] opacity-40 cursor-not-allowed" aria-disabled="true">
               View All Legislative Activity <ChevronRight className="w-[14px] h-[14px]" />
-            </Link>
+            </span>
           </div>
 
         </div>

@@ -5,6 +5,8 @@ import { Navbar } from '@/components/navigation/Navbar';
 import { GlobalFooter } from '@/components/shared/GlobalFooter';
 import { LiveIndicator } from '@/components/ui/LiveIndicator';
 import Link from 'next/link';
+import { MotionProvider } from '@/components/ui/MotionProvider';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -16,12 +18,15 @@ const inter = Inter({
 const ibmPlex = IBM_Plex_Sans({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-serif',
+  variable: '--font-display',
   display: 'swap',
   preload: true,
 });
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://netasamachar.in';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: {
     default: 'Neta Samachar | Evidence-Based Political Accountability',
     template: '%s | Neta Samachar',
@@ -31,7 +36,24 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Neta Samachar — Political Accountability',
     description: 'Track every promise. Verify every claim. Hold power accountable.',
+    url: BASE_URL,
+    siteName: 'Neta Samachar',
+    images: [
+      {
+        url: '/api/og',
+        width: 1200,
+        height: 630,
+        alt: 'Neta Samachar — Political Accountability',
+      },
+    ],
+    locale: 'en_IN',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Neta Samachar — Political Accountability',
+    description: 'Track every promise. Verify every claim. Hold power accountable.',
+    images: ['/api/og'],
   },
 };
 
@@ -42,8 +64,6 @@ const FOOTER_LINKS = [
   { href: '/methodology', label: 'Methodology' },
   { href: '/search',      label: 'Database Search' },
   { href: '/about',       label: 'About' },
-  { href: '/weekly-brief',label: 'Weekly Brief' },
-  { href: '/api',         label: 'API' },
 ];
 
 const PRINCIPLES = [
@@ -66,15 +86,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.gstatic.com/s/ibmplexsans/v19/zYX9KVElMYYaJe8bpLHnCwDKjQ76AI9sdP3pBms.woff2"
           crossOrigin="anonymous"
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": ["WebSite", "Organization"],
+              "name": "Neta Samachar",
+              "url": BASE_URL,
+              "logo": `${BASE_URL}/api/og`,
+              "description": "India's most comprehensive, evidence-driven political accountability platform.",
+            })
+          }}
+        />
       </head>
       <body className="min-h-svh antialiased">
-        <Navbar />
+        <MotionProvider>
+          <a href="#main-content" className="skip-link">Skip to main content</a>
+          <Navbar />
 
-        <main>
-          {children}
-        </main>
+          <main id="main-content">
+            {children}
+          </main>
 
-        <GlobalFooter />
+          <GlobalFooter />
+          <SpeedInsights />
+        </MotionProvider>
       </body>
     </html>
   );

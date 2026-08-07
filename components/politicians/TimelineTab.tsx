@@ -31,7 +31,7 @@ export function TimelineTab({ politician, promises }: Props) {
 
   if (timelineEvents.length === 0) {
     return (
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-[16px] bg-white/[0.02]">
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-md bg-white/[0.02]">
         <h3 className="text-white font-bold mb-2">No Timeline Data Found</h3>
         <p className="text-[#A1A1AA] text-[13px]">There is no timeline data available for {politician.name}.</p>
       </div>
@@ -52,7 +52,7 @@ export function TimelineTab({ politician, promises }: Props) {
           <button onClick={() => alert('Download starting... (Placeholder)')} className="flex items-center gap-[6px] px-[16px] py-[8px] bg-white/[0.03] hover:bg-white/[0.08] text-white text-[13px] font-medium rounded-lg transition-colors border border-white/5">
             <Download className="w-[14px] h-[14px] text-[#A1A1AA]" /> Download Timeline
           </button>
-          <button className="flex items-center gap-[6px] px-[16px] py-[10px] rounded-[8px] border border-white/10 text-white text-[13px] hover:bg-white/[0.02] transition-colors font-medium">
+          <button className="flex items-center gap-[6px] px-[16px] py-[10px] rounded-sm border border-white/10 text-white text-[13px] hover:bg-white/[0.02] transition-colors font-medium">
             <Calendar className="w-[14px] h-[14px] text-[#A1A1AA]" /> Filter by Period <ChevronRight className="w-[14px] h-[14px] text-[#A1A1AA] ml-1 rotate-90" />
           </button>
         </div>
@@ -86,7 +86,7 @@ export function TimelineTab({ politician, promises }: Props) {
                 </div>
 
                 {/* Event Card (Right Side) */}
-                <div className="bg-[#111111] border border-white/5 hover:border-white/10 rounded-[12px] p-[24px] transition-all duration-300 relative group-hover:bg-white/[0.02]">
+                <div className="bg-[#111111] border border-white/5 hover:border-white/10 rounded-sm p-[24px] transition-all duration-300 relative group-hover:bg-white/[0.02]">
                    
                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-[16px]">
                       
@@ -102,7 +102,7 @@ export function TimelineTab({ politician, promises }: Props) {
 
                       <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start shrink-0 ml-14 sm:ml-0 h-full">
                          {/* Badge */}
-                         <div className={clsx("px-[10px] py-[4px] rounded-[6px] border text-[10px] font-bold tracking-widest uppercase mb-[24px]", 
+                         <div className={clsx("px-[10px] py-[4px] rounded-sm border text-[10px] font-bold tracking-widest uppercase mb-[24px]", 
                            event.type === 'milestone' ? "text-[var(--color-accent-positive)] bg-[var(--color-accent-positive)]/10 border-[var(--color-accent-positive)]/20" :
                            event.type === 'setback' ? "text-red-500 bg-red-500/10 border-red-500/20" :
                            "text-[#3b82f6] bg-[#3b82f6]/10 border-[#3b82f6]/20"

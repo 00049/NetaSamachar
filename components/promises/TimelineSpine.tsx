@@ -156,7 +156,7 @@ export function TimelineSpine({ promise }: Props) {
                     No verified {stage.label.toLowerCase()} on record — this stage would normally precede the reported outcome below, but we have not located the primary document yet.
                   </p>
                   <Link
-                    href="#"
+                    href="/evidence"
                     className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-[#FBBF24] hover:text-white transition-colors mt-2"
                   >
                     Have a source? Submit evidence <ArrowRight className="w-3.5 h-3.5" />
@@ -193,7 +193,7 @@ export function TimelineSpine({ promise }: Props) {
                 <span className="text-[11px] uppercase text-[#71717A] font-bold">
                   {new Date(event.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
                 </span>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[3px] bg-[rgba(251,191,36,0.1)] border border-[rgba(251,191,36,0.25)] text-[10px] font-bold uppercase tracking-widest text-[#FBBF24]">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm bg-[rgba(251,191,36,0.1)] border border-[rgba(251,191,36,0.25)] text-[10px] font-bold uppercase tracking-widest text-[#FBBF24]">
                   Reported Outcome
                 </span>
               </div>
@@ -214,7 +214,7 @@ export function TimelineSpine({ promise }: Props) {
             <h4 className={clsx("text-sm font-semibold", statusColor)}>Current Status</h4>
           </div>
           <div className={clsx(
-            "inline-flex items-center px-3 py-1.5 rounded-[4px] bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)]",
+            "inline-flex items-center px-3 py-1.5 rounded-sm bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)]",
             statusColor
           )}>
             <span className="text-xs font-bold uppercase tracking-widest">{promise.status.replace(/_/g, ' ')}</span>

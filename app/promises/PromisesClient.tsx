@@ -111,6 +111,7 @@ export function PromisesClient() {
               onChange={setInputValue}
               onDebounced={handleDebouncedSearch}
               placeholder="Search statements or subjects..."
+              ariaLabel="Search election promises by statement or subject"
               className="input-minimal w-full text-heading-md placeholder-[var(--color-text-tertiary)]"
             />
           </div>

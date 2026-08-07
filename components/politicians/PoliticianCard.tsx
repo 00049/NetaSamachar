@@ -24,6 +24,7 @@ export function PoliticianCard({
   politician,
   viewMode = 'grid',
   onClickPreview,
+  lazy = false,
 }: Props) {
   const party           = PARTIES.find(p => p.id === politician.partyId);
   const fulfillmentRate = getPromiseFulfillmentRate(politician.promisesFulfilled, politician.promisesTotal);
@@ -61,7 +62,7 @@ export function PoliticianCard({
         )}
 
         {/* Avatar — neutral, no party color */}
-        <Avatar photoUrl={politician.photoUrl} name={politician.name} size={40} />
+        <Avatar photoUrl={politician.photoUrl} name={politician.name} size={40} priority={!lazy} />
 
         <div className="flex-1 min-w-0 grid grid-cols-12 items-center gap-4">
           {/* Name + meta */}
@@ -122,11 +123,11 @@ export function PoliticianCard({
     return (
       <HoverPrefetchLink href={`/politicians/${politician.id}`} className="group block w-full outline-none">
         <div
-          className="h-auto md:h-[340px] p-[32px] bg-white/[0.02] border border-white/8 rounded-[4px] flex flex-col items-center text-center transition-all duration-220 ease-out hover:bg-white/[0.04] hover:border-white/20 hover:-translate-y-[2px] hover:shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
+          className="h-auto md:h-[340px] p-[32px] bg-white/[0.02] border border-white/8 rounded-sm flex flex-col items-center text-center transition-all duration-220 ease-out hover:bg-white/[0.04] hover:border-white/20 hover:-translate-y-[2px] hover:shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
         >
           {/* Avatar */}
           <div className="relative mb-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] rounded-full">
-            <Avatar photoUrl={politician.photoUrl} name={politician.name} size={88} />
+            <Avatar photoUrl={politician.photoUrl} name={politician.name} size={88} priority={!lazy} />
             {/* Colored Ring */}
             <div 
               className="absolute inset-[-4px] rounded-full border-[2px] opacity-70 pointer-events-none"
@@ -142,7 +143,7 @@ export function PoliticianCard({
           {/* Party */}
           <div className="flex items-center gap-2 justify-center mb-8">
             <span 
-              className="px-[10px] py-[4px] rounded-[3px] text-[11px] font-semibold uppercase tracking-[0.05em] text-[#D4D4D8]"
+              className="px-[10px] py-[4px] rounded-sm text-[11px] font-semibold uppercase tracking-[0.05em] text-[#D4D4D8]"
               style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
             >
               {party?.abbreviation || party?.name}
@@ -195,6 +196,7 @@ export function PoliticianCard({
             photoUrl={politician.photoUrl} 
             name={politician.name} 
             size={88} 
+            priority={!lazy}
             className="group-hover:ring-2 ring-white/10 transition-all duration-300" 
           />
         </div>
@@ -240,7 +242,7 @@ export function PoliticianCard({
             <div className="text-white text-[16px] font-bold mb-0.5">
               {Math.max(1, Math.floor((2024 - (politician.termsSince || 2014)) / 5))}
             </div>
-            <div className="text-white/40 text-[10px] uppercase tracking-wider">
+            <div className="text-white/60 text-[10px] uppercase tracking-wider">
               Terms
             </div>
           </div>
@@ -248,7 +250,7 @@ export function PoliticianCard({
             <div className="text-white text-[16px] font-bold mb-0.5">
               {politician.yearsInPolitics || '10+'}
             </div>
-            <div className="text-white/40 text-[10px] uppercase tracking-wider">
+            <div className="text-white/60 text-[10px] uppercase tracking-wider">
               Years in Politics
             </div>
           </div>
@@ -256,7 +258,7 @@ export function PoliticianCard({
             <div className="text-white text-[16px] font-bold mb-0.5">
               {politician.attendancePercent}%
             </div>
-            <div className="text-white/40 text-[10px] uppercase tracking-wider">
+            <div className="text-white/60 text-[10px] uppercase tracking-wider">
               Attendance
             </div>
           </div>

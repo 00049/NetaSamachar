@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model AISummary {
@@ -18,4 +18,221 @@ model AISummary {
   sourcesUsed     String   // Stored as JSON string
   confidenceScore Float
   status          String   // CURRENT, STALE, GENERATING, FAILED
+}
+
+model Party {
+  id           String       @id
+  name         String
+  abbreviation String
+  color        String
+  ideology     String
+  founded      Int
+  logoUrl      String?
+  politicians  Politician[]
+  promises     Promise[]
+}
+
+model Politician {
+  id                 String             @id
+  name               String
+  nameHindi          String?
+  photoUrl           String
+  partyId            String
+  party              Party              @relation(fields: [partyId], references: [id])
+  constituency       String
+  state              String
+  position           String
+  chamber            String?
+  education          String
+  age                Int
+  yearsInPolitics    Int
+  
+  attendancePercent  Float
+  questionsRaised    Int
+  billsIntroduced    Int
+  debatesParticipated Int
+  promisesTotal      Int
+  promisesFulfilled  Int
+  promisesBroken     Int
+  promisesInProgress Int
+  
+  latestNetWorth     Float
+  bio                String
+  officialEmail      String?
+  officialWebsite    String?
+  twitter            String?
+  facebook           String?
+  
+  termsSince         Int
+  verified           Boolean
+  lastUpdated        DateTime
+
+  criminalCases      CriminalCase[]
+  assetDeclarations  AssetDeclaration[]
+  careerTimeline     PoliticalOffice[]
+  promises           Promise[]
+  bills              Bill[]
+  voteRecords        VoteRecord[]
+  evidenceIds        String[]
+
+  @@index([partyId])
+  @@index([state])
+  @@index([constituency])
+}
+
+model PoliticalOffice {
+  id           String      @id @default(cuid())
+  politicianId String
+  politician   Politician  @relation(fields: [politicianId], references: [id])
+  title        String
+  startYear    Int
+  endYear      String?
+  party        String?
+  constituency String?
+  government   String?
+}
+
+model CriminalCase {
+  id                String     @id
+  politicianId      String
+  politician        Politician @relation(fields: [politicianId], references: [id])
+  caseNumber        String
+  court             String
+  section           String
+  chargeDescription String
+  status            String
+  year              Int
+  severity          String
+
+  @@index([politicianId])
+}
+
+model AssetDeclaration {
+  id               String     @id @default(cuid())
+  politicianId     String
+  politician       Politician @relation(fields: [politicianId], references: [id])
+  year             Int
+  electionType     String?
+  party            String?
+  constituency     String?
+  winner           Boolean?
+  margin           Float?
+  runnerUp         String?
+  
+  totalAssets      Float
+  totalLiabilities Float
+  movableAssets    Float
+  immovableAssets  Float
+  spouseAssets     Float
+  growthPercent    Float?
+  
+  declaredIncome   Float?
+  
+  assetComposition   Json?
+  liabilityBreakdown Json?
+  incomeSources      Json?
+}
+
+model Promise {
+  id               String     @id
+  politicianId     String
+  politician       Politician @relation(fields: [politicianId], references: [id])
+  partyId          String
+  party            Party      @relation(fields: [partyId], references: [id])
+  title            String
+  fullStatement    String
+  manifestoExcerpt String
+  category         String
+  status           String
+  madeDate         DateTime
+  manifestoYear    Int
+  deadline         String?
+  state            String?
+  confidenceScore  Float
+  tags             String[]
+
+  timeline         TimelineEvent[]
+  evidenceIds      String[]
+
+  @@index([politicianId])
+  @@index([status])
+  @@index([partyId])
+}
+
+model TimelineEvent {
+  id              String   @id
+  promiseId       String
+  promise         Promise  @relation(fields: [promiseId], references: [id])
+  date            DateTime
+  title           String
+  description     String
+  type            String
+  evidenceIds     String[]
+  confidenceScore Float
+}
+
+model Evidence {
+  id              String   @id
+  title           String
+  type            String
+  source          String
+  sourceUrl       String?
+  date            DateTime
+  excerpt         String
+  sha256Hash      String
+  confidenceScore Float
+  tier            Int
+  tags            String[]
+
+  @@index([tier])
+}
+
+model Bill {
+  id                 String       @id
+  politicianId       String
+  politician         Politician   @relation(fields: [politicianId], references: [id])
+  title              String
+  summary            String
+  status             String
+  sponsorRole        String
+  introducedDate     DateTime
+  
+  type               String?
+  isGovernmentBill   Boolean?
+  legislativeSession String?
+  house              String?
+  ministerInCharge   String?
+  language           String?
+  
+  passedDate         DateTime?
+  assentDate         DateTime?
+  gazetteDate        DateTime?
+  
+  objectives         Json?
+  keyProvisions      Json?
+  imageUrl           String?
+  
+  votesFor           Int?
+  votesAgainst       Int?
+  votesAbstain       Int?
+  officialRecordUrl  String?
+  gazetteUrl         String?
+  relatedPromiseIds  String[]
+  
+  votingRecord       Json?
+  timeline           Json?
+  
+  voteRecords        VoteRecord[]
+}
+
+model VoteRecord {
+  id            String     @id
+  politicianId  String
+  politician    Politician @relation(fields: [politicianId], references: [id])
+  billId        String
+  bill          Bill       @relation(fields: [billId], references: [id])
+  billTitle     String
+  vote          String
+  date          DateTime
+  partyPosition String
 }

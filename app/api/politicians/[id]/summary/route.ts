@@ -3,9 +3,38 @@ import { prisma } from "../../../../../lib/prisma";
 import { inngest } from "../../../../../inngest/client";
 import { getPoliticianData } from "../../../../../data/politicians";
 import crypto from "crypto";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
+// Create a new ratelimiter, that allows 5 requests per 1 minute
+// Note: Requires UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN in .env
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, "1 m"),
+  analytics: true,
+});
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+
+  // Rate Limiting (5 requests per minute per IP per politician ID)
+  const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
+  const identifier = `ratelimit_${ip}_${id}`;
+  const { success, limit, reset, remaining } = await ratelimit.limit(identifier);
+
+  if (!success) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Limit": limit.toString(),
+          "X-RateLimit-Remaining": remaining.toString(),
+          "X-RateLimit-Reset": reset.toString(),
+          "Retry-After": Math.ceil((reset - Date.now()) / 1000).toString(),
+        },
+      }
+    );
+  }
 
   // 1. Get structured data
   const politician = getPoliticianData(id);
@@ -14,7 +43,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 
   // 2. Generate inputHash
-  const inputHash = crypto.createHash("md5").update(JSON.stringify(politician)).digest("hex");
+  const inputHash = crypto.createHash("sha256").update(JSON.stringify(politician)).digest("hex");
 
   // 3. Check existing summary
   const existingSummary = await prisma.aISummary.findUnique({

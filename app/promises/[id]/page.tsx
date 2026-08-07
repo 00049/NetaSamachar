@@ -1,264 +1,170 @@
+import { getPromise } from '@/lib/api';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import Link from 'next/link';
-import { PROMISES, EVIDENCE } from '@/data/promises';
-import { POLITICIANS, PARTIES } from '@/data/politicians';
-import PromiseClient from './PromiseClient';
-import { 
-  Share, 
-  Bookmark, 
-  Flag, 
-  Zap, 
-  Calendar, 
-  MapPin, 
-  Users, 
-  Tag, 
-  BarChart, 
-  CheckCircle2, 
-  Clock, 
-  Circle, 
-  ChevronDown, 
-  Sun, 
-  FileText, 
-  ArrowRight,
-  Download,
-  ArrowLeft,
-  TrendingUp,
-  Info,
-  AlertTriangle
-} from 'lucide-react';
-import clsx from 'clsx';
-import { Promise as PromiseType } from '@/lib/types';
+import { Target, ChevronRight, User, Calendar, Tag, ShieldCheck, Clock, FileText } from 'lucide-react';
 
-interface Props {
+interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const promise = PROMISES.find(p => p.id === id);
+  const promise = await getPromise(id);
   if (!promise) return { title: 'Promise Not Found' };
   return {
-    title: `${promise.title} | Neta Samachar`,
+    title: `${promise.title} | Promise Record | Neta Samachar`,
     description: promise.fullStatement,
+    alternates: {
+      canonical: `/promises/${promise.id}`,
+    },
   };
 }
 
-export function generateStaticParams() {
-  return PROMISES.map(p => ({ id: p.id }));
-}
-
-const getCompletionPercentage = (status: string): number => {
-  switch (status) {
-    case 'completed':
-    case 'operational': return 100;
-    case 'mostly_completed': return 75;
-    case 'partially_completed': return 50;
-    case 'in_progress':
-    case 'construction_started':
-    case 'implementation_started': return 25;
-    case 'tender_issued': return 10;
-    case 'planning': return 5;
-    case 'delayed': return 25;
-    default: return 0;
-  }
-};
-
-const formatStatusText = (status: string) => {
-  return status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-};
-
-export default async function PromiseDetailPage({ params }: Props) {
+export default async function PromiseDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const promise = PROMISES.find(p => p.id === id);
-  if (!promise) notFound();
+  const promise = await getPromise(id);
+  
+  if (!promise) {
+    notFound();
+  }
 
-  const politician = POLITICIANS.find(p => p.id === promise.politicianId);
-  const party = PARTIES.find(p => p.id === promise.partyId);
-  const promiseEvidence = EVIDENCE.filter(e => promise.evidenceIds.includes(e.id));
-  
-  const percentage = getCompletionPercentage(promise.status);
-  
-  // Calculate mock milestone data based on timeline length to make the UI look right
-  const totalMilestones = Math.max(promise.timeline.length + 1, 8); // At least 8 to match screenshot
-  const completedMilestones = Math.floor((percentage / 100) * totalMilestones);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+      case 'operational': return 'text-green-500 border-green-500/20 bg-green-500/5';
+      case 'partially_completed':
+      case 'mostly_completed':
+      case 'construction_started':
+      case 'implementation_started': return 'text-yellow-500 border-yellow-500/20 bg-yellow-500/5';
+      case 'delayed':
+      case 'insufficient_evidence':
+      case 'no_verified_progress': return 'text-orange-500 border-orange-500/20 bg-orange-500/5';
+      case 'cancelled': return 'text-red-500 border-red-500/20 bg-red-500/5';
+      default: return 'text-[#A1A1AA] border-[#A1A1AA]/20 bg-[#A1A1AA]/5';
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] text-white">
-      
-      {/* HEADER BAR (Breadcrumbs & Actions) */}
-      <div className="w-full border-b border-white/5 bg-[#131722]/50 backdrop-blur-xl">
-        <div className="max-w-[1440px] mx-auto px-[24px] lg:px-[40px] h-[64px] flex items-center justify-between">
-          <div className="flex items-center gap-[8px] text-[12px] font-medium text-[#A1A1AA]">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <span className="text-white/20">&gt;</span>
-            <Link href="/politicians" className="hover:text-white transition-colors">Politicians</Link>
-            <span className="text-white/20">&gt;</span>
-            <span className="hover:text-white transition-colors cursor-pointer">{promise.state || 'State'}</span>
-            <span className="text-white/20">&gt;</span>
-            <Link href={`/politicians/${politician?.id}`} className="hover:text-white transition-colors">{politician?.name}</Link>
-            <span className="text-white/20">&gt;</span>
-            <span className="text-[#A1A1AA]">Promises</span>
-            <span className="text-white/20">&gt;</span>
-            <span className="text-white">{promise.id.toUpperCase()}</span>
+    <div className="min-h-screen bg-[var(--bg-base)] pb-32">
+      <div className="border-b border-[var(--border-subtle)] bg-[var(--bg-raised)] pt-24 pb-12 px-4 sm:px-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest text-[#8A8F98] mb-6">
+            <Link href="/investigations" className="hover:text-white transition-colors">Promises</Link>
+            <ChevronRight size={14} />
+            <span className="text-[#e6b16a]">{promise.category.replace('_', ' ')}</span>
           </div>
-
-          <div className="flex items-center gap-[16px]">
-            <button className="flex items-center gap-[8px] px-[12px] py-[6px] rounded-[8px] text-[#A1A1AA] hover:text-white hover:bg-white/[0.05] transition-colors text-[13px] font-medium border border-transparent hover:border-white/10">
-              <Share className="w-[14px] h-[14px]" /> Share
-            </button>
-            <button className="flex items-center gap-[8px] px-[12px] py-[6px] rounded-[8px] text-[#A1A1AA] hover:text-white hover:bg-white/[0.05] transition-colors text-[13px] font-medium border border-transparent hover:border-white/10">
-              <Bookmark className="w-[14px] h-[14px]" /> Save
-            </button>
-            <button className="flex items-center gap-[8px] px-[12px] py-[6px] rounded-[8px] text-[var(--color-accent-negative)] hover:bg-[var(--color-accent-negative)]/10 transition-colors text-[13px] font-medium border border-transparent hover:border-[var(--color-accent-negative)]/20">
-              <Flag className="w-[14px] h-[14px]" /> Report Issue
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-[1440px] mx-auto px-[24px] lg:px-[40px] py-[32px]">
-        
-        <Link href={`/politicians/${politician?.id}`} className="inline-flex items-center gap-[8px] text-[#A1A1AA] hover:text-white transition-colors text-[13px] font-medium mb-[24px]">
-          <ArrowLeft className="w-[16px] h-[16px]" /> Back to {politician?.name}
-        </Link>
-
-        {/* HERO PROMISE CARD */}
-        <div className="premium-card p-[32px] flex flex-col xl:flex-row gap-[40px] justify-between mb-[32px]">
           
-          <div className="flex gap-[24px] flex-grow">
-            {/* Category Icon */}
-            <div className="w-[96px] h-[96px] shrink-0 rounded-[16px] bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
-              <Zap className="w-[48px] h-[48px] text-yellow-500" />
+          <h1 className="font-serif text-3xl md:text-5xl font-black text-[#F5F5F7] mb-6 leading-tight">
+            {promise.title}
+          </h1>
+          
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[#A1A1AA]">
+            <div className={`px-4 py-2 rounded-sm border ${getStatusColor(promise.status)} flex items-center gap-2 font-bold uppercase tracking-widest`}>
+              <Target size={16} />
+              {promise.status.replace(/_/g, ' ')}
             </div>
-
-            {/* Content */}
-            <div className="flex flex-col flex-grow">
-              <div className="flex items-center gap-[8px] mb-[12px]">
-                <div className="inline-flex items-center px-[8px] py-[2px] rounded-[4px] bg-yellow-500/10 text-yellow-500 text-[10px] font-bold uppercase tracking-wider">
-                  {promise.category}
-                </div>
-                <div className="inline-flex items-center px-[8px] py-[2px] rounded-[4px] bg-white/5 text-[#A1A1AA] text-[10px] font-bold uppercase tracking-wider border border-white/10">
-                  Manifesto Promise
-                </div>
+            <div className="flex items-center gap-2">
+              <Calendar size={16} />
+              Made: {new Date(promise.madeDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </div>
+            {promise.deadline && (
+              <div className="flex items-center gap-2 text-[#e6b16a]">
+                <Clock size={16} />
+                Deadline: {new Date(promise.deadline).toLocaleDateString('en-IN', { year: 'numeric', month: 'short' })}
               </div>
-              <h1 className="text-white text-[28px] font-bold mb-[8px] leading-tight">
-                {promise.title}
-              </h1>
-              <p className="text-[#A1A1AA] text-[15px] mb-[32px] max-w-[800px]">
-                {promise.fullStatement}
-              </p>
-
-              {/* Meta Grid */}
-              <div className="flex flex-wrap items-center gap-x-[48px] gap-y-[16px]">
-                <div className="flex items-center gap-[12px]">
-                  <div className="w-[32px] h-[32px] rounded-[8px] bg-white/[0.02] border border-white/5 flex items-center justify-center">
-                    <Calendar className="w-[14px] h-[14px] text-[#A1A1AA]" />
-                  </div>
-                  <div>
-                    <div className="text-[#A1A1AA] text-[11px] mb-[2px]">Promised On</div>
-                    <div className="text-white text-[13px] font-medium">{new Date(promise.madeDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-[12px]">
-                  <div className="w-[32px] h-[32px] rounded-[8px] bg-white/[0.02] border border-white/5 flex items-center justify-center">
-                    <MapPin className="w-[14px] h-[14px] text-[#A1A1AA]" />
-                  </div>
-                  <div>
-                    <div className="text-[#A1A1AA] text-[11px] mb-[2px]">Jurisdiction</div>
-                    <div className="text-white text-[13px] font-medium">{promise.state || 'N/A'}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-[12px]">
-                  <div className="w-[32px] h-[32px] rounded-[8px] bg-white/[0.02] border border-white/5 flex items-center justify-center">
-                    <Users className="w-[14px] h-[14px] text-[#A1A1AA]" />
-                  </div>
-                  <div>
-                    <div className="text-[#A1A1AA] text-[11px] mb-[2px]">Target Beneficiaries</div>
-                    <div className="text-white text-[13px] font-medium">All Domestic Households</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-[12px]">
-                  <div className="w-[32px] h-[32px] rounded-[8px] bg-white/[0.02] border border-white/5 flex items-center justify-center">
-                    <Tag className="w-[14px] h-[14px] text-[#A1A1AA]" />
-                  </div>
-                  <div>
-                    <div className="text-[#A1A1AA] text-[11px] mb-[2px]">Promise ID</div>
-                    <div className="text-white text-[13px] font-medium">{promise.id.toUpperCase()}</div>
-                  </div>
-                </div>
-              </div>
+            )}
+            <div className="flex items-center gap-2 px-3 py-1 bg-white/[0.04] border border-[var(--border-subtle)] rounded-sm font-mono text-xs">
+              Score: {promise.confidenceScore}
             </div>
           </div>
-
-          {/* Current Status Block */}
-          <div className="shrink-0 w-full xl:w-[320px] rounded-[16px] bg-[#111111]/80 border border-white/5 p-[24px] flex flex-col">
-             <div className="flex items-center justify-between mb-[24px]">
-               <div className="text-[#A1A1AA] text-[11px] font-medium uppercase tracking-wider">Current Status</div>
-               <div className="inline-flex items-center gap-[6px] px-[10px] py-[4px] rounded-full bg-yellow-500/10 border border-yellow-500/20">
-                 <div className="w-[6px] h-[6px] rounded-full bg-yellow-500"></div>
-                 <span className="text-yellow-500 text-[10px] font-bold uppercase tracking-wider">{formatStatusText(promise.status)}</span>
-               </div>
-             </div>
-
-             <div className="flex items-center gap-[24px] mb-[16px]">
-               <div className="relative w-[64px] h-[64px]">
-                 <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                   <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="12" />
-                   <circle cx="50" cy="50" r="40" fill="none" stroke="var(--color-accent-warning)" strokeWidth="12" strokeDasharray={`${(percentage / 100) * 251} 251`} className="drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" />
-                 </svg>
-               </div>
-               <div>
-                 <div className="text-white font-bold text-[28px] leading-none mb-[4px]">{percentage}%</div>
-                 <div className="text-[#A1A1AA] text-[12px]">Overall Progress</div>
-               </div>
-             </div>
-
-             <div className="text-[#A1A1AA] text-[12px] mb-[24px]">
-               {completedMilestones} of {totalMilestones} major milestones completed
-             </div>
-
-             <button className="w-full flex items-center justify-center gap-[8px] py-[10px] rounded-[8px] bg-white/[0.03] border border-white/5 text-[#A1A1AA] hover:text-white hover:bg-white/[0.05] transition-colors text-[13px] font-medium mt-auto">
-               <BarChart className="w-[14px] h-[14px]" /> View Summary
-             </button>
-          </div>
-
         </div>
-
-        <PromiseClient 
-          promise={promise} 
-          promiseEvidence={promiseEvidence} 
-          totalMilestones={totalMilestones} 
-          completedMilestones={completedMilestones} 
-          percentage={percentage} 
-        />
-
       </div>
 
-      {/* FOOTER NOTE */}
-      <div className="max-w-[1440px] mx-auto px-[24px] lg:px-[40px] pb-[32px]">
-        <div className="flex items-center justify-between py-[16px] border-t border-white/10">
-          <div className="flex items-center gap-[12px]">
-            <span className="text-[#A1A1AA] text-[12px]">
-              <span className="text-yellow-500 mr-[4px]">Note:</span> 
-              Progress is based on official data and public records. Last updated on 28 Jul 2026.
-            </span>
-          </div>
-          <div className="flex items-center gap-[32px] text-[#A1A1AA] text-[12px]">
-            <span>Data Sources: ECI, Parliament, Govt. Websites, Court Records, Affidavits</span>
-            <div className="flex items-center gap-[6px]">
-              <CheckCircle2 className="w-[14px] h-[14px] text-[var(--color-accent-positive)]" />
-              <span>Our data is verified and updated regularly</span>
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="md:col-span-2 space-y-12">
+          <section>
+            <h2 className="text-xl font-serif font-bold text-white mb-6 flex items-center gap-2">
+              <FileText size={20} className="text-[#e6b16a]" />
+              Original Statement
+            </h2>
+            <div className="relative">
+              <div className="absolute -left-4 top-0 text-6xl text-white/5 font-serif leading-none select-none">"</div>
+              <div className="text-[#A1A1AA] leading-[1.8] text-[18px] font-serif italic relative z-10 pl-6 border-l-2 border-[var(--border-subtle)]">
+                {promise.fullStatement}
+              </div>
             </div>
-            <Link href="#" className="flex items-center gap-[4px] hover:text-white transition-colors">
-              Learn More <ArrowRight className="w-[12px] h-[12px]" />
+          </section>
+
+          {promise.timeline && promise.timeline.length > 0 && (
+            <section>
+              <h2 className="text-xl font-serif font-bold text-white mb-6">Status Timeline</h2>
+              <div className="relative border-l border-[var(--border-subtle)] ml-3 space-y-8 pb-4">
+                {promise.timeline.map((event, i) => (
+                  <div key={event.id} className="relative pl-8">
+                    <div className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-[var(--bg-base)] border-2 border-[#e6b16a]" />
+                    <div className="text-[12px] text-[#e6b16a] font-bold tracking-widest uppercase mb-1">{new Date(event.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                    <div className="text-white font-bold mb-1 hover:text-[#e6b16a] transition-colors">
+                      <Link href={`/timeline/${event.id}`}>
+                        {event.title}
+                      </Link>
+                    </div>
+                    <div className="text-sm text-[#A1A1AA]">{event.description}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {promise.tags && promise.tags.length > 0 && (
+            <section>
+              <h2 className="text-sm font-bold uppercase tracking-widest text-[#8A8F98] mb-4">Tags</h2>
+              <div className="flex flex-wrap gap-2">
+                {promise.tags.map(tag => (
+                  <div key={tag} className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--bg-raised)] border border-[var(--border-subtle)] rounded-sm text-xs text-[#A1A1AA]">
+                    <Tag size={12} />
+                    {tag}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        <div className="space-y-8">
+          {promise.politician && (
+            <div className="bg-[var(--bg-raised)] border border-[var(--border-subtle)] rounded-sm p-6">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#8A8F98] mb-4">Promising Official</h3>
+              <Link href={`/politicians/${promise.politician.id}`} className="group flex items-center gap-4 p-3 -mx-3 rounded-sm hover:bg-white/[0.04] transition-colors">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white overflow-hidden flex-shrink-0">
+                  {promise.politician.photoUrl ? (
+                    <img src={promise.politician.photoUrl} alt={promise.politician.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                  ) : (
+                    <User size={24} />
+                  )}
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-white group-hover:text-[#e6b16a] transition-colors">{promise.politician.name}</div>
+                  <div className="text-[11px] text-[#A1A1AA] uppercase tracking-wider mt-1">{promise.politician.position}</div>
+                </div>
+              </Link>
+            </div>
+          )}
+          
+          <div className="bg-[var(--bg-raised)] border border-[var(--border-subtle)] rounded-sm p-6">
+            <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#8A8F98] mb-4 flex items-center gap-2">
+              <ShieldCheck size={14} className="text-[#e6b16a]" />
+              Evidence Assessment
+            </h3>
+            <p className="text-sm text-[#A1A1AA] leading-relaxed mb-4">
+              This promise has a confidence score of {promise.confidenceScore}/100 based on {promise.evidenceIds.length} primary source documents.
+            </p>
+            <Link href="/methodology#confidence" className="text-[12px] font-bold text-[#e6b16a] hover:text-white uppercase tracking-widest transition-colors flex items-center">
+              View Scoring Methodology <ChevronRight size={14} className="ml-1" />
             </Link>
           </div>
         </div>
       </div>
-
     </div>
   );
 }

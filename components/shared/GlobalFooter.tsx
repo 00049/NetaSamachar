@@ -1,15 +1,18 @@
 import Link from 'next/link';
-import { ExternalLink, Mail } from 'lucide-react';
+import { NewsletterForm } from '@/components/home/NewsletterForm';
 
 export function GlobalFooter() {
   return (
-    <footer className="bg-[#11131A] border-t border-white/5 mt-32 pt-24 pb-16">
+    <footer className="bg-[var(--color-panel)] border-t border-white/5 mt-32 pt-24 pb-16">
       <div className="max-w-[1440px] mx-auto px-8 md:px-12 xl:px-24">
+        
+        <NewsletterForm />
+
         
         {/* TOP SECTION: 5 Columns */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 xl:gap-24 mb-24">
           
-          {/* COLUMN 1: BRANDING & SOCIAL (Span 4) */}
+          {/* COLUMN 1: BRANDING (Span 5) */}
           <div className="lg:col-span-5 lg:pr-12">
             <div className="flex items-center gap-5 mb-5">
               <div className="w-14 h-14 rounded-2xl border border-[#e6b16a]/50 flex items-center justify-center bg-transparent">
@@ -24,32 +27,26 @@ export function GlobalFooter() {
               Political Intelligence Platform
             </div>
             
-            <p className="text-white/60 text-[15px] sm:text-[16px] leading-[1.8] mb-10 max-w-[340px]">
+            <p className="text-white/60 text-[15px] sm:text-[16px] leading-[1.8] max-w-[340px]">
               Independent, non-partisan platform for political transparency and accountability. All data sourced from official and public records.
             </p>
-
-            <div className="flex items-center gap-5">
-              <Link href="#" className="w-12 h-12 rounded-xl border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.04] transition-all duration-300">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
-              </Link>
-              <Link href="#" className="w-12 h-12 rounded-xl border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.04] transition-all duration-300">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-              </Link>
-              <Link href="#" className="w-12 h-12 rounded-xl border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.04] transition-all duration-300">
-                <Mail className="w-5 h-5" />
-              </Link>
-            </div>
           </div>
 
           {/* COLUMNS 2, 3, 4: LINKS (Span 7) */}
           <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10">
             {/* PLATFORM */}
             <div>
-              <h4 className="text-white/40 font-bold text-[12px] tracking-[0.15em] mb-8 uppercase">Platform</h4>
+              <h4 className="text-white/60 font-bold text-[12px] tracking-[0.15em] mb-8 uppercase">Platform</h4>
               <ul className="flex flex-col gap-5">
-                {['Politicians', 'Parties', 'Compare', 'Archive', 'Methodology'].map(link => (
-                  <li key={link}>
-                    <Link href="#" className="text-white/80 hover:text-[#e6b16a] text-[15px] sm:text-[16px] transition-colors">{link}</Link>
+                {[
+                  { label: 'Politicians', href: '/politicians' },
+                  { label: 'Parties', href: '/parties' },
+                  { label: 'Compare', href: '/compare' },
+                  { label: 'Archive', href: '/archive' },
+                  { label: 'Methodology', href: '/methodology' },
+                ].map(link => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-white/80 hover:text-[#e6b16a] text-[15px] sm:text-[16px] transition-colors">{link.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -57,11 +54,14 @@ export function GlobalFooter() {
             
             {/* RESOURCES */}
             <div>
-              <h4 className="text-white/40 font-bold text-[12px] tracking-[0.15em] mb-8 uppercase">Resources</h4>
+              <h4 className="text-white/60 font-bold text-[12px] tracking-[0.15em] mb-8 uppercase">Resources</h4>
               <ul className="flex flex-col gap-5">
-                {['Evidence Archive', 'Data Sources', 'API', 'Open Methodology'].map(link => (
-                  <li key={link}>
-                    <Link href="#" className="text-white/80 hover:text-[#e6b16a] text-[15px] sm:text-[16px] transition-colors">{link}</Link>
+                {[
+                  { label: 'Evidence Archive', href: '/archive' },
+                  { label: 'Search', href: '/search' },
+                ].map(link => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-white/80 hover:text-[#e6b16a] text-[15px] sm:text-[16px] transition-colors">{link.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -69,11 +69,13 @@ export function GlobalFooter() {
 
             {/* COMPANY */}
             <div>
-              <h4 className="text-white/40 font-bold text-[12px] tracking-[0.15em] mb-8 uppercase">Company</h4>
+              <h4 className="text-white/60 font-bold text-[12px] tracking-[0.15em] mb-8 uppercase">Company</h4>
               <ul className="flex flex-col gap-5">
-                {['About Us', 'Contact', 'Report an Issue', 'Careers'].map(link => (
-                  <li key={link}>
-                    <Link href="#" className="text-white/80 hover:text-[#e6b16a] text-[15px] sm:text-[16px] transition-colors">{link}</Link>
+                {[
+                  { label: 'About Us', href: '/about' },
+                ].map(link => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-white/80 hover:text-[#e6b16a] text-[15px] sm:text-[16px] transition-colors">{link.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -84,11 +86,7 @@ export function GlobalFooter() {
 
         {/* MIDDLE SECTION: Data Sourced string */}
         <div className="border-t border-white/5 pt-12 pb-12 text-center text-white/50 text-[14px] sm:text-[15px]">
-          Data sourced from official public records 
-          <span className="text-[#e6b16a]/50 mx-4 text-xl leading-none align-middle">•</span>
-          Last updated: 8/3/2026
-          <span className="text-[#e6b16a]/50 mx-4 text-xl leading-none align-middle">•</span>
-          Next update: in ~14 hours
+          Data sourced from official public records
         </div>
 
         {/* BOTTOM SECTION: Copyright & Legal */}
@@ -97,19 +95,26 @@ export function GlobalFooter() {
           <div>
             © 2026 Neta Samachar. All rights reserved.
           </div>
-          
-          <div className="flex flex-wrap items-center justify-center">
-            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <span className="text-[#e6b16a]/50 mx-4 text-xl leading-none align-middle">•</span>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Use</Link>
-            <span className="text-[#e6b16a]/50 mx-4 text-xl leading-none align-middle">•</span>
-            <Link href="#" className="hover:text-white transition-colors">Open Data Policy</Link>
+
+          <div className="flex items-center gap-6">
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link>
+            <Link href="/open-data" className="hover:text-white transition-colors">Open Data</Link>
           </div>
 
           <div className="flex items-center gap-2">
             Made with 
             <svg viewBox="0 0 24 24" width="18" height="18" stroke="#e6b16a" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="mx-1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             for India
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Link href="#" className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors" aria-label="X / Twitter">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z" /><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" /></svg>
+            </Link>
+            <Link href="#" className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+            </Link>
           </div>
 
         </div>

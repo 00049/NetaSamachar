@@ -4,8 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, type Variants } from 'framer-motion';
-import { ArrowRight, User, Flag, Search, Scale, Archive, LineChart } from 'lucide-react';
+import { User, Flag, Scale, Archive, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import { SearchBar } from '@/components/shared/SearchBar';
+import { PlatformStats, Politician } from '@/lib/types';
+import { PoliticianCard } from '@/components/politicians/PoliticianCard';
 
 const heroItem: Variants = {
   hidden: { opacity: 0, y: 12 },
@@ -45,19 +48,11 @@ const cards = [
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-export function HomeClient({ stats }: { stats?: any }) {
+export function HomeClient({ stats, trendingPoliticians = [] }: { stats?: PlatformStats, trendingPoliticians?: Politician[] }) {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
 
   return (
-    <div className="min-h-screen bg-[#090b10]">
+    <div className="min-h-screen bg-[var(--bg-base)]">
       {/* ═══════════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════════════ */}
@@ -105,33 +100,27 @@ export function HomeClient({ stats }: { stats?: any }) {
             </motion.p>
 
             {/* Search Input Container */}
-            <motion.div variants={heroItem} className="flex flex-col gap-[20px] w-full max-w-[840px]">
-              <form 
-                onSubmit={handleSearch}
-                className="relative flex items-center w-full h-[88px] bg-[#0f131a]/80 backdrop-blur-md border border-white/10 hover:border-white/20 rounded-full px-8 focus-within:border-[#e6b16a]/50 focus-within:bg-[#0f131a] transition-all duration-300 shadow-2xl"
-              >
-                <Search className="w-[28px] h-[28px] text-white/40 flex-shrink-0 ml-2" />
-                <input 
-                  type="text" 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search politicians, constituencies, parties, elections, bills, or issues..."
-                  className="w-full bg-transparent text-[22px] text-white placeholder-white/40 focus:outline-none ml-6"
-                />
-                <button type="submit" className="w-[64px] h-[64px] rounded-full bg-[#e6b16a] flex items-center justify-center hover:bg-[#e6b16a]/90 transition-colors flex-shrink-0 text-black ml-4 group shadow-lg">
-                  <ArrowRight className="w-[28px] h-[28px] group-hover:translate-x-1.5 transition-transform" />
-                </button>
-              </form>
-              
-              <div className="flex items-center flex-wrap gap-x-5 gap-y-2 text-[15px] ml-8">
-                <span className="text-white/40">Trending:</span>
-                {['Tejashwi Yadav', 'Prashant Kishor', 'Nishant Kumar', 'Shambhuraj Desai', 'Rajesh Kumar', 'Keshab Mahanta'].map((name) => (
-                  <Link key={name} href="#" className="text-white/60 hover:text-[#e6b16a] hover:underline transition-colors">
-                    {name}
-                  </Link>
-                ))}
-              </div>
+            <motion.div variants={heroItem} className="flex flex-col gap-[20px] w-full max-w-[840px] mb-8">
+              <SearchBar variant="hero" placeholder="Search politicians, constituencies, parties, elections, bills, or issues..." />
             </motion.div>
+            
+            {/* Live Stats */}
+            {stats && (
+              <motion.div variants={heroItem} className="flex items-center gap-6 text-sm text-[#A1A1AA] font-mono">
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-bold">{stats.promisesTracked}</span> Promises Tracked
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-bold">{stats.evidenceDocuments}</span> Verified Sources
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-bold">{stats.verifiedComplete}%</span> Complete
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-bold">{stats.pendingScrutiny}</span> Under Scrutiny
+                </div>
+              </motion.div>
+            )}
           </div>
         </motion.div>
       </section>
@@ -153,7 +142,7 @@ export function HomeClient({ stats }: { stats?: any }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 + i * 0.1 }}
-                className="h-full flex flex-col bg-[#0f1218] border border-white/[0.04] rounded-2xl p-7 hover:border-[#e6b16a]/30 hover:bg-[#12161d] hover:shadow-[0_8px_30px_rgba(230,177,106,0.04)] transition-all duration-300"
+                className="h-full flex flex-col bg-[var(--color-panel)] border border-white/[0.04] rounded-2xl p-7 hover:border-[#e6b16a]/30 hover:bg-[var(--color-raised)] hover:shadow-[0_8px_30px_rgba(230,177,106,0.04)] transition-all duration-300"
               >
                 <div className="mb-6">
                   {card.icon}
@@ -182,47 +171,55 @@ export function HomeClient({ stats }: { stats?: any }) {
             <span className="text-white/40 text-[11px] uppercase tracking-[0.1em] font-medium mb-1">TRUSTED SOURCES.</span>
             <span className="text-white/80 text-[12px] uppercase tracking-[0.1em] font-bold">ZERO COMPROMISES.</span>
           </div>
-          
-          <div className="flex flex-wrap items-center justify-center lg:justify-end gap-x-12 gap-y-6 text-white/50 text-[13px] font-medium grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:flex-nowrap items-center justify-center lg:justify-end gap-6 lg:gap-12 text-white/50 text-[13px] font-medium grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-200">
+            {/* Government of India */}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 flex items-center justify-center opacity-80 mix-blend-screen">
-                <Image src="/favicon.ico" alt="Gov" width={24} height={24} className="opacity-50" />
+              <div className="w-8 h-8 rounded-xs bg-white/10 flex items-center justify-center flex-shrink-0">
+                <span className="text-[10px] font-black tracking-tight text-white uppercase">GOI</span>
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] leading-tight">भारत सरकार</span>
                 <span className="text-[10px] leading-tight font-semibold tracking-wide">GOVERNMENT OF INDIA</span>
               </div>
             </div>
-            
+
+            {/* Election Commission of India */}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 flex items-center justify-center opacity-80 mix-blend-screen">
-                <Image src="/favicon.ico" alt="ECI" width={24} height={24} className="opacity-50" />
+              <div className="w-8 h-8 rounded-xs bg-white/10 flex items-center justify-center flex-shrink-0">
+                <span className="text-[10px] font-black tracking-tight text-white uppercase">ECI</span>
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] leading-tight font-semibold tracking-wide">ELECTION COMMISSION</span>
                 <span className="text-[9px] leading-tight">OF INDIA</span>
               </div>
             </div>
-            
+
+            {/* PRS Legislative Research */}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 flex items-center justify-center font-serif text-[18px] font-bold opacity-80">prs</div>
+              <div className="w-8 h-8 rounded-xs bg-white/10 flex items-center justify-center flex-shrink-0">
+                <span className="text-[10px] font-black tracking-tight text-white uppercase">PRS</span>
+              </div>
               <div className="flex flex-col">
                 <span className="text-[10px] leading-tight font-semibold tracking-wide">PRS LEGISLATIVE</span>
                 <span className="text-[9px] leading-tight">RESEARCH</span>
               </div>
             </div>
-            
+
+            {/* eCourts */}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 flex items-center justify-center font-serif text-[18px] font-bold opacity-80">⚖️</div>
+              <div className="w-8 h-8 rounded-xs bg-white/10 flex items-center justify-center flex-shrink-0">
+                <span className="text-[10px] font-black tracking-tight text-white uppercase">eCT</span>
+              </div>
               <div className="flex flex-col">
                 <span className="text-[10px] leading-tight font-semibold tracking-wide">eCOURTS</span>
                 <span className="text-[9px] leading-tight">SERVICES</span>
               </div>
             </div>
-            
+
+            {/* Lok Sabha */}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 flex items-center justify-center opacity-80 mix-blend-screen">
-                <Image src="/favicon.ico" alt="Lok Sabha" width={24} height={24} className="opacity-50" />
+              <div className="w-8 h-8 rounded-xs bg-white/10 flex items-center justify-center flex-shrink-0">
+                <span className="text-[9px] font-black tracking-tight text-white uppercase">LS</span>
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] leading-tight">लोक सभा</span>
@@ -232,6 +229,31 @@ export function HomeClient({ stats }: { stats?: any }) {
           </div>
         </div>
       </div>
+
+      {/* ═══════════════════════════════════════════════════
+          TRENDING SECTION
+      ══════════════════════════════════════════════════════ */}
+      {trendingPoliticians.length > 0 && (
+        <section className="relative z-10 w-full mx-auto px-6 md:px-10 xl:px-20 py-20 border-t border-white/5">
+          <div className="mb-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+            <div>
+              <h2 className="text-white text-3xl font-serif mb-3 tracking-tight">Trending Leaders</h2>
+              <p className="text-white/50 text-sm md:text-base max-w-xl">
+                Most recently updated and frequently viewed political figures.
+              </p>
+            </div>
+            <Link href="/politicians" className="flex items-center gap-2 text-[#e6b16a] hover:text-white transition-colors text-sm font-semibold tracking-wider uppercase">
+              View All <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8">
+            {trendingPoliticians.map((politician) => (
+              <PoliticianCard key={politician.id} politician={politician} viewMode="grid" />
+            ))}
+          </div>
+        </section>
+      )}
 
     </div>
   );

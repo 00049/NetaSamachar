@@ -58,7 +58,7 @@ export function SectionWrapper({ id, label, heading, description, children, righ
       ref={sectionRef}
       className={clsx(
         "py-24 sm:py-32", // Generous vertical spacing
-        "transition-all duration-1000 ease-out",
+        "transition-all duration-500 ease-out",
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
       )}
     >

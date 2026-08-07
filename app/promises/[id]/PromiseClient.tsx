@@ -96,7 +96,7 @@ export default function PromiseClient({ promise, promiseEvidence, totalMilestone
                             <p className="text-[#A1A1AA] text-[13px] leading-relaxed max-w-[600px]">{event.description}</p>
                             
                             {event.evidenceIds && event.evidenceIds.length > 0 && (
-                              <div className="mt-[8px] inline-flex items-center gap-[6px] px-[8px] py-[4px] rounded-[4px] bg-white/[0.02] border border-white/10 w-fit">
+                              <div className="mt-[8px] inline-flex items-center gap-[6px] px-[8px] py-[4px] rounded-sm bg-white/[0.02] border border-white/10 w-fit">
                                 <span className="text-white/40 text-[9px] font-black uppercase tracking-widest">Source</span>
                                 <span className="text-[#A1A1AA] text-[11px]">{EVIDENCE.find(e => e.id === event.evidenceIds[0])?.title || 'Official Document'}</span>
                               </div>
@@ -175,7 +175,7 @@ export default function PromiseClient({ promise, promiseEvidence, totalMilestone
             {promiseEvidence.length > 0 ? promiseEvidence.map((evidence) => (
               <a href={evidence.sourceUrl || '#'} target="_blank" rel="noopener noreferrer" key={evidence.id} className="premium-card p-[16px] flex flex-col justify-between group cursor-pointer hover:border-white/20 transition-all min-h-[160px]">
                 <div className="flex gap-[12px] mb-[16px]">
-                   <div className="w-[48px] h-[48px] shrink-0 rounded-[8px] bg-white/5 flex items-center justify-center overflow-hidden">
+                   <div className="w-[48px] h-[48px] shrink-0 rounded-sm bg-white/5 flex items-center justify-center overflow-hidden">
                      <FileText className="w-[20px] h-[20px] text-[#A1A1AA]" />
                    </div>
                    <div>

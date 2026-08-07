@@ -4,9 +4,10 @@ import { PROMISES } from '@/data/promises';
 import { aggregateStats } from '@/lib/aggregation';
 import { notFound } from 'next/navigation';
 
-export default function CityScorecardPage({ params }: { params: { slug: string, city: string } }) {
+export default async function CityScorecardPage({ params }: { params: Promise<{ slug: string, city: string }> }) {
+  const { slug, city } = await params;
   const uniqueStates = Array.from(new Set(POLITICIANS.map(p => p.state)));
-  const stateName = uniqueStates.find(s => s.toLowerCase().replace(/\s+/g, '-') === params.slug);
+  const stateName = uniqueStates.find(s => s.toLowerCase().replace(/\s+/g, '-') === slug);
   
   if (!stateName) {
     notFound();
@@ -15,7 +16,7 @@ export default function CityScorecardPage({ params }: { params: { slug: string, 
   // We assume constituency === city for the scope of this view
   const statePoliticians = POLITICIANS.filter(p => p.state === stateName);
   const uniqueConstituencies = Array.from(new Set(statePoliticians.map(p => p.constituency)));
-  const cityName = uniqueConstituencies.find(c => c.toLowerCase().replace(/\s+/g, '-') === params.city);
+  const cityName = uniqueConstituencies.find(c => c.toLowerCase().replace(/\s+/g, '-') === city);
 
   if (!cityName) {
     notFound();
@@ -32,7 +33,7 @@ export default function CityScorecardPage({ params }: { params: { slug: string, 
 
   return (
     <EntityScorecard 
-      entityId={`${params.slug}-${params.city}`}
+      entityId={`${slug}-${city}`}
       entityName={cityName}
       entityType="city"
       parentState={stateName}

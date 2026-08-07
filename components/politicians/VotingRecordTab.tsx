@@ -91,7 +91,7 @@ export function VotingRecordTab({ politician, votes }: Props) {
       </div>
 
       {/* Table container */}
-      <div className="w-full overflow-x-auto border border-[var(--border-subtle)] bg-[var(--bg-base)] rounded-[4px] mb-8">
+      <div className="w-full overflow-x-auto border border-[var(--border-subtle)] bg-[var(--bg-base)] rounded-sm mb-8">
         <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
             <tr className="border-b border-[var(--border-subtle)] bg-[rgba(255,255,255,0.02)] text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)]">

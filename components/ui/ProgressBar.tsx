@@ -100,12 +100,12 @@ export function ProgressBar({
   return (
     <div
       ref={trackRef}
-      className={`relative overflow-hidden rounded-[3px] bg-white/10 ${className}`}
+      className={`relative overflow-hidden rounded-sm bg-white/10 ${className}`}
       style={{ height }}
     >
       <div
         ref={fillRef}
-        className="absolute inset-0 rounded-[3px]"
+        className="absolute inset-0 rounded-sm"
         style={{
           backgroundColor: color,
           transformOrigin: 'left',

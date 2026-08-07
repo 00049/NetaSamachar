@@ -48,7 +48,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[48px] items-stretch">
           {/* Pillar 1 */}
           <div className="flex flex-col">
-            <div className="w-[56px] h-[56px] rounded-[8px] border border-[rgba(255,255,255,0.1)] flex items-center justify-center mb-6 bg-white/[0.02]">
+            <div className="w-[56px] h-[56px] rounded-sm border border-[rgba(255,255,255,0.1)] flex items-center justify-center mb-6 bg-white/[0.02]">
               <Landmark size={28} strokeWidth={1.5} className="text-[#A1A1AA]" />
             </div>
             <h3 className="text-[19px] font-semibold text-white mb-3">Primary Source Only</h3>
@@ -59,7 +59,7 @@ export default function AboutPage() {
 
           {/* Pillar 2 */}
           <div className="flex flex-col">
-            <div className="w-[56px] h-[56px] rounded-[8px] border border-[rgba(255,255,255,0.1)] flex items-center justify-center mb-6 bg-white/[0.02]">
+            <div className="w-[56px] h-[56px] rounded-sm border border-[rgba(255,255,255,0.1)] flex items-center justify-center mb-6 bg-white/[0.02]">
               <ShieldCheck size={28} strokeWidth={1.5} className="text-[#A1A1AA]" />
             </div>
             <h3 className="text-[19px] font-semibold text-white mb-3">SHA-256 Verified</h3>
@@ -70,7 +70,7 @@ export default function AboutPage() {
 
           {/* Pillar 3 */}
           <div className="flex flex-col">
-            <div className="w-[56px] h-[56px] rounded-[8px] border border-[rgba(255,255,255,0.1)] flex items-center justify-center mb-6 bg-white/[0.02]">
+            <div className="w-[56px] h-[56px] rounded-sm border border-[rgba(255,255,255,0.1)] flex items-center justify-center mb-6 bg-white/[0.02]">
               <FileSignature size={28} strokeWidth={1.5} className="text-[#A1A1AA]" />
             </div>
             <h3 className="text-[19px] font-semibold text-white mb-3">Immutable Audit Trail</h3>
@@ -81,7 +81,7 @@ export default function AboutPage() {
 
           {/* Pillar 4 */}
           <div className="flex flex-col">
-            <div className="w-[56px] h-[56px] rounded-[8px] border border-[rgba(255,255,255,0.1)] flex items-center justify-center mb-6 bg-white/[0.02]">
+            <div className="w-[56px] h-[56px] rounded-sm border border-[rgba(255,255,255,0.1)] flex items-center justify-center mb-6 bg-white/[0.02]">
               <Scale size={28} strokeWidth={1.5} className="text-[#A1A1AA]" />
             </div>
             <h3 className="text-[19px] font-semibold text-white mb-3">Non-Partisan</h3>
@@ -98,14 +98,14 @@ export default function AboutPage() {
           Ingestion Architecture
         </h2>
         
-        <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-[4px] p-8 md:p-12">
+        <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-sm p-8 md:p-12">
           <p className="text-[#A1A1AA] text-[16px] leading-[1.6] mb-8">
             Neta Samachar programmatically indexes and permanently archives documents from the following critical infrastructure nodes. These constitute our Tier 1 evidentiary baseline.
           </p>
 
           <div className="flex flex-col gap-6">
             <div className="flex items-start gap-4 pb-6 border-b border-[rgba(255,255,255,0.05)]">
-              <div className="w-[40px] h-[40px] bg-white/[0.04] rounded-[4px] flex items-center justify-center flex-shrink-0 mt-1">
+              <div className="w-[40px] h-[40px] bg-white/[0.04] rounded-sm flex items-center justify-center flex-shrink-0 mt-1">
                 <Database className="w-5 h-5 text-[#A1A1AA]" />
               </div>
               <div>
@@ -115,7 +115,7 @@ export default function AboutPage() {
             </div>
 
             <div className="flex items-start gap-4 pb-6 border-b border-[rgba(255,255,255,0.05)]">
-              <div className="w-[40px] h-[40px] bg-white/[0.04] rounded-[4px] flex items-center justify-center flex-shrink-0 mt-1">
+              <div className="w-[40px] h-[40px] bg-white/[0.04] rounded-sm flex items-center justify-center flex-shrink-0 mt-1">
                 <ScrollText className="w-5 h-5 text-[#A1A1AA]" />
               </div>
               <div>
@@ -125,7 +125,7 @@ export default function AboutPage() {
             </div>
 
             <div className="flex items-start gap-4 pb-6 border-b border-[rgba(255,255,255,0.05)]">
-              <div className="w-[40px] h-[40px] bg-white/[0.04] rounded-[4px] flex items-center justify-center flex-shrink-0 mt-1">
+              <div className="w-[40px] h-[40px] bg-white/[0.04] rounded-sm flex items-center justify-center flex-shrink-0 mt-1">
                 <Scale className="w-5 h-5 text-[#A1A1AA]" />
               </div>
               <div>
@@ -135,7 +135,7 @@ export default function AboutPage() {
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="w-[40px] h-[40px] bg-white/[0.04] rounded-[4px] flex items-center justify-center flex-shrink-0 mt-1">
+              <div className="w-[40px] h-[40px] bg-white/[0.04] rounded-sm flex items-center justify-center flex-shrink-0 mt-1">
                 <FileText className="w-5 h-5 text-[#A1A1AA]" />
               </div>
               <div>
@@ -169,7 +169,7 @@ export default function AboutPage() {
             </h2>
             <div className="space-y-8">
               <div>
-                <div className="inline-flex items-center bg-white/[0.06] px-2.5 py-1 rounded-[4px] mb-3">
+                <div className="inline-flex items-center bg-white/[0.06] px-2.5 py-1 rounded-sm mb-3">
                   <span className="text-[11px] font-bold uppercase tracking-[0.04em] text-white">GODL Framework</span>
                 </div>
                 <p className="text-[#A1A1AA] text-[14px] leading-[1.6]">
@@ -177,7 +177,7 @@ export default function AboutPage() {
                 </p>
               </div>
               <div>
-                <div className="inline-flex items-center bg-white/[0.06] px-2.5 py-1 rounded-[4px] mb-3">
+                <div className="inline-flex items-center bg-white/[0.06] px-2.5 py-1 rounded-sm mb-3">
                   <span className="text-[11px] font-bold uppercase tracking-[0.04em] text-white">BSA 2023 Compliant</span>
                 </div>
                 <p className="text-[#A1A1AA] text-[14px] leading-[1.6]">
@@ -192,7 +192,7 @@ export default function AboutPage() {
 
       {/* ── 6. Contact & Corrections ────────────────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-8 max-w-4xl mx-auto">
-        <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-[4px] p-8 md:p-12 text-center max-w-2xl mx-auto">
+        <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-sm p-8 md:p-12 text-center max-w-2xl mx-auto">
           <Mail className="w-8 h-8 text-[#A1A1AA] mx-auto mb-6" />
           <h2 className="font-serif text-[32px] font-bold text-[#F5F5F7] mb-4">
             Disputes & Corrections
@@ -202,13 +202,13 @@ export default function AboutPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="h-[48px] px-8 bg-white text-[#090B12] text-[13px] font-bold uppercase tracking-widest flex items-center justify-center transition-all hover:bg-[#E4E4E7] rounded-[4px] w-full sm:w-auto">
+            <button className="h-[48px] px-8 bg-white text-[#090B12] text-[13px] font-bold uppercase tracking-widest flex items-center justify-center transition-all hover:bg-[#E4E4E7] rounded-sm w-full sm:w-auto">
               Submit Evidence
               <Send className="w-4 h-4 ml-2" />
             </button>
             <Link 
               href="mailto:press@netasamachar.in" 
-              className="h-[48px] px-8 border border-[rgba(255,255,255,0.2)] text-white text-[13px] font-bold uppercase tracking-widest flex items-center justify-center transition-all hover:bg-white/5 rounded-[4px] w-full sm:w-auto"
+              className="h-[48px] px-8 border border-[rgba(255,255,255,0.2)] text-white text-[13px] font-bold uppercase tracking-widest flex items-center justify-center transition-all hover:bg-white/5 rounded-sm w-full sm:w-auto"
             >
               Press Inquiries
             </Link>

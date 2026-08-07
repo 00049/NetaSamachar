@@ -73,7 +73,7 @@ export function PromisesTab({ promises }: { promises: PromiseType[] }) {
 
   if (promises.length === 0) {
     return (
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-[16px] bg-white/[0.02]">
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-md bg-white/[0.02]">
         <h3 className="text-white font-bold mb-2">No Promises Tracked</h3>
         <p className="text-[#A1A1AA] text-[13px]">There are currently no promises tracked for this politician.</p>
       </div>
@@ -88,7 +88,7 @@ export function PromisesTab({ promises }: { promises: PromiseType[] }) {
         {/* Total Promises */}
         <div className="premium-card p-[24px] flex items-center justify-between">
           <div className="flex gap-[16px] items-center">
-            <div className="w-[48px] h-[48px] rounded-[12px] bg-[var(--color-accent-positive)]/10 border border-[var(--color-accent-positive)]/20 flex items-center justify-center">
+            <div className="w-[48px] h-[48px] rounded-sm bg-[var(--color-accent-positive)]/10 border border-[var(--color-accent-positive)]/20 flex items-center justify-center">
               <ClipboardCheck className="w-[24px] h-[24px] text-[var(--color-accent-positive)]" />
             </div>
             <div>
@@ -101,7 +101,7 @@ export function PromisesTab({ promises }: { promises: PromiseType[] }) {
         {/* Delivered */}
         <div className="premium-card p-[24px] flex items-center justify-between">
           <div className="flex gap-[16px] items-center">
-            <div className="w-[48px] h-[48px] rounded-[12px] bg-[var(--color-accent-positive)]/10 border border-[var(--color-accent-positive)]/20 flex items-center justify-center">
+            <div className="w-[48px] h-[48px] rounded-sm bg-[var(--color-accent-positive)]/10 border border-[var(--color-accent-positive)]/20 flex items-center justify-center">
               <User className="w-[24px] h-[24px] text-[var(--color-accent-positive)]" />
             </div>
             <div>
@@ -115,7 +115,7 @@ export function PromisesTab({ promises }: { promises: PromiseType[] }) {
         {/* In Progress */}
         <div className="premium-card p-[24px] flex items-center justify-between">
           <div className="flex gap-[16px] items-center">
-            <div className="w-[48px] h-[48px] rounded-[12px] bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+            <div className="w-[48px] h-[48px] rounded-sm bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
               <Loader className="w-[24px] h-[24px] text-yellow-500" />
             </div>
             <div>
@@ -129,7 +129,7 @@ export function PromisesTab({ promises }: { promises: PromiseType[] }) {
         {/* Not Started */}
         <div className="premium-card p-[24px] flex items-center justify-between">
           <div className="flex gap-[16px] items-center">
-            <div className="w-[48px] h-[48px] rounded-[12px] bg-[var(--color-accent-negative)]/10 border border-[var(--color-accent-negative)]/20 flex items-center justify-center">
+            <div className="w-[48px] h-[48px] rounded-sm bg-[var(--color-accent-negative)]/10 border border-[var(--color-accent-negative)]/20 flex items-center justify-center">
               <AlertTriangle className="w-[24px] h-[24px] text-[var(--color-accent-negative)]" />
             </div>
             <div>
@@ -174,7 +174,7 @@ export function PromisesTab({ promises }: { promises: PromiseType[] }) {
 
         {/* Sort & List Toggle */}
         <div className="flex items-center gap-[12px] shrink-0">
-          <div className="flex items-center gap-[8px] px-[16px] py-[8px] rounded-[8px] bg-white/[0.02] border border-white/5">
+          <div className="flex items-center gap-[8px] px-[16px] py-[8px] rounded-xs bg-white/[0.02] border border-white/5">
             <span className="text-[#A1A1AA] text-[13px]">Sort by:</span>
             <select
               value={sortBy}
@@ -186,7 +186,7 @@ export function PromisesTab({ promises }: { promises: PromiseType[] }) {
             </select>
           </div>
           
-          <button className="w-[36px] h-[36px] flex items-center justify-center rounded-[8px] bg-white/[0.02] border border-white/5 text-[#A1A1AA] hover:text-white hover:bg-white/[0.05] transition-colors">
+          <button className="w-[36px] h-[36px] flex items-center justify-center rounded-xs bg-white/[0.02] border border-white/5 text-[#A1A1AA] hover:text-white hover:bg-white/[0.05] transition-colors">
             <List className="w-[16px] h-[16px]" />
           </button>
         </div>

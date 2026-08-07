@@ -19,6 +19,13 @@ type EvidenceTier = 1 | 2 | 3 | 4 | 5;
 
 export type ConfidenceTier = 'absolute' | 'high' | 'moderate' | 'unverified';
 
+export interface PlatformStats {
+  promisesTracked: number;
+  evidenceDocuments: number;
+  verifiedComplete: number;
+  pendingScrutiny: number;
+}
+
 
 // ===== EVIDENCE SOURCES =====
 export type EvidenceType =
@@ -58,9 +65,10 @@ export interface TimelineEvent {
   date: string;
   title: string;
   description: string;
-  type: 'progress' | 'setback' | 'milestone' | 'neutral';
+  type: 'progress' | 'setback' | 'milestone' | 'neutral' | string;
   evidenceIds: string[];
   confidenceScore: number;
+  promise?: Promise;
 }
 
 // ===== POLITICAL PROMISE =====
@@ -77,7 +85,8 @@ export type PolicyCategory =
   | 'foreign_policy'
   | 'technology'
   | 'housing'
-  | 'employment';
+  | 'employment'
+  | 'social';
 
 export interface Promise {
   id: string;
@@ -86,27 +95,31 @@ export interface Promise {
   title: string;
   fullStatement: string;
   manifestoExcerpt: string;
-  category: PolicyCategory;
-  status: PromiseStatus;
+  category: PolicyCategory | string;
+  status: PromiseStatus | string;
   madeDate: string; // when promise was made
   manifestoYear: number;
   deadline?: string;
   state?: string; // geographic scope
   confidenceScore: number;
-  timeline: TimelineEvent[];
+  timeline: TimelineEvent[] | any;
   evidenceIds: string[];
   tags: string[];
+  politician?: Politician;
+  party?: Party;
 }
 
 // ===== CRIMINAL CASE =====
-interface CriminalCase {
+export interface CriminalCase {
+  id: string;
   caseNumber: string;
   court: string;
   section: string;
   chargeDescription: string;
-  status: 'pending' | 'acquitted' | 'convicted' | 'withdrawn' | 'quashed';
+  status: 'pending' | 'acquitted' | 'convicted' | 'withdrawn' | 'quashed' | 'active';
   year: number;
-  severity: 'cognizable' | 'non_cognizable' | 'heinous';
+  severity: 'cognizable' | 'non_cognizable' | 'heinous' | 'high';
+  politician?: Politician;
 }
 
 // ===== FINANCIAL DATA STRUCTURES =====
@@ -189,7 +202,7 @@ export interface Politician {
   constituency: string;
   state: string;
   position: string; // e.g., "Member of Parliament", "Chief Minister"
-  chamber?: 'lok_sabha' | 'rajya_sabha' | 'state_assembly';
+  chamber?: 'lok_sabha' | 'rajya_sabha' | 'state_assembly' | 'legislative_council';
   education: string;
   age: number;
   yearsInPolitics: number;
@@ -259,7 +272,21 @@ export interface Bill {
   votesAbstain?: number;
   officialRecordUrl?: string;
   gazetteUrl?: string;
-  relatedPromiseIds: string[];
+  relatedPromiseIds?: string[];
+  
+  votingRecord?: {
+    aye: number;
+    no: number;
+    abstain: number;
+    totalVotes: number;
+    passed: boolean;
+  } | any;
+  timeline?: {
+    date: string;
+    title: string;
+    description: string;
+    status: 'completed' | 'in_progress' | 'pending' | string;
+  }[] | any;
 }
 
 // ===== VOTE RECORD =====

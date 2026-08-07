@@ -19,7 +19,7 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
       {/* TOP ROW */}
       <div className="grid grid-cols-1 xl:grid-cols-[300px_1fr_400px] gap-[24px]">
         {/* COLUMN 1: PORTRAIT */}
-        <div className="relative overflow-hidden rounded-[24px] w-full h-full min-h-[400px] bg-[#0B0E14] transition-all duration-[220ms] hover:translate-y-[-2px]">
+        <div className="relative overflow-hidden rounded-lg w-full h-full min-h-[400px] bg-[var(--bg-base)] transition-all duration-[220ms] hover:translate-y-[-2px]">
           <div className="absolute inset-0 z-0">
             <Image
               src={politician.photoUrl}
@@ -28,10 +28,10 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
               className="object-cover object-top opacity-90"
               sizes="(max-width: 1280px) 100vw, 300px"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-base)] via-[var(--bg-base)]/40 to-transparent" />
           </div>
           <div className="absolute bottom-[24px] left-[24px] z-10">
-            <div className="flex items-center gap-[8px] px-[16px] py-[8px] rounded-[20px] bg-black/60 backdrop-blur-md border border-white/10 text-[12px] font-bold text-[var(--color-accent-positive)] uppercase tracking-wider">
+            <div className="flex items-center gap-[8px] px-[16px] py-[8px] rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-[12px] font-bold text-[var(--color-accent-positive)] uppercase tracking-wider">
               <BadgeCheck className="w-4 h-4" />
               VERIFIED IDENTITY
             </div>
@@ -92,7 +92,7 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
               </div>
             </div>
 
-            <div className="mt-[24px] bg-white/[0.03] border border-white/10 rounded-[12px] p-[16px] flex items-center justify-between">
+            <div className="mt-[24px] bg-white/[0.03] border border-white/10 rounded-sm p-[16px] flex items-center justify-between">
               <div className="flex items-center gap-[8px]">
                 <div className="w-2 h-2 rounded-full bg-[var(--color-accent-positive)]" />
                 <span className="text-[#A1A1AA] text-[13px] uppercase tracking-wider font-semibold">Current Status</span>
@@ -107,12 +107,25 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
           {/* Right: Score */}
           <div className="w-[240px] flex flex-col items-center justify-center shrink-0 pl-[8px]">
             <div className="w-full flex items-center justify-between mb-[16px] text-[#A1A1AA] text-[12px] uppercase tracking-wider font-semibold">
-              <span>Overall Performance Score</span>
-              <Info className="w-[16px] h-[16px]" />
+              <span className="flex items-center gap-1 group relative cursor-help">
+                Overall Performance Score
+                <Info className="w-[14px] h-[14px]" aria-hidden="true" />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[220px] p-3 bg-[var(--bg-raised)] border border-[var(--border-subtle)] rounded-[var(--radius-sm)] shadow-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-50 text-[11px] text-[var(--text-secondary)] font-normal normal-case tracking-normal">
+                  Score = (Promises Fulfilled × 40) + (Attendance × 30) + (Legislation × 20) + (Transparency × 10). Higher = better accountability record.
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-4 border-transparent border-t-[var(--border-subtle)]"></div>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-[3px] border-transparent border-t-[var(--bg-raised)]"></div>
+                </div>
+              </span>
             </div>
 
             <div className="relative w-[180px] h-[180px] flex flex-col items-center justify-center mb-[24px]">
-              <svg className="absolute inset-0 w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
+              <svg
+                role="img"
+                aria-label={`Overall performance score: ${quickLook.score.value} out of 100`}
+                className="absolute inset-0 w-full h-full -rotate-90 transform"
+                viewBox="0 0 100 100"
+              >
+                <title>Overall performance score: {quickLook.score.value} / 100</title>
                 <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="6" />
                 <circle
                   cx="50" cy="50" r="46" fill="none"
@@ -131,9 +144,6 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
               </div>
             </div>
 
-            <p className="text-center text-[#A1A1AA] text-[13px] leading-relaxed">
-              Performance is better than <br /><span className="text-white font-semibold">71% of politicians</span> in Himachal Pradesh
-            </p>
           </div>
         </div>
 

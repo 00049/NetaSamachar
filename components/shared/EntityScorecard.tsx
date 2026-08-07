@@ -51,7 +51,7 @@ export function EntityScorecard({
         {/* Compare Button */}
         <Link 
           href={`/compare?type=${entityType}&a=${entityId}`}
-          className="flex items-center justify-center font-bold uppercase text-[#090B12] bg-white hover:bg-black/80 transition-colors duration-200 px-6 py-3 rounded-sm gap-2 shrink-0"
+          className="flex items-center justify-center font-bold uppercase text-[#090B12] bg-white hover:bg-gray-100 active:bg-gray-200 transition-colors duration-150 px-6 py-3 rounded-sm gap-2 shrink-0"
           style={{ fontSize: '12px', letterSpacing: '0.06em' }}
         >
           <ArrowRightLeft className="w-4 h-4" /> Compare This {typeLabel}

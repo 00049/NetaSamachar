@@ -325,7 +325,7 @@ export function PerformanceTab({ politician, quickLook }: Props) {
       </div>
 
       {/* FOOTER NOTE */}
-      <div className="flex items-center justify-between py-[16px] px-[24px] bg-[#131722]/50 border border-white/5 rounded-[16px] mt-[-8px]">
+      <div className="flex items-center justify-between py-[16px] px-[24px] bg-[#131722]/50 border border-white/5 rounded-md mt-[-8px]">
         <div className="flex items-center gap-[12px]">
           <Lightbulb className="w-[16px] h-[16px] text-yellow-500" />
           <span className="text-[#A1A1AA] text-[13px]">

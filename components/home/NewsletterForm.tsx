@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export function NewsletterForm() {
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'error' | 'success'>('idle');
+  const [status, setStatus] = useState<'idle' | 'error' | 'success' | 'unavailable'>('idle');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,24 +15,21 @@ export function NewsletterForm() {
       setStatus('error');
       return;
     }
-    // Simulate API call
-    setStatus('success');
+    // Honest message: backend not ready yet
+    setStatus('unavailable' as any);
   };
 
   return (
     <div className="w-full relative z-10 py-6 border-b border-[var(--border-subtle)] mb-12">
       <AnimatePresence mode="wait">
-        {status === 'success' ? (
+        {status === 'unavailable' ? (
           <motion.div
-            key="success"
+            key="unavailable"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="flex items-center justify-center gap-3 h-[52px]"
           >
-            <div className="w-8 h-8 rounded-full bg-[var(--accent-positive)]/20 flex items-center justify-center">
-              <Check className="w-5 h-5 text-[var(--accent-positive)]" />
-            </div>
-            <span className="text-[var(--accent-positive)] font-bold tracking-wide text-sm">You're on the list.</span>
+            <span className="text-[var(--text-secondary)] font-bold tracking-wide text-sm">Our newsletter is launching soon! Check back later.</span>
           </motion.div>
         ) : (
           <motion.form

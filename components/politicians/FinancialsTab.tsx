@@ -23,6 +23,7 @@ import {
   Award
 } from 'lucide-react';
 import clsx from 'clsx';
+import { formatCurrency as formatCurrencyBase } from '@/lib/utils';
 import Link from 'next/link';
 
 interface Props {
@@ -34,7 +35,7 @@ export function FinancialsTab({ politician }: Props) {
   
   if (declarations.length === 0) {
     return (
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-[16px] bg-white/[0.02]">
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-md bg-white/[0.02]">
         <h3 className="text-white font-bold mb-2">No Financial Data</h3>
         <p className="text-[#A1A1AA] text-[13px]">No asset declarations or financial data available.</p>
       </div>
@@ -42,12 +43,9 @@ export function FinancialsTab({ politician }: Props) {
   }
 
   // --- Helpers ---
-  const formatCurrency = (val: number | undefined) => {
-    if (val === undefined) return '₹0';
-    if (val >= 10000000) return `₹${(val / 10000000).toFixed(2)} Cr`;
-    if (val >= 100000) return `₹${(val / 100000).toFixed(2)} L`;
-    return `₹${val.toLocaleString()}`;
-  };
+  // Wraps lib/utils formatCurrency to handle undefined gracefully
+  const formatCurrency = (val: number | undefined) =>
+    val !== undefined ? formatCurrencyBase(val) : '₹0';
 
   const getNetWorth = (d: AssetDeclaration) => d.totalAssets - d.totalLiabilities;
 
@@ -154,13 +152,13 @@ export function FinancialsTab({ politician }: Props) {
             </span>
             <div className="group relative cursor-help">
               <Info className="w-[14px] h-[14px] text-[#A1A1AA] hover:text-white" />
-              <div className="absolute right-0 top-[24px] w-[240px] p-[12px] rounded-[8px] bg-[#1A1A1A] border border-white/10 shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-[11px] text-[#A1A1AA] font-normal leading-relaxed">
+              <div className="absolute right-0 top-[24px] w-[240px] p-[12px] rounded-xs bg-[#1A1A1A] border border-white/10 shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 text-[11px] text-[#A1A1AA] font-normal leading-relaxed">
                 Methodology: Combines CAGR, absolute growth, asset concentration, and time covered to provide a neutral, evidence-based indicator of wealth trajectory. This is not an accusation of illegality.
               </div>
             </div>
           </div>
           <div>
-            <div className={clsx("inline-flex items-center px-[10px] py-[4px] rounded-[6px] border text-[13px] font-bold mb-[8px]", indicator.bg, indicator.border, indicator.color)}>
+            <div className={clsx("inline-flex items-center px-[10px] py-[4px] rounded-sm border text-[13px] font-bold mb-[8px]", indicator.bg, indicator.border, indicator.color)}>
               {indicator.label}
             </div>
             <div className="text-[12px] text-[#A1A1AA]">
@@ -272,7 +270,7 @@ export function FinancialsTab({ politician }: Props) {
                         {dec.winner !== undefined && (
                           <div className="lg:col-span-2">
                             <div className="text-[#A1A1AA] text-[11px] uppercase tracking-wider mb-[8px]">Election Result</div>
-                            <div className="flex flex-col gap-[4px] bg-[#111] p-[12px] rounded-[8px] border border-white/5">
+                            <div className="flex flex-col gap-[4px] bg-[#111] p-[12px] rounded-xs border border-white/5">
                               <div className="flex items-center justify-between">
                                 <span className="text-white text-[13px] font-medium flex items-center gap-[6px]">
                                   {dec.winner ? <span className="w-[8px] h-[8px] rounded-full bg-green-500"></span> : <span className="w-[8px] h-[8px] rounded-full bg-red-500"></span>}
@@ -424,7 +422,7 @@ function TimelineOverlay({ declarations, timeline, hoveredYear, setHoveredYear, 
                  onMouseEnter={() => setHoveredYear(d.year)}
                >
                  {isHovered && (
-                   <div className="absolute bottom-[20px] left-1/2 -translate-x-1/2 bg-[#222] border border-white/10 rounded-[8px] p-[12px] min-w-[160px] shadow-2xl z-30 pointer-events-none">
+                   <div className="absolute bottom-[20px] left-1/2 -translate-x-1/2 bg-[#222] border border-white/10 rounded-xs p-[12px] min-w-[160px] shadow-2xl z-30 pointer-events-none">
                      <div className="text-white font-bold text-[14px] mb-[4px]">{d.year} Affidavit</div>
                      <div className="text-emerald-400 font-semibold text-[16px] mb-[4px]">{formatCurrency(d.totalAssets)}</div>
                      <div className="text-[#A1A1AA] text-[11px]">Net Worth: {formatCurrency(d.totalAssets - d.totalLiabilities)}</div>
@@ -436,7 +434,7 @@ function TimelineOverlay({ declarations, timeline, hoveredYear, setHoveredYear, 
          </div>
 
          {/* Political Career Gantt Chart */}
-         <div className="absolute bottom-0 left-0 right-0 h-[40px] bg-white/[0.02] rounded-[8px] border border-white/5 relative overflow-hidden">
+         <div className="absolute bottom-0 left-0 right-0 h-[40px] bg-white/[0.02] rounded-xs border border-white/5 relative overflow-hidden">
            {timeline.map((t: any, i: number) => {
              const endY = t.endYear === 'Present' ? maxYear : t.endYear;
              const startX = getX(t.startYear);
@@ -449,7 +447,7 @@ function TimelineOverlay({ declarations, timeline, hoveredYear, setHoveredYear, 
                  initial={{ width: 0, opacity: 0 }}
                  animate={{ width: `${width}%`, opacity: 1 }}
                  transition={{ duration: 1, delay: 0.5 + (i * 0.2) }}
-                 className="absolute top-[4px] bottom-[4px] bg-blue-500/20 border border-blue-500/40 rounded-[4px] flex items-center justify-center overflow-hidden group cursor-default"
+                 className="absolute top-[4px] bottom-[4px] bg-blue-500/20 border border-blue-500/40 rounded-sm flex items-center justify-center overflow-hidden group cursor-default"
                  style={{ left: `${startX}%` }}
                >
                  <span className="text-blue-300 text-[10px] font-medium px-[4px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">

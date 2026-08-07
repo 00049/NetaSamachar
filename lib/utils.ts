@@ -152,6 +152,7 @@ export const POLICY_CATEGORIES: Record<PolicyCategory, { label: string; icon: st
   technology: { label: 'Technology', icon: '💻' },
   housing: { label: 'Housing', icon: '🏠' },
   employment: { label: 'Employment', icon: '💼' },
+  social: { label: 'Social', icon: '🫂' },
 };
 
 export function getConfidenceTier(score: number): ConfidenceTier {

@@ -9,6 +9,7 @@ interface AvatarProps {
   name: string;
   size?: number;
   className?: string;
+  priority?: boolean;
 }
 
 // 4x4 generic gray/neutral placeholder to satisfy next/image blurDataURL
@@ -22,7 +23,7 @@ const BLUR_B64 =
  * exact sizing, and smooth blur-up loading. Falls back to a letter
  * circle if no photo is available or if it errors out.
  */
-export function Avatar({ photoUrl, name, size = 40, className = '' }: AvatarProps) {
+export function Avatar({ photoUrl, name, size = 40, className = '', priority = false }: AvatarProps) {
   const [error, setError] = useState(false);
 
   // Treat 'placeholder' strings in our raw data as missing images
@@ -63,6 +64,7 @@ export function Avatar({ photoUrl, name, size = 40, className = '' }: AvatarProp
         className="object-cover"
         placeholder="blur"
         blurDataURL={BLUR_B64}
+        priority={priority}
         onError={() => setError(true)}
       />
     </div>

@@ -3,10 +3,12 @@ import { Suspense } from 'react';
 import { PromiseCardSkeleton } from '@/components/ui/Skeletons';
 import type { Metadata } from 'next';
 
+import { EVIDENCE } from '@/data/promises';
+
 export const metadata: Metadata = {
   title: 'Evidence Archive',
   description:
-    'Primary source document repository: 12,847+ verified government records, gazette notifications, court orders and RTI responses backing every claim on the platform.',
+    `Primary source document repository: ${EVIDENCE.length}+ verified government records, gazette notifications, court orders and RTI responses backing every claim on the platform.`,
 };
 
 export default function ArchivePage() {
@@ -43,7 +45,9 @@ export default function ArchivePage() {
           </div>
         </div>
       }>
-        <ArchiveClient />
+        <div className="animate-in fade-in duration-200">
+          <ArchiveClient />
+        </div>
       </Suspense>
     </div>
   );

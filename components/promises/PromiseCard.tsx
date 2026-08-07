@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { Promise as PromiseType } from '@/lib/types';
 import { POLITICIANS } from '@/data/politicians';
-import { Clock, ArrowRight, FileText, AlertCircle } from 'lucide-react';
+import { Clock, ArrowRight, FileText, AlertCircle, Users } from 'lucide-react';
+import { PoliticianHoverCard } from '../politicians/PoliticianHoverCard';
 
 interface Props {
   promise: PromiseType;
@@ -274,7 +275,9 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
               </Link>
             ) : (
               <span className="text-meta !text-[#A1A1AA]">
-                {politician?.name || 'Unknown'}
+                <PoliticianHoverCard politicianId={promise.politicianId}>
+                  <span className="hover:text-white transition-colors cursor-pointer">{politician?.name || 'Unknown'}</span>
+                </PoliticianHoverCard>
               </span>
             )}
           </div>

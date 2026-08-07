@@ -7,14 +7,19 @@ import Link from 'next/link';
 export function ArchiveCard({ doc }: { doc: any }) {
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
 
-  const handleCopy = (hash: string) => {
-    navigator.clipboard.writeText(hash);
-    setCopiedHash(hash);
-    setTimeout(() => setCopiedHash(null), 2000);
+  const handleCopy = async (hash: string) => {
+    try {
+      await navigator.clipboard.writeText(hash);
+      setCopiedHash(hash);
+      setTimeout(() => setCopiedHash(null), 2000);
+    } catch (err) {
+      console.error('Copy failed', err);
+      // Fallback
+    }
   };
 
   return (
-    <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-[4px] relative overflow-hidden group">
+    <div className="bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-sm relative overflow-hidden group">
       <div className="p-[32px] md:p-[48px] relative z-10">
         {/* Tag Row */}
         <div className="flex items-center justify-between gap-3 mb-6">
@@ -32,7 +37,7 @@ export function ArchiveCard({ doc }: { doc: any }) {
             </div>
             <button 
               onClick={() => handleCopy(doc.sha256Hash)}
-              className="p-1.5 hover:bg-white/10 rounded-[4px] transition-colors group/copy relative"
+              className="p-1.5 hover:bg-white/10 rounded-sm transition-colors group/copy relative"
               aria-label="Copy SHA-256 Hash"
             >
               {copiedHash === doc.sha256Hash ? (
@@ -65,7 +70,7 @@ export function ArchiveCard({ doc }: { doc: any }) {
             <Link 
               key={idx} 
               href={item.href}
-              className="inline-flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition-colors rounded-[12px] px-3 py-1.5 text-[11px] font-medium text-white"
+              className="inline-flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition-colors rounded-sm px-3 py-1.5 text-[11px] font-medium text-white"
             >
               {item.type === 'promise' ? <FileText className="w-3 h-3 text-[#A1A1AA]" /> : <User className="w-3 h-3 text-[#A1A1AA]" />}
               {item.label}
@@ -82,7 +87,7 @@ export function ArchiveCard({ doc }: { doc: any }) {
           <div className="text-[13px] font-bold text-[#F5F5F7] uppercase tracking-wider">{doc.source}</div>
         </div>
         <div className="flex flex-col sm:items-end">
-          <div className="flex items-center gap-2 px-[12px] py-[6px] rounded-[4px]" style={{ backgroundColor: 'rgba(52,211,153,0.12)' }}>
+          <div className="flex items-center gap-2 px-[12px] py-[6px] rounded-sm" style={{ backgroundColor: 'rgba(52,211,153,0.12)' }}>
             <Check className="w-4 h-4 text-[#34D399]" />
             <span className="text-[14px] font-bold text-[#34D399] tracking-wide mt-px">
               <span className="text-[10px] font-sans mr-2 uppercase tracking-[0.08em]">CONFIDENCE</span>

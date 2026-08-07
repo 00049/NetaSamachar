@@ -19,11 +19,13 @@ export default function PoliticiansPage() {
         <div className="w-full h-screen flex items-center justify-center">
           <div className="animate-pulse flex flex-col items-center">
             <div className="h-8 w-8 border-2 border-white/20 border-t-white rounded-full animate-spin mb-4" />
-            <div className="text-white/40 text-sm">Loading database...</div>
+            <div className="text-white/60 text-sm">Loading database...</div>
           </div>
         </div>
       }>
-        <PoliticiansClient />
+        <div className="animate-in fade-in duration-200">
+          <PoliticiansClient initialPoliticians={POLITICIANS} />
+        </div>
       </Suspense>
     </main>
   );

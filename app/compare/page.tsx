@@ -1,21 +1,18 @@
-import './compare.css';
 import { ComparePageClient } from './ComparePageClient';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Compare',
+  title: 'Compare Politicians & Parties — Neta Samachar',
   description:
     'Side-by-side comparison of parties, states, constituencies, and politicians — identical methodology applied to both sides.',
 };
 
-export default function ComparePage({
+// Next.js App Router: searchParams is a Promise in server components
+export default async function ComparePage({
   searchParams,
 }: {
-  searchParams: { type?: string; a?: string; b?: string; c?: string };
+  searchParams: Promise<{ type?: string; a?: string; b?: string; c?: string }>;
 }) {
-  return (
-    <main className="compare-workspace">
-      <ComparePageClient initialSearchParams={searchParams} />
-    </main>
-  );
+  const resolvedParams = await searchParams;
+  return <ComparePageClient initialSearchParams={resolvedParams} />;
 }

@@ -33,9 +33,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const politician = POLITICIANS.find(p => p.id === id);
   if (!politician) return { title: 'Politician Not Found' };
+  
+  const ogImageUrl = `/api/og?id=${politician.id}`;
+
   return {
     title: `${politician.name} — Legislative Dossier | Neta Samachar`,
     description: `Complete accountability profile for ${politician.name}. Track promises, criminal cases, financial declarations, and legislative activity.`,
+    alternates: {
+      canonical: `/politicians/${politician.id}`,
+    },
+    openGraph: {
+      images: [ogImageUrl],
+    },
+    twitter: {
+      images: [ogImageUrl],
+    },
   };
 }
 
@@ -67,14 +79,60 @@ export default async function PoliticianProfilePage({ params }: Props) {
     attendancePercent: politician.attendancePercent,
   };
 
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://netasamachar.in';
+
   return (
-    <div className="w-full min-h-screen bg-[#0B0E14] overflow-x-clip relative">
+    <div className="w-full min-h-screen bg-[var(--bg-base)] overflow-x-clip relative">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Person",
+                "name": politician.name,
+                "jobTitle": politician.position,
+                "affiliation": {
+                  "@type": "Organization",
+                  "name": party?.name || politician.partyId
+                },
+                "image": politician.photoUrl,
+                "url": `${BASE_URL}/politicians/${politician.id}`
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Politicians",
+                    "item": `${BASE_URL}/politicians`
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": politician.state,
+                    "item": `${BASE_URL}/search?state=${encodeURIComponent(politician.state)}`
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": politician.name,
+                    "item": `${BASE_URL}/politicians/${politician.id}`
+                  }
+                ]
+              }
+            ]
+          })
+        }}
+      />
       <div className="w-full relative">
         {/* Background Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[400px] bg-[#3B82F6]/5 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 w-full">
-          <div className="px-[40px] py-[28px] flex items-center justify-between border-b border-white/10">
+          <div className="px-4 sm:px-6 md:px-10 lg:px-[40px] py-[28px] flex items-center justify-between border-b border-white/10">
 
             {/* Breadcrumbs */}
             <Breadcrumbs items={[
@@ -84,21 +142,21 @@ export default async function PoliticianProfilePage({ params }: Props) {
             ]} />
 
             {/* Action Buttons */}
-            <ActionButtons />
+            <ActionButtons politicianId={id} />
           </div>
 
-          <div id="overview" className="px-[40px] pt-[48px] pb-[32px]">
+          <div id="overview" className="px-4 sm:px-6 md:px-10 lg:px-[40px] pt-[48px] pb-[32px]">
             {/* ===== PREMIUM HERO ===== */}
             <PoliticianHero politician={politician} party={party} quickLook={quickLookData} />
           </div>
         </div>
 
         {/* ===== STICKY NAVIGATOR & FOOTER ===== */}
-        <StickyNavigator />
+        <StickyNavigator lastUpdated={politician.lastUpdated} />
         <InfoFooterBar />
 
         {/* ===== CONTINUOUS SCROLL SECTIONS ===== */}
-        <div className="px-[40px] pb-[96px] pt-[64px] flex flex-col gap-[96px]">
+        <div className="px-4 sm:px-6 md:px-10 lg:px-[40px] pb-[96px] pt-[64px] flex flex-col gap-[96px]">
 
           <SectionWrapper
             id="performance"

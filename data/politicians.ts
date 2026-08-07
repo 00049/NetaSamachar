@@ -71,7 +71,7 @@ export const POLITICIANS: Politician[] = [
     id: 'tejashwi-yadav',
     name: 'Tejashwi Yadav',
     nameHindi: 'तेजस्वी यादव',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0d/Tejaswi_Yadav_2023.jpg',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081914/neta_samachar_politicians/z9kvwrpdmfupjgqu7q9y.jpg',
     partyId: 'rjd',
     constituency: 'Raghopur',
     state: 'Bihar',
@@ -164,7 +164,7 @@ export const POLITICIANS: Politician[] = [
     id: 'keshab-mahanta',
     name: 'Keshab Mahanta',
     nameHindi: 'केशब महंता',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/67/Keshab_Mahanta_%28cropped%29.JPG',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081915/neta_samachar_politicians/z5w8xotn2tdzhxopr0m2.jpg',
     partyId: 'agp',
     constituency: 'Kaliabor',
     state: 'Assam',
@@ -195,7 +195,7 @@ export const POLITICIANS: Politician[] = [
     id: 'prashant-kishor',
     name: 'Prashant Kishor',
     nameHindi: 'प्रशांत किशोर',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Prashant_Kishor_during_a_press_conference_on_Bihar_Assembly_elections.jpg/500px-Prashant_Kishor_during_a_press_conference_on_Bihar_Assembly_elections.jpg',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081916/neta_samachar_politicians/umubxmjzx2uereaffq0j.jpg',
     partyId: 'jsp',
     constituency: 'Statewide',
     state: 'Bihar',
@@ -229,7 +229,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'sukhvinder-singh-sukhu',
     name: 'Sukhvinder Singh Sukhu',
     nameHindi: 'सुखविंदर सिंह सुक्खू',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Sukhvinder_Singh_Sukhu.jpg/500px-Sukhvinder_Singh_Sukhu.jpg',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081917/neta_samachar_politicians/ykgbsmsfopcyi33lzobw.jpg',
     partyId: 'inc',
     constituency: 'Nadaun',
     state: 'Himachal Pradesh',
@@ -247,7 +247,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     promisesBroken: 2,
     promisesInProgress: 3,
     criminalCases: [
-      { caseNumber: 'Unknown', court: 'Unknown', section: 'IPC 143, 188, 341', chargeDescription: 'Punishment for being a member of an unlawful assembly, disobedience to order duly promulgated by public servant, wrongful restraint', status: 'pending', year: 2022, severity: 'cognizable' }
+      { id: 'c-001', caseNumber: 'Unknown', court: 'Unknown', section: 'IPC 143, 188, 341', chargeDescription: 'Punishment for being a member of an unlawful assembly, disobedience to order duly promulgated by public servant, wrongful restraint', status: 'pending', year: 2022, severity: 'cognizable' }
     ],
     assetDeclarations: [
       { year: 2022, totalAssets: 120957028, totalLiabilities: 13403020, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
@@ -281,7 +281,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'virbhadra-singh',
     name: 'Virbhadra Singh',
     nameHindi: 'वीरभद्र सिंह',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Virbhadra_Singh_HP.jpg/500px-Virbhadra_Singh_HP.jpg',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081918/neta_samachar_politicians/i45izw759ago4g7vmabi.jpg',
     partyId: 'inc',
     constituency: 'Shimla Rural',
     state: 'Himachal Pradesh',
@@ -299,8 +299,8 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     promisesBroken: 2,
     promisesInProgress: 5,
     criminalCases: [
-      { caseNumber: 'CBI-CC No. 02/17', court: 'Patiala House Court', section: 'IPC 120B, 465, 471, PC Act 13(1)(d), 13(1)(e)', chargeDescription: 'Criminal conspiracy, forgery, disproportionate assets', status: 'pending', year: 2017, severity: 'cognizable' },
-      { caseNumber: 'FIR 27/2009', court: 'Vigilance Bureau', section: 'IPC 120B, PC Act 7, 11', chargeDescription: 'Criminal conspiracy and corruption', status: 'pending', year: 2012, severity: 'cognizable' }
+      { id: 'c-002', caseNumber: 'CBI-CC No. 02/17', court: 'Patiala House Court', section: 'IPC 120B, 465, 471, PC Act 13(1)(d), 13(1)(e)', chargeDescription: 'Criminal conspiracy, forgery, disproportionate assets', status: 'pending', year: 2017, severity: 'cognizable' },
+      { id: 'c-003', caseNumber: 'FIR 27/2009', court: 'Vigilance Bureau', section: 'IPC 120B, PC Act 7, 11', chargeDescription: 'Criminal conspiracy and corruption', status: 'pending', year: 2012, severity: 'cognizable' }
     ],
     assetDeclarations: [
       { year: 2017, totalAssets: 305215611, totalLiabilities: 62524000, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
@@ -316,7 +316,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'vikramaditya-singh',
     name: 'Vikramaditya Singh',
     nameHindi: 'विक्रमादित्य सिंह',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Vikramaditya_Singh.jpg/500px-Vikramaditya_Singh.jpg',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081918/neta_samachar_politicians/roubnotiqstlaiy9iro1.jpg',
     partyId: 'inc',
     constituency: 'Shimla Rural',
     state: 'Himachal Pradesh',
@@ -334,8 +334,8 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     promisesBroken: 1,
     promisesInProgress: 3,
     criminalCases: [
-      { caseNumber: 'Multiple', court: 'Various', section: 'Various', chargeDescription: '14 criminal cases declared in 2024 Lok Sabha affidavit', status: 'pending', year: 2024, severity: 'cognizable' },
-      { caseNumber: 'Multiple', court: 'Various', section: 'Various', chargeDescription: '11 criminal cases declared in 2022 Assembly affidavit', status: 'pending', year: 2022, severity: 'cognizable' }
+      { id: 'c-004', caseNumber: 'Multiple', court: 'Various', section: 'Various', chargeDescription: '14 criminal cases declared in 2024 Lok Sabha affidavit', status: 'pending', year: 2024, severity: 'cognizable' },
+      { id: 'c-005', caseNumber: 'Multiple', court: 'Various', section: 'Various', chargeDescription: '11 criminal cases declared in 2022 Assembly affidavit', status: 'pending', year: 2022, severity: 'cognizable' }
     ],
     assetDeclarations: [
       { year: 2024, totalAssets: 1005100000, totalLiabilities: 0, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
@@ -352,7 +352,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'suresh-bhardwaj',
     name: 'Suresh Bhardwaj',
     nameHindi: 'सुरेश भारद्वाज',
-    photoUrl: 'https://i.pravatar.cc/300?u=suresh-bhardwaj',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081919/neta_samachar_politicians/rurxvazjewk7axkuacjh.jpg',
     partyId: 'bjp',
     constituency: 'Shimla Urban',
     state: 'Himachal Pradesh',
@@ -384,7 +384,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'harish-janartha',
     name: 'Harish Janartha',
     nameHindi: 'हरीश जनारथा',
-    photoUrl: 'https://i.pravatar.cc/300?u=harish-janartha',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081920/neta_samachar_politicians/mtjxahifg3nk30rg96tv.jpg',
     partyId: 'inc',
     constituency: 'Shimla Urban',
     state: 'Himachal Pradesh',
@@ -402,7 +402,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     promisesBroken: 0,
     promisesInProgress: 3,
     criminalCases: [
-      { caseNumber: 'Unknown', court: 'Unknown', section: 'Various', chargeDescription: '1 criminal case declared in 2022 Assembly affidavit', status: 'pending', year: 2022, severity: 'cognizable' }
+      { id: 'c-006', caseNumber: 'Unknown', court: 'Unknown', section: 'Various', chargeDescription: '1 criminal case declared in 2022 Assembly affidavit', status: 'pending', year: 2022, severity: 'cognizable' }
     ],
     assetDeclarations: [
       { year: 2022, totalAssets: 46640142, totalLiabilities: 3000000, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
@@ -418,7 +418,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'anirudh-singh',
     name: 'Anirudh Singh',
     nameHindi: 'अनिरुद्ध सिंह',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Anirudh_Singh.jpg/500px-Anirudh_Singh.jpg',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081921/neta_samachar_politicians/rputkj2frzeaibh5ugbm.jpg',
     partyId: 'inc',
     constituency: 'Kasumpti',
     state: 'Himachal Pradesh',
@@ -436,7 +436,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     promisesBroken: 1,
     promisesInProgress: 2,
     criminalCases: [
-      { caseNumber: 'Not specified', court: 'Various', section: 'IPC 143, 341, 188, 353', chargeDescription: '4 cases related to protests, wrongful restraint, assault to deter public servant', status: 'pending', year: 2022, severity: 'cognizable' }
+      { id: 'c-007', caseNumber: 'Not specified', court: 'Various', section: 'IPC 143, 341, 188, 353', chargeDescription: '4 cases related to protests, wrongful restraint, assault to deter public servant', status: 'pending', year: 2022, severity: 'cognizable' }
     ],
     assetDeclarations: [
       { year: 2022, totalAssets: 102093247, totalLiabilities: 67780000, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
@@ -452,7 +452,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'mohan-lal-brakta',
     name: 'Mohan Lal Brakta',
     nameHindi: 'मोहन लाल ब्राक्टा',
-    photoUrl: 'https://i.pravatar.cc/300?u=mohan-lal-brakta',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081922/neta_samachar_politicians/uez9xedsn5uo6myayxzv.jpg',
     partyId: 'inc',
     constituency: 'Rohru (SC)',
     state: 'Himachal Pradesh',
@@ -470,7 +470,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     promisesBroken: 0,
     promisesInProgress: 3,
     criminalCases: [
-      { caseNumber: 'FIR 114/20, 150/19, 203/18', court: 'Theog and Shimla', section: 'IPC 143, 188, 341, 336', chargeDescription: '3 cases related to public protests and civil disobedience', status: 'pending', year: 2022, severity: 'cognizable' }
+      { id: 'c-008', caseNumber: 'FIR 114/20, 150/19, 203/18', court: 'Theog and Shimla', section: 'IPC 143, 188, 341, 336', chargeDescription: '3 cases related to public protests and civil disobedience', status: 'pending', year: 2022, severity: 'cognizable' }
     ],
     assetDeclarations: [
       { year: 2022, totalAssets: 25168089, totalLiabilities: 1748069, movableAssets: 0, immovableAssets: 0, spouseAssets: 0 },
@@ -486,7 +486,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'sanjay-chauhan',
     name: 'Sanjay Chauhan',
     nameHindi: 'संजय चौहान',
-    photoUrl: 'https://i.pravatar.cc/300?u=sanjay-chauhan',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081925/neta_samachar_politicians/yrjyiadnccqnkw2ghzxe.jpg',
     partyId: 'cpi-m',
     constituency: 'Shimla Urban',
     state: 'Himachal Pradesh',
@@ -517,7 +517,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'surinder-chauhan',
     name: 'Surinder Chauhan',
     nameHindi: 'सुरिंदर चौहान',
-    photoUrl: 'https://i.pravatar.cc/300?u=surinder-chauhan',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081926/neta_samachar_politicians/adykgnnabhpvjwbbirbd.jpg',
     partyId: 'inc',
     constituency: 'Shimla',
     state: 'Himachal Pradesh',
@@ -548,7 +548,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'suresh-kumar-kashyap',
     name: 'Suresh Kumar Kashyap',
     nameHindi: 'सुरेश कुमार कश्यप',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Suresh_Kumar_Kashyap_with_Pm_Narendra_Modi.jpg/500px-Suresh_Kumar_Kashyap_with_Pm_Narendra_Modi.jpg',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081927/neta_samachar_politicians/grpon21vxsgdpro85izu.jpg',
     partyId: 'bjp',
     constituency: 'Shimla',
     state: 'Himachal Pradesh',
@@ -685,7 +685,7 @@ export const ARCHIVED_POLITICIANS: Politician[] = [
     id: 'sanjay-sood',
     name: 'Sanjay Sood',
     nameHindi: 'संजय सूद',
-    photoUrl: 'https://i.pravatar.cc/300?u=sanjay-sood',
+    photoUrl: 'https://res.cloudinary.com/g37jftpu/image/upload/v1786081928/neta_samachar_politicians/wbjugala9kfhx6gsegsx.jpg',
     partyId: 'bjp',
     constituency: 'Shimla Urban',
     state: 'Himachal Pradesh',

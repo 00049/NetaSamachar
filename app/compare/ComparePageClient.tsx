@@ -15,7 +15,7 @@ function CompareBuilderSkeleton() {
           {['Party', 'State', 'Constituency', 'Politician'].map((t) => (
             <div
               key={t}
-              className="h-[36px] w-28 bg-white/[0.04] rounded-[18px] border border-white/[0.08]"
+              className="h-[36px] w-28 bg-white/[0.04] rounded-md border border-white/[0.08]"
             />
           ))}
         </div>

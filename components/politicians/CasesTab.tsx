@@ -33,7 +33,7 @@ export function CasesTab({ politician }: Props) {
 
   if (cases.length === 0) {
     return (
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-[16px] bg-white/[0.02]">
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-md bg-white/[0.02]">
         <h3 className="text-white font-bold mb-2">No Legal Proceedings</h3>
         <p className="text-[#A1A1AA] text-[13px]">No criminal cases or legal proceedings have been registered.</p>
       </div>
@@ -65,10 +65,12 @@ export function CasesTab({ politician }: Props) {
 
   const getSeverityMeta = (severity: string) => {
     switch(severity) {
-      case 'heinous': return { label: 'Heinous', color: 'bg-red-500' };
-      case 'cognizable': return { label: 'Cognizable', color: 'bg-yellow-500' };
-      case 'non_cognizable': return { label: 'Non-Cognizable', color: 'bg-[#22c55e]' };
-      default: return { label: severity, color: 'bg-[#A1A1AA]' };
+      // shape: circle (red) = heinous, diamond = cognizable, triangle = non-cognizable
+      // Shape + color ensures colorblind accessibility
+      case 'heinous': return { label: 'Heinous', color: 'bg-red-500', shape: 'rounded-none rotate-45' };
+      case 'cognizable': return { label: 'Cognizable', color: 'bg-yellow-500', shape: 'rounded-none' };
+      case 'non_cognizable': return { label: 'Non-Cognizable', color: 'bg-[#22c55e]', shape: 'rounded-full' };
+      default: return { label: severity, color: 'bg-[#A1A1AA]', shape: 'rounded-full' };
     }
   };
 
@@ -163,24 +165,24 @@ export function CasesTab({ politician }: Props) {
                 <input 
                   type="text" 
                   placeholder="Search cases..." 
-                  className="w-full bg-[#111111] border border-white/10 rounded-[8px] pl-[36px] pr-[12px] py-[8px] text-[13px] text-white focus:outline-none focus:border-white/20 transition-colors placeholder:text-white/20"
+                  className="w-full bg-[#111111] border border-white/10 rounded-xs pl-[36px] pr-[12px] py-[8px] text-[13px] text-white focus:outline-none focus:border-white/20 transition-colors placeholder:text-white/20"
                 />
               </div>
 
-              <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
+              <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
                 All Status <ChevronDown className="w-[14px] h-[14px]" />
               </button>
-              <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
+              <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
                 All Case Types <ChevronDown className="w-[14px] h-[14px]" />
               </button>
-              <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
+              <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
                 All Courts <ChevronDown className="w-[14px] h-[14px]" />
               </button>
-              <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
+              <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors">
                 All Years <ChevronDown className="w-[14px] h-[14px]" />
               </button>
               
-              <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-[8px] border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors ml-auto xl:ml-0">
+              <button className="flex items-center gap-[6px] px-[12px] py-[8px] rounded-xs border border-white/10 text-[#A1A1AA] text-[13px] hover:text-white bg-[#111111] hover:bg-white/[0.02] transition-colors ml-auto xl:ml-0">
                 More Filters <Filter className="w-[14px] h-[14px]" />
               </button>
             </div>
@@ -212,7 +214,7 @@ export function CasesTab({ politician }: Props) {
                     
                     {/* Case Title */}
                     <div className="col-span-3 flex gap-[12px] items-start pr-[16px]">
-                       <div className="w-[40px] h-[40px] shrink-0 rounded-[12px] bg-white/[0.02] border border-white/10 flex items-center justify-center group-hover:border-white/20 transition-colors mt-[2px]">
+                       <div className="w-[40px] h-[40px] shrink-0 rounded-sm bg-white/[0.02] border border-white/10 flex items-center justify-center group-hover:border-white/20 transition-colors mt-[2px]">
                          <Scale className="w-[18px] h-[18px] text-[#A1A1AA]" />
                        </div>
                        <div className="flex flex-col gap-[4px]">
@@ -251,7 +253,10 @@ export function CasesTab({ politician }: Props) {
                     
                     {/* Severity */}
                     <div className="col-span-1 flex items-center justify-center gap-[6px]">
-                      <div className={clsx("w-[6px] h-[6px] rounded-full", getSeverityMeta(c.severity).color)} />
+                      <div
+                        className={clsx("w-[7px] h-[7px] flex-shrink-0", getSeverityMeta(c.severity).color, getSeverityMeta(c.severity).shape)}
+                        aria-hidden="true"
+                      />
                       <span className="text-[#A1A1AA] text-[12px]">{getSeverityMeta(c.severity).label}</span>
                     </div>
 
@@ -305,7 +310,7 @@ export function CasesTab({ politician }: Props) {
             
             <div className="flex items-end gap-[16px] mb-[12px]">
               <div className="text-yellow-500 font-bold text-[36px] leading-none">42<span className="text-white/40 text-[20px]"> / 100</span></div>
-              <div className="px-[10px] py-[4px] rounded-[6px] bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[11px] font-bold uppercase tracking-wider mb-[4px]">
+              <div className="px-[10px] py-[4px] rounded-sm bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[11px] font-bold uppercase tracking-wider mb-[4px]">
                 Moderate Risk
               </div>
             </div>
@@ -321,7 +326,7 @@ export function CasesTab({ politician }: Props) {
               <span>High Risk</span>
             </div>
 
-            <Link href="#" className="flex items-center gap-[6px] text-[#3b82f6] hover:text-blue-400 transition-colors text-[12px] font-medium">
+            <Link href="/methodology" className="flex items-center gap-[6px] text-[#3b82f6] hover:text-blue-400 transition-colors text-[12px] font-medium">
               View Methodology <ChevronRight className="w-[14px] h-[14px]" />
             </Link>
           </div>
@@ -433,14 +438,14 @@ export function CasesTab({ politician }: Props) {
 
             </div>
             
-            <Link href="#" className="flex items-center justify-center gap-[6px] text-[#A1A1AA] hover:text-white transition-colors text-[12px] font-medium mt-[24px] pt-[16px] border-t border-white/5">
+            <span className="flex items-center justify-center gap-[6px] text-[#A1A1AA] text-[12px] font-medium mt-[24px] pt-[16px] border-t border-white/5 opacity-50 cursor-not-allowed" aria-disabled="true">
               View Detailed Case Timeline <ChevronRight className="w-[14px] h-[14px]" />
-            </Link>
+            </span>
           </div>
           
           <div className="flex items-center justify-end gap-[16px]">
             <span className="text-[#A1A1AA] text-[12px]">Have information about a case?</span>
-            <button className="px-[16px] py-[8px] rounded-[8px] border border-green-500/30 text-green-500 text-[12px] font-medium hover:bg-green-500/10 transition-colors">
+            <button className="px-[16px] py-[8px] rounded-xs border border-green-500/30 text-green-500 text-[12px] font-medium hover:bg-green-500/10 transition-colors">
               Submit Information
             </button>
           </div>

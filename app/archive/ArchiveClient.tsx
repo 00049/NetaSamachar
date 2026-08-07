@@ -10,13 +10,6 @@ import { ArchiveCard } from '@/components/archive/ArchiveCard';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useRef } from 'react';
 
-const STATS = [
-  { label: 'Total Documents', value: 12847, color: 'var(--text-primary)' },
-  { label: 'Tier 1 Sources', value: 8294, color: 'var(--accent-info)' },
-  { label: 'SHA-256 Verified', value: 100, suffix: '%', color: 'var(--accent-positive)' },
-  { label: 'Last Ingested', value: 2, suffix: 'h ago', color: 'var(--text-tertiary)' },
-];
-
 const MOCK_DOCUMENTS = [
   {
     id: 'doc-1',
@@ -57,6 +50,13 @@ const MOCK_DOCUMENTS = [
       { type: 'politician', label: 'Siddaramaiah', href: '/politicians/siddaramaiah' },
     ],
   },
+];
+
+const STATS = [
+  { label: 'Total Documents', value: MOCK_DOCUMENTS.length, color: 'var(--text-primary)' },
+  { label: 'Tier 1 Sources', value: MOCK_DOCUMENTS.filter(d => d.tier === 1).length, color: 'var(--accent-info)' },
+  { label: 'SHA-256 Verified', value: 100, suffix: '%', color: 'var(--accent-positive)' },
+  { label: 'Last Ingested', value: 2, suffix: 'h ago', color: 'var(--text-tertiary)' },
 ];
 
 type Doc = (typeof MOCK_DOCUMENTS)[0];
@@ -142,6 +142,7 @@ export function ArchiveClient() {
               onChange={setInputValue}
               onDebounced={handleDebouncedSearch}
               placeholder="Search documents, sources, or SHA hashes..."
+              ariaLabel="Search the evidence archive by document title, source, or hash"
               className="xl:max-w-md flex-shrink-0"
             />
 
@@ -152,7 +153,7 @@ export function ArchiveClient() {
                   <button
                     key={filter}
                     onClick={() => setActiveType(filter)}
-                    className={`h-[32px] px-[14px] rounded-[16px] text-[13px] whitespace-nowrap transition-all duration-150 ${
+                    className={`h-[32px] px-[14px] rounded-md text-[13px] whitespace-nowrap transition-all duration-150 ${
                       activeType === filter
                         ? 'bg-white/10 border border-white/30 text-white font-semibold'
                         : 'bg-transparent border border-white/12 text-[#A1A1AA] hover:border-white/25 hover:text-[#D4D4D8]'
@@ -171,7 +172,7 @@ export function ArchiveClient() {
                   <button
                     key={filter}
                     onClick={() => setActiveTier(filter)}
-                    className={`h-[32px] px-[14px] rounded-[16px] text-[13px] whitespace-nowrap transition-all duration-150 ${
+                    className={`h-[32px] px-[14px] rounded-md text-[13px] whitespace-nowrap transition-all duration-150 ${
                       activeTier === filter
                         ? 'bg-white/10 border border-white/30 text-white font-semibold'
                         : 'bg-transparent border border-white/12 text-[#A1A1AA] hover:border-white/25 hover:text-[#D4D4D8]'
@@ -184,7 +185,7 @@ export function ArchiveClient() {
 
               <div className="h-6 w-px bg-[var(--border-subtle)] hidden xl:block flex-shrink-0" />
 
-              <div className="flex items-center gap-2 pl-3 border border-[var(--border-subtle)] pr-4 min-h-[36px] rounded-[8px] bg-white/5 flex-shrink-0">
+              <div className="flex items-center gap-2 pl-3 border border-[var(--border-subtle)] pr-4 min-h-[36px] rounded-sm bg-white/5 flex-shrink-0">
                 <ArrowUpDown className="w-4 h-4 text-[var(--text-tertiary)]" />
                 <select
                   value={sortBy}
@@ -231,7 +232,7 @@ export function ArchiveClient() {
 
         {filteredDocs.length > 0 && (
           <div className="flex justify-center mt-12">
-            <button className="px-8 py-3 border border-white/20 text-[11px] font-bold uppercase tracking-widest text-white hover:bg-white/10 hover:border-white/30 transition-all rounded-[4px]">
+            <button className="btn-secondary">
               Load 20 more documents
             </button>
           </div>

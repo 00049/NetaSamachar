@@ -1,26 +1,34 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Sparkles, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
+import type { AISummary } from '@prisma/client';
 
 interface IntelligenceOverviewProps {
   politicianId: string;
 }
 
 export function IntelligenceOverview({ politicianId }: IntelligenceOverviewProps) {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<AISummary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const pollCount = useRef(0);
 
   const fetchSummary = async () => {
+    setLoading(true);
+    setError(false);
     try {
       const res = await fetch(`/api/politicians/${politicianId}/summary`);
       if (res.ok) {
         const json = await res.json();
         setData(json);
+      } else {
+        setError(true);
       }
     } catch (e) {
       console.error(e);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -35,6 +43,12 @@ export function IntelligenceOverview({ politicianId }: IntelligenceOverviewProps
     let interval: NodeJS.Timeout;
     if (data?.status === 'GENERATING') {
       interval = setInterval(() => {
+        if (pollCount.current >= 10) {
+          clearInterval(interval);
+          setError(true);
+          return;
+        }
+        pollCount.current += 1;
         fetchSummary();
       }, 3000); // Poll every 3s
     }
@@ -50,6 +64,20 @@ export function IntelligenceOverview({ politicianId }: IntelligenceOverviewProps
           <RefreshCw className="w-[16px] h-[16px] animate-spin text-[#3B82F6]" />
           <span className="text-[14px]">Updating Intelligence Overview...</span>
         </div>
+      </div>
+    );
+  }
+
+  if (error && !data) {
+    return (
+      <div className="premium-card p-[24px] flex flex-col items-center justify-center min-h-[140px] text-center gap-3">
+        <span className="text-[#F87171] text-[14px] font-medium">Failed to load intelligence overview</span>
+        <button 
+          onClick={fetchSummary}
+          className="px-4 py-1.5 rounded-md bg-[#F87171]/10 text-[#F87171] hover:bg-[#F87171]/20 text-[13px] font-bold transition-colors border border-[#F87171]/20"
+        >
+          Try Again
+        </button>
       </div>
     );
   }
@@ -92,11 +120,17 @@ export function IntelligenceOverview({ politicianId }: IntelligenceOverviewProps
           <span className="text-white text-[11px] font-medium">{timeAgo}</span>
           {data?.sourcesUsed && (
             <span className="text-[#52525B] text-[11px]">
-              Sources: {JSON.parse(data.sourcesUsed).join(', ')}
+              Sources: {(() => {
+                try {
+                  return JSON.parse(data.sourcesUsed).join(', ');
+                } catch {
+                  return '';
+                }
+              })()}
             </span>
           )}
         </div>
-        <Link href={`/politicians/${politicianId}/executive-brief`} className="flex items-center justify-center border border-white/10 rounded-[8px] py-[8px] px-[16px] text-[#A1A1AA] text-[13px] font-medium hover:text-white hover:bg-white/5 transition-all duration-[220ms] whitespace-nowrap">
+        <Link href={`/politicians/${politicianId}/executive-brief`} className="flex items-center justify-center border border-white/10 rounded-xs py-[8px] px-[16px] text-[#A1A1AA] text-[13px] font-medium hover:text-white hover:bg-white/5 transition-all duration-[220ms] whitespace-nowrap">
           Read Full Overview <span className="ml-[8px]">&gt;</span>
         </Link>
       </div>

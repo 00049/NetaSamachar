@@ -65,7 +65,7 @@ export default function EvidencePage() {
       </div>
 
       {/* Sticky Database Controls */}
-      <div className="sticky top-[60px] z-30 bg-[var(--bg-base)]/90 backdrop-blur-md border-y border-[var(--border-subtle)] mb-8 shadow-sm">
+      <div className="sticky top-[80px] z-30 bg-[var(--bg-base)]/90 backdrop-blur-md border-y border-[var(--border-subtle)] mb-8 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 py-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
           
           <div className="relative w-full md:max-w-md">

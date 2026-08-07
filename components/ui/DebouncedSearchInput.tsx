@@ -14,6 +14,8 @@ interface SearchInputProps {
   debounceMs?: number;
   className?: string;
   id?: string;
+  /** Accessible label for the input. Falls back to placeholder if omitted. */
+  ariaLabel?: string;
 }
 
 /**
@@ -31,6 +33,7 @@ export function DebouncedSearchInput({
   debounceMs = 220,
   className = '',
   id,
+  ariaLabel,
 }: SearchInputProps) {
   const debounced = useDebounce(value, debounceMs);
   const [isPending, setIsPending] = useState(false);
@@ -66,6 +69,7 @@ export function DebouncedSearchInput({
             viewBox="0 0 24 24"
             stroke="currentColor"
             strokeWidth={2}
+            aria-hidden="true"
           >
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -78,6 +82,7 @@ export function DebouncedSearchInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        aria-label={ariaLabel ?? placeholder}
         autoComplete="off"
         className={`w-full pl-10 pr-4 py-2.5 bg-transparent border border-[var(--border-subtle)]
           text-sm font-medium text-[var(--text-primary)]

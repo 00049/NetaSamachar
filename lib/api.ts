@@ -1,9 +1,9 @@
 import { unstable_cache } from 'next/cache';
-import { POLITICIANS, PARTIES } from '@/data/politicians';
-import { PROMISES, EVIDENCE } from '@/data/promises';
-import { BILLS } from '@/data/bills';
-import { VOTES } from '@/data/votes';
+import { PrismaClient } from '@prisma/client';
 import { EXECUTIVE_BRIEFS } from '@/data/executive_briefs';
+import { Politician, Promise as PromiseType, Bill, CriminalCase, TimelineEvent, Party, Evidence } from './types';
+
+const prisma = new PrismaClient();
 
 /**
  * Calculates and caches global platform statistics.
@@ -12,18 +12,29 @@ import { EXECUTIVE_BRIEFS } from '@/data/executive_briefs';
  */
 export const getPlatformStats = unstable_cache(
   async () => {
-    // In a real database, this would be COUNT(*) queries
-    const promisesTracked = PROMISES.length;
+    const promisesTracked = await prisma.promise.count();
     
-    // We don't have a real evidence array yet, so we derive a realistic number
-    const evidenceDocuments = promisesTracked * 3 + 187; 
+    // Real evidence count from DB
+    const evidenceDocuments = await prisma.evidence.count(); 
     
     // Calculate verified complete %
-    const fulfilled = PROMISES.filter(p => p.status === 'completed' || p.status === 'operational' || p.status === 'mostly_completed').length;
+    const fulfilled = await prisma.promise.count({
+      where: {
+        status: {
+          in: ['completed', 'operational', 'mostly_completed']
+        }
+      }
+    });
     const verifiedComplete = promisesTracked > 0 ? Math.round((fulfilled / promisesTracked) * 100) : 0;
 
     // Calculate pending scrutiny based on pending status
-    const pendingScrutiny = PROMISES.filter(p => p.status === 'no_verified_progress' || p.status === 'unable_to_verify').length;
+    const pendingScrutiny = await prisma.promise.count({
+      where: {
+        status: {
+          in: ['no_verified_progress', 'unable_to_verify']
+        }
+      }
+    });
 
     return {
       promisesTracked,
@@ -37,42 +48,132 @@ export const getPlatformStats = unstable_cache(
 );
 
 /**
- * Simulates a unified, batched data query.
- * In a real backend, this establishes the pattern for a single composite query 
- * (e.g. GraphQL or a joined SQL query) fetching the profile, promises, and evidence 
- * in one round trip to avoid sequential request waterfalls.
+ * Single composite query fetching the profile, promises, and evidence
  */
 export async function getPoliticianDossier(id: string) {
-  // Simulate network delay to prove this runs async
-  // await new Promise(resolve => setTimeout(resolve, 50));
-
-  const politician = POLITICIANS.find(p => p.id === id);
+  const politician = await prisma.politician.findUnique({
+    where: { id },
+    include: {
+      party: true,
+      criminalCases: true,
+      assetDeclarations: true,
+      careerTimeline: true,
+      promises: {
+        include: {
+          timeline: true
+        }
+      },
+      bills: true,
+      voteRecords: true
+    }
+  });
   if (!politician) return null;
 
-  const party = PARTIES.find(p => p.id === politician.partyId) || null;
-  const promises = PROMISES.filter(p => p.politicianId === politician.id);
-  const bills = BILLS.filter(b => b.politicianId === politician.id);
-  const votes = VOTES.filter(v => v.politicianId === politician.id);
+  const party = politician.party;
+  const promises = politician.promises;
+  const bills = politician.bills;
+  const votes = politician.voteRecords;
   
+  // Aggregate evidence IDs
   const evidenceIds = new Set<string>();
-  politician.evidenceIds?.forEach(id => evidenceIds.add(id));
-  promises.forEach(p => p.evidenceIds.forEach(id => evidenceIds.add(id)));
-  promises.forEach(p => p.timeline.forEach(t => t.evidenceIds.forEach(id => evidenceIds.add(id))));
-  bills.forEach(b => {
-    // If bills had evidenceIds, we'd add them here
-    // b.evidenceIds?.forEach(id => evidenceIds.add(id));
+  politician.evidenceIds.forEach((eid: string) => evidenceIds.add(eid));
+  promises.forEach((p: any) => p.evidenceIds.forEach((eid: string) => evidenceIds.add(eid)));
+  promises.forEach((p: any) => p.timeline.forEach((t: any) => t.evidenceIds.forEach((eid: string) => evidenceIds.add(eid))));
+  
+  const evidence = await prisma.evidence.findMany({
+    where: {
+      id: { in: Array.from(evidenceIds) }
+    }
   });
   
-  const evidence = EVIDENCE.filter(e => evidenceIds.has(e.id));
   const executiveBrief = EXECUTIVE_BRIEFS[id] || null;
 
   return {
-    politician,
-    party,
-    promises,
-    bills,
-    votes,
-    evidence,
+    politician: politician as any as Politician,
+    party: party as any as Party,
+    promises: promises as any as PromiseType[],
+    bills: bills as any as Bill[],
+    votes: votes as any,
+    evidence: evidence as any as Evidence[],
     executiveBrief
   };
+}
+
+export async function getBill(id: string): Promise<Bill | null> {
+  return await prisma.bill.findUnique({ where: { id } }) as any;
+}
+
+export async function getCriminalCase(id: string): Promise<CriminalCase | null> {
+  return await prisma.criminalCase.findUnique({
+    where: { id },
+    include: { politician: true }
+  }) as any;
+}
+
+export async function getPromise(id: string): Promise<PromiseType | null> {
+  return await prisma.promise.findUnique({
+    where: { id },
+    include: { politician: true, party: true, timeline: true }
+  }) as any;
+}
+
+export async function getTimelineEvent(id: string): Promise<TimelineEvent | null> {
+  return await prisma.timelineEvent.findUnique({
+    where: { id },
+    include: { promise: true }
+  }) as any;
+}
+
+export async function getState(slug: string) {
+  const stateName = slug.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  const exists = await prisma.politician.findFirst({
+    where: { state: stateName }
+  });
+  if (!exists) return null;
+  return { name: stateName, slug };
+}
+
+export async function getParty(slug: string): Promise<Party | null> {
+  return await prisma.party.findFirst({
+    where: {
+      abbreviation: {
+        mode: 'insensitive',
+        equals: slug
+      }
+    }
+  }) as any;
+}
+
+export async function getPoliticiansByState(stateName: string): Promise<Politician[]> {
+  return await prisma.politician.findMany({
+    where: { state: stateName },
+    include: { party: true, criminalCases: true, assetDeclarations: true, careerTimeline: true }
+  }) as any;
+}
+
+export async function searchEvidence(query: string): Promise<Evidence[]> {
+  if (!query) return await prisma.evidence.findMany({ take: 10 }) as any;
+  return await prisma.evidence.findMany({
+    where: {
+      OR: [
+        { title: { contains: query, mode: 'insensitive' } },
+        { excerpt: { contains: query, mode: 'insensitive' } }
+      ]
+    },
+    take: 20
+  }) as any;
+}
+
+export async function getPoliticians(): Promise<Politician[]> {
+  return await prisma.politician.findMany({
+    include: { party: true, criminalCases: true, assetDeclarations: true, careerTimeline: true }
+  }) as any;
+}
+
+export async function getTrendingPoliticians(): Promise<Politician[]> {
+  return await prisma.politician.findMany({
+    take: 4,
+    include: { party: true, criminalCases: true, assetDeclarations: true, careerTimeline: true },
+    orderBy: { attendancePercent: 'desc' } // or any other arbitrary ranking to represent "trending"
+  }) as any;
 }

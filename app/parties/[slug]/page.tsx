@@ -4,8 +4,25 @@ import { PROMISES } from '@/data/promises';
 import { aggregateStats } from '@/lib/aggregation';
 import { notFound } from 'next/navigation';
 
-export default function PartyScorecardPage({ params }: { params: { slug: string } }) {
-  const party = PARTIES.find(p => p.id === params.slug);
+import type { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const party = PARTIES.find(p => p.id === slug);
+  if (!party) return { title: 'Party Not Found' };
+  
+  return {
+    title: `${party.name} (${party.abbreviation}) | Neta Samachar`,
+    description: `Accountability scorecard for ${party.name}. Track promises, candidates, and legislative performance.`,
+    alternates: {
+      canonical: `/parties/${slug}`,
+    },
+  };
+}
+
+export default async function PartyScorecardPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const party = PARTIES.find(p => p.id === slug);
   
   if (!party) {
     notFound();

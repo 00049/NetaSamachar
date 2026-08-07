@@ -19,6 +19,7 @@ interface Props {
 
 export function EvidenceSidePanel({ evidence, isOpen, onClose }: Props) {
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState('');
   const [activeTab, setActiveTab] = useState<'metadata' | 'graph'>('metadata');
 
   if (!evidence) return null;
@@ -32,12 +33,30 @@ export function EvidenceSidePanel({ evidence, isOpen, onClose }: Props) {
   const linkedPoliticianIds = Array.from(new Set(linkedPromises.map(p => p.politicianId)));
   const linkedPoliticians = POLITICIANS.filter(p => linkedPoliticianIds.includes(p.id));
 
-  const handleCopyCitation = () => {
+  const handleCopyCitation = async () => {
     // Basic APA-ish citation for the platform
     const citation = `${evidence.source}. (${new Date(evidence.date).getFullYear()}). ${evidence.title}. Neta Samachar Evidence Archive.`;
-    navigator.clipboard.writeText(citation);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(citation);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Clipboard copy failed:', err);
+      setCopyError('Failed to copy. ' + citation);
+      setTimeout(() => setCopyError(''), 5000);
+    }
+  };
+
+  const handleCopyHash = async () => {
+    try {
+      await navigator.clipboard.writeText(evidence.sha256Hash);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Clipboard copy failed:', err);
+      setCopyError('Failed to copy. Hash: ' + evidence.sha256Hash);
+      setTimeout(() => setCopyError(''), 5000);
+    }
   };
 
   return (
@@ -84,8 +103,8 @@ export function EvidenceSidePanel({ evidence, isOpen, onClose }: Props) {
                   </button>
                 </div>
               </div>
-              <button onClick={onClose} className="p-2 hover:bg-[var(--border-subtle)] transition-colors rounded-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
-                <X className="w-4 h-4" />
+              <button onClick={onClose} aria-label="Close evidence panel" className="p-2 hover:bg-[var(--border-subtle)] transition-colors rounded-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
@@ -143,7 +162,7 @@ export function EvidenceSidePanel({ evidence, isOpen, onClose }: Props) {
                           </code>
                         </div>
                         <button 
-                          onClick={() => navigator.clipboard.writeText(evidence.sha256Hash)}
+                          onClick={handleCopyHash}
                           className="p-2 hover:bg-[var(--bg-base)] border border-transparent hover:border-[var(--border-subtle)] transition-colors text-[var(--text-tertiary)]"
                           title="Copy Hash"
                         >
@@ -324,14 +343,19 @@ export function EvidenceSidePanel({ evidence, isOpen, onClose }: Props) {
             </div>
 
             {/* Bottom Action Bar */}
-            <div className="p-4 border-t border-[var(--border-subtle)] bg-[var(--bg-base)] flex items-center justify-between">
+            <div className="p-4 border-t border-[var(--border-subtle)] bg-[var(--bg-base)] flex flex-col md:flex-row items-center justify-between gap-4">
               <button 
                 onClick={handleCopyCitation}
                 className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-raised)] border border-[var(--border-subtle)] hover:border-[var(--text-primary)] transition-colors text-xs font-bold uppercase tracking-widest text-[var(--text-primary)]"
               >
                 {copied ? <CheckCircle2 className="w-4 h-4 text-[var(--accent-positive)]" /> : <Link2 className="w-4 h-4" />}
-                {copied ? 'Citation Copied' : 'Cite Document'}
+                {copied ? 'Copied' : 'Cite Document'}
               </button>
+              {copyError && (
+                <div className="text-red-500 text-xs font-bold max-w-md break-all">
+                  {copyError}
+                </div>
+              )}
             </div>
           </motion.div>
         </>

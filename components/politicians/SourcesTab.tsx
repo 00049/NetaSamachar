@@ -25,7 +25,7 @@ export function SourcesTab({ politician, evidence = [] }: { politician: Politici
   
   if (!evidence || evidence.length === 0) {
     return (
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-[16px] bg-white/[0.02]">
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-md bg-white/[0.02]">
         <h3 className="text-white font-bold mb-2">No Sources Found</h3>
         <p className="text-[#A1A1AA] text-[13px]">There is no verifiable evidence or sources documented for {politician.name} at this time.</p>
       </div>

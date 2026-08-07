@@ -29,6 +29,7 @@ export default function MethodologyPage() {
     { id: 'confidence', title: 'Confidence Scoring' },
     { id: 'lifecycle', title: 'Promise Lifecycle' },
     { id: 'decision-tree', title: 'Interactive Decision Tree' },
+    { id: 'scoring-formula', title: 'Overall Score Formula' },
     { id: 'legal', title: 'Legal & Compliance' },
   ];
 
@@ -249,13 +250,57 @@ export default function MethodologyPage() {
             </AnimatePresence>
           </section>
 
-          {/* VI. Legal */}
+          {/* VI. Overall Score Formula */}
+          <section id="scoring-formula" className="border border-[var(--border-subtle)] bg-[var(--bg-raised)] overflow-hidden">
+            <button 
+              onClick={() => toggleSection('scoring-formula')}
+              className="w-full flex items-center justify-between p-6 bg-[var(--bg-base)] hover:bg-[var(--border-subtle)] transition-colors"
+            >
+              <h2 className="font-serif text-2xl font-bold text-[var(--text-primary)]">VI. Overall Score Formula</h2>
+              <ChevronDown className={clsx("w-5 h-5 text-[var(--text-tertiary)] transition-transform duration-300", expandedSection === 'scoring-formula' ? "rotate-180" : "")} />
+            </button>
+            <AnimatePresence>
+              {expandedSection === 'scoring-formula' && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="p-8 border-t border-[var(--border-subtle)]">
+                    <p className="text-[var(--text-primary)] leading-relaxed text-lg font-serif mb-6">
+                      A politician's overall Intelligence Score is a composite metric combining their legislative behavior, ethical standing, and promise fulfillment.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                      <div className="bg-[var(--bg-base)] border border-[var(--border-subtle)] p-6 rounded-sm">
+                        <div className="text-3xl font-black text-[#e6b16a] mb-2">40%</div>
+                        <h3 className="font-bold text-[var(--text-primary)] mb-2">Promises</h3>
+                        <p className="text-[13px] text-[var(--text-tertiary)]">Calculated by dividing fulfilled promises by total promises, penalized heavily for explicitly broken promises. Base promise score is weighted by the confidence tiers of their underlying evidence.</p>
+                      </div>
+                      <div className="bg-[var(--bg-base)] border border-[var(--border-subtle)] p-6 rounded-sm">
+                        <div className="text-3xl font-black text-[#e6b16a] mb-2">30%</div>
+                        <h3 className="font-bold text-[var(--text-primary)] mb-2">Attendance</h3>
+                        <p className="text-[13px] text-[var(--text-tertiary)]">Directly tracks parliamentary or legislative assembly attendance percentages against the baseline expectation.</p>
+                      </div>
+                      <div className="bg-[var(--bg-base)] border border-[var(--border-subtle)] p-6 rounded-sm">
+                        <div className="text-3xl font-black text-[#e6b16a] mb-2">30%</div>
+                        <h3 className="font-bold text-[var(--text-primary)] mb-2">Legal/Ethical</h3>
+                        <p className="text-[13px] text-[var(--text-tertiary)]">A perfect base score of 100, which is then severely deducted for pending cognizable criminal cases or proven corruption charges.</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </section>
+
+          {/* VII. Legal */}
           <section id="legal" className="border border-[var(--border-subtle)] bg-[var(--bg-raised)] overflow-hidden">
             <button 
               onClick={() => toggleSection('legal')}
               className="w-full flex items-center justify-between p-6 bg-[var(--bg-base)] hover:bg-[var(--border-subtle)] transition-colors"
             >
-              <h2 className="font-serif text-2xl font-bold text-[var(--text-primary)]">VI. Legal & Compliance</h2>
+              <h2 className="font-serif text-2xl font-bold text-[var(--text-primary)]">VII. Legal & Compliance</h2>
               <ChevronDown className={clsx("w-5 h-5 text-[var(--text-tertiary)] transition-transform duration-300", expandedSection === 'legal' ? "rotate-180" : "")} />
             </button>
             <AnimatePresence>

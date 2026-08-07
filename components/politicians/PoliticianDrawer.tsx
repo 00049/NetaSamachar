@@ -2,9 +2,11 @@
 
 import { Politician } from '@/lib/types';
 import { PARTIES } from '@/data/politicians';
+import { PoliticianHoverCard } from './PoliticianHoverCard';
 import { formatCurrency, getPromiseFulfillmentRate } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink } from 'lucide-react';
+import { CriminalCaseBadge } from './CriminalCaseBadge';
 import { Avatar } from '@/components/ui/Avatar';
 import { HoverPrefetchLink } from '@/components/ui/HoverPrefetchLink';
 
@@ -42,8 +44,8 @@ export function PoliticianDrawer({ politician, isOpen, onClose }: Props) {
               <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)]">
                 Dossier Preview
               </div>
-              <button onClick={onClose} className="p-2 hover:bg-[var(--border-subtle)] transition-colors">
-                <X className="w-5 h-5 text-[var(--text-primary)]" />
+              <button onClick={onClose} aria-label="Close dossier preview" className="p-2.5 hover:bg-[var(--border-subtle)] transition-colors">
+                <X className="w-5 h-5 text-[var(--text-primary)]" aria-hidden="true" />
               </button>
             </div>
 
@@ -56,7 +58,9 @@ export function PoliticianDrawer({ politician, isOpen, onClose }: Props) {
                 />
                 <div>
                   <h2 className="font-serif text-3xl font-black text-[var(--text-primary)] mb-1">
-                    {politician.name}
+                    <PoliticianHoverCard politicianId={politician.id}>
+                      <span className="cursor-default">{politician.name}</span>
+                    </PoliticianHoverCard>
                   </h2>
                   <div className="text-xs uppercase tracking-widest text-[var(--text-tertiary)] font-bold mb-3">
                     {party?.name} • {politician.constituency}
@@ -87,7 +91,7 @@ export function PoliticianDrawer({ politician, isOpen, onClose }: Props) {
                   <ul className="space-y-4">
                     {politician.criminalCases.map((c, i) => (
                       <li key={i} className="flex gap-4 items-start">
-                        <div className={`w-2 h-2 mt-1.5 rounded-full flex-shrink-0 ${c.severity === 'heinous' ? 'bg-[var(--accent-negative)]' : 'bg-[var(--accent-warning)]'}`} />
+                        <CriminalCaseBadge severity={c.severity} />
                         <div>
                           <div className="font-bold text-sm text-[var(--text-primary)]">{c.chargeDescription}</div>
                           <div className="text-xs text-[var(--text-tertiary)]">IPC Section {c.section} • {c.status}</div>

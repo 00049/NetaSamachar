@@ -6,7 +6,7 @@ export default async function SourceDetailPlaceholder({ params }: { params: Prom
     <div className="min-h-screen pt-[80px]">
       <div className="max-w-[1200px] mx-auto px-6 py-8">
         <Breadcrumbs items={[
-          { label: 'Sources', href: '#' },
+          { label: 'Sources', href: '/evidence' },
           { label: id }
         ]} />
         <div className="mb-8">
@@ -16,7 +16,7 @@ export default async function SourceDetailPlaceholder({ params }: { params: Prom
         </div>
         <div className="premium-card p-8 h-full min-h-[400px] flex flex-col items-center justify-center text-[#A1A1AA] border border-white/10 border-dashed">
           <p className="mb-4">Complete breakdown of all data points collected from {id}</p>
-          <a href="#" className="px-4 py-2 bg-white/5 rounded hover:bg-white/10 transition-colors">Visit External Source</a>
+          <span className="px-4 py-2 bg-white/5 rounded opacity-40 cursor-not-allowed text-[#A1A1AA]" aria-disabled="true">Visit External Source</span>
         </div>
       </div>
     </div>
