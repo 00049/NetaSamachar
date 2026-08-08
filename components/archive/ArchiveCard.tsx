@@ -62,22 +62,24 @@ export function ArchiveCard({ doc }: { doc: any }) {
         </div>
         
         {/* Supports Row */}
-        <div className="pt-4 border-t border-[rgba(255,255,255,0.05)] flex items-center flex-wrap gap-3">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#71717A] mr-1">
-            Supports:
-          </span>
-          {doc.supports.map((item: { href: string; type: string; label: string }, idx: number) => (
-            <Link 
-              key={idx} 
-              href={item.href}
-              className="inline-flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition-colors rounded-sm px-3 py-1.5 text-[11px] font-medium text-white"
-            >
-              {item.type === 'promise' ? <FileText className="w-3 h-3 text-[#A1A1AA]" /> : <User className="w-3 h-3 text-[#A1A1AA]" />}
-              {item.label}
-              <ChevronRight className="w-3 h-3 ml-0.5 text-[#52525B]" />
-            </Link>
-          ))}
-        </div>
+        {(doc.supports && doc.supports.length > 0) && (
+          <div className="pt-4 border-t border-[rgba(255,255,255,0.05)] flex items-center flex-wrap gap-3">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#71717A] mr-1">
+              Supports:
+            </span>
+            {doc.supports.map((item: { href: string; type: string; label: string }, idx: number) => (
+              <Link 
+                key={idx} 
+                href={item.href}
+                className="inline-flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition-colors rounded-sm px-3 py-1.5 text-[11px] font-medium text-white"
+              >
+                {item.type === 'promise' ? <FileText className="w-3 h-3 text-[#A1A1AA]" /> : <User className="w-3 h-3 text-[#A1A1AA]" />}
+                {item.label}
+                <ChevronRight className="w-3 h-3 ml-0.5 text-[#52525B]" />
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Footer Row */}

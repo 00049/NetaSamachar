@@ -52,11 +52,11 @@ export function HomeClient({ stats, trendingPoliticians = [] }: { stats?: Platfo
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)]">
+    <div className="bg-[var(--bg-base)]">
       {/* ═══════════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[85vh] flex flex-col justify-center px-6 md:px-10 xl:px-20 overflow-hidden pt-[80px]">
+      <section className="relative flex flex-col justify-center overflow-hidden pt-32 pb-12 isolate">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -75,7 +75,7 @@ export function HomeClient({ stats, trendingPoliticians = [] }: { stats?: Platfo
         </div>
 
         <motion.div 
-          className="relative z-10 w-full mx-auto"
+          className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-10 xl:px-16 transform-gpu"
           variants={heroContainer}
           initial="hidden"
           animate="show"
@@ -128,7 +128,7 @@ export function HomeClient({ stats, trendingPoliticians = [] }: { stats?: Platfo
       {/* ═══════════════════════════════════════════════════
           FEATURE CARDS
       ══════════════════════════════════════════════════════ */}
-      <section className="relative z-10 w-full mx-auto px-6 md:px-10 xl:px-20 pb-20 -mt-12">
+      <section className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-10 xl:px-16 pb-8">
         <div className="mb-10 text-center md:text-left">
           <h2 className="text-white text-3xl font-serif mb-3 tracking-tight">Navigate Neta Samachar</h2>
           <p className="text-white/50 text-sm md:text-base max-w-2xl">
@@ -166,7 +166,7 @@ export function HomeClient({ stats, trendingPoliticians = [] }: { stats?: Platfo
           TRUST STRIP
       ══════════════════════════════════════════════════════ */}
       <div className="border-t border-white/5 bg-[#05060a]/80 backdrop-blur-md relative z-10">
-        <div className="w-full mx-auto px-6 md:px-10 xl:px-20 py-8 flex flex-col lg:flex-row items-center justify-between gap-10">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-10 xl:px-16 py-8 flex flex-col lg:flex-row items-center justify-between gap-10">
           <div className="flex flex-col text-center lg:text-left">
             <span className="text-white/40 text-[11px] uppercase tracking-[0.1em] font-medium mb-1">TRUSTED SOURCES.</span>
             <span className="text-white/80 text-[12px] uppercase tracking-[0.1em] font-bold">ZERO COMPROMISES.</span>
@@ -234,7 +234,7 @@ export function HomeClient({ stats, trendingPoliticians = [] }: { stats?: Platfo
           TRENDING SECTION
       ══════════════════════════════════════════════════════ */}
       {trendingPoliticians.length > 0 && (
-        <section className="relative z-10 w-full mx-auto px-6 md:px-10 xl:px-20 py-20 border-t border-white/5">
+        <section className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-10 xl:px-16 py-20 border-t border-white/5">
           <div className="mb-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
             <div>
               <h2 className="text-white text-3xl font-serif mb-3 tracking-tight">Trending Leaders</h2>

@@ -5,7 +5,7 @@ import { ScrollReveal } from '@/components/ui/ScrollReveal';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { useRouter } from 'next/navigation';
 import { Politician } from '@/lib/types';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 const CARD_GAP = 16;
 const MIN_CARD_WIDTH = 260;
@@ -16,6 +16,7 @@ export function PoliticianGrid({
   clearAllFilters,
 }: any) {
   const router = useRouter();
+  const shouldReduceMotion = useReducedMotion();
   const gridRef = useRef<HTMLDivElement>(null);
   const [gridWidth, setGridWidth] = useState(800);
 
@@ -29,9 +30,9 @@ export function PoliticianGrid({
   const colCount = Math.max(1, Math.floor((gridWidth + CARD_GAP) / (MIN_CARD_WIDTH + CARD_GAP)));
   const rowCount = Math.ceil(filteredAndSorted.length / colCount);
   const scrollMargin = gridRef.current?.offsetTop ?? 0;
-  
-  // Bug fix: different heights for different modes
-  const itemHeight = viewMode === 'grid' ? 310 : 200;
+
+  // Initial estimate, will be measured dynamically
+  const itemHeight = viewMode === 'grid' ? 420 : 200;
 
   const rowVirtualizer = useWindowVirtualizer({
     count: rowCount,
@@ -40,73 +41,94 @@ export function PoliticianGrid({
     scrollMargin,
   });
 
-  return (
-    <>
-{/* Grid Area */}
-          {filteredAndSorted.length === 0 ? (
-            <div className="py-24 text-center text-white/40 font-serif italic text-lg border border-white/5 rounded-2xl bg-[#0a0c12]">
-              No results match your current filters.
-            </div>
-          ) : viewMode === 'list' ? (
-            <div className="flex flex-col gap-4">
-              {filteredAndSorted.map((politician: Politician, idx: number) => (
-                <PoliticianCard
-                  key={politician.id}
-                  politician={politician}
-                  viewMode="list"
-                  lazy={idx >= 10}
-                  onClickPreview={() => router.push('/politicians/' + politician.id)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div ref={gridRef} style={{ height: `${rowVirtualizer.getTotalSize()}px`, position: 'relative' }}>
-              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                const startIdx = virtualRow.index * colCount;
-                const rowPoliticians = filteredAndSorted.slice(startIdx, startIdx + colCount);
-                return (
-                  <div
-                    key={virtualRow.key}
-                    style={{ position: 'absolute', top: 0, transform: `translateY(${virtualRow.start - rowVirtualizer.options.scrollMargin}px)`, width: '100%' }}
-                  >
-                    <ScrollReveal
-                      delay={Math.min(virtualRow.index, 3) * 70}
-                      style={{ display: 'grid', gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`, gap: `${CARD_GAP}px`, paddingBottom: `${CARD_GAP}px` }}
-                    >
-                      {rowPoliticians.map((politician: Politician) => (
-                        <PoliticianCard
-                          key={politician.id}
-                          politician={politician}
-                          viewMode="grid"
-                          onClickPreview={() => router.push('/politicians/' + politician.id)}
-                        />
-                      ))}
-                    </ScrollReveal>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+  if (filteredAndSorted.length === 0) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="py-24 text-center text-white/40 font-serif italic text-lg border border-white/5 rounded-2xl bg-[var(--color-panel)]"
+      >
+        No results match your current filters.
+      </motion.div>
+    );
+  }
 
-          
-          {/* Pagination Mock */}
-          <div className="flex items-center justify-center gap-2 mt-12 pb-20">
-            <button className="w-8 h-8 rounded border border-white/10 flex items-center justify-center text-white/40 hover:bg-white/5 hover:text-white transition-colors">
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button className="w-8 h-8 rounded border border-emerald-500 text-emerald-500 bg-emerald-500/10 flex items-center justify-center text-[12px] font-bold">
-              1
-            </button>
-            <button className="w-8 h-8 rounded flex items-center justify-center text-white/50 hover:text-white text-[12px] font-medium">2</button>
-            <button className="w-8 h-8 rounded flex items-center justify-center text-white/50 hover:text-white text-[12px] font-medium">3</button>
-            <button className="w-8 h-8 rounded flex items-center justify-center text-white/50 hover:text-white text-[12px] font-medium">4</button>
-            <button className="w-8 h-8 rounded flex items-center justify-center text-white/50 hover:text-white text-[12px] font-medium">5</button>
-            <span className="text-white/40">...</span>
-            <button className="w-8 h-8 rounded flex items-center justify-center text-white/50 hover:text-white text-[12px] font-medium">256</button>
-            <button className="w-8 h-8 rounded border border-white/10 flex items-center justify-center text-white/40 hover:bg-white/5 hover:text-white transition-colors">
-              <ChevronRight className="w-4 h-4" />
-            </button>
+  if (viewMode === 'list') {
+    return (
+      <div className="flex flex-col gap-4">
+        <AnimatePresence mode="popLayout">
+          {filteredAndSorted.map((politician: Politician, idx: number) => (
+            <motion.div
+              key={politician.id}
+              layout="position"
+              initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
+              transition={{ duration: 0.15 }}
+            >
+              <PoliticianCard
+                politician={politician}
+                viewMode="list"
+                lazy={idx >= 10}
+                onClickPreview={() => router.push('/politicians/' + politician.id)}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    );
+  }
+
+  // Grid view with window virtualizer
+  return (
+    <div ref={gridRef} style={{ height: `${rowVirtualizer.getTotalSize()}px`, position: 'relative' }}>
+      {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+        const startIdx = virtualRow.index * colCount;
+        const rowPoliticians = filteredAndSorted.slice(startIdx, startIdx + colCount);
+        return (
+          <div
+            key={virtualRow.key}
+            data-index={virtualRow.index}
+            ref={rowVirtualizer.measureElement}
+            style={{
+              position: 'absolute',
+              top: 0,
+              transform: `translateY(${virtualRow.start - rowVirtualizer.options.scrollMargin}px)`,
+              width: '100%',
+            }}
+          >
+            <ScrollReveal
+              delay={Math.min(virtualRow.index, 3) * 70}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
+                gap: `${CARD_GAP}px`,
+                paddingBottom: `${CARD_GAP}px`,
+              }}
+            >
+              <AnimatePresence mode="popLayout">
+                {rowPoliticians.map((politician: Politician) => (
+                  <motion.div
+                    key={politician.id}
+                    layout="position"
+                    initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <PoliticianCard
+                      politician={politician}
+                      viewMode="grid"
+                      onClickPreview={() => router.push('/politicians/' + politician.id)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </ScrollReveal>
           </div>
-    </>
+        );
+      })}
+    </div>
   );
 }

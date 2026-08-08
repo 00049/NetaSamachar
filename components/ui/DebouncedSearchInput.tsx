@@ -13,6 +13,7 @@ interface SearchInputProps {
   placeholder?: string;
   debounceMs?: number;
   className?: string;
+  inputClassName?: string;
   id?: string;
   /** Accessible label for the input. Falls back to placeholder if omitted. */
   ariaLabel?: string;
@@ -32,6 +33,7 @@ export function DebouncedSearchInput({
   placeholder = 'Search...',
   debounceMs = 220,
   className = '',
+  inputClassName = '',
   id,
   ariaLabel,
 }: SearchInputProps) {
@@ -58,12 +60,12 @@ export function DebouncedSearchInput({
 
   return (
     <div className={`relative w-full ${className}`}>
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
         {isPending ? (
-          <Loader2 className="w-4 h-4 text-[var(--text-tertiary)] animate-spin" />
+          <Loader2 className="w-5 h-5 text-[var(--text-tertiary)] animate-spin" />
         ) : (
           <svg
-            className="w-4 h-4 text-[var(--text-tertiary)]"
+            className="w-5 h-5 text-[var(--text-tertiary)]"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -84,10 +86,10 @@ export function DebouncedSearchInput({
         placeholder={placeholder}
         aria-label={ariaLabel ?? placeholder}
         autoComplete="off"
-        className={`w-full pl-10 pr-4 py-2.5 bg-transparent border border-[var(--border-subtle)]
+        className={`w-full pl-12 pr-4 py-2.5 bg-transparent border border-[var(--border-subtle)]
           text-sm font-medium text-[var(--text-primary)]
           focus:outline-none focus:border-[var(--text-primary)] transition-colors
-          placeholder:text-[var(--text-tertiary)]`}
+          placeholder:text-[var(--text-tertiary)] ${inputClassName}`}
       />
     </div>
   );

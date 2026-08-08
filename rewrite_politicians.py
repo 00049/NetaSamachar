@@ -1,4 +1,12 @@
-'use client';
+import re
+
+with open("app/politicians/PoliticiansClient.tsx", "r") as f:
+    content = f.read()
+
+# We will just write a new version of PoliticiansClient.tsx directly from python.
+# The new version will import the components and pass props.
+
+new_client = """'use client';
 /* eslint-disable react-hooks/refs, @typescript-eslint/no-unused-vars */
 
 import { useState, useMemo, useEffect, useRef } from 'react';
@@ -9,7 +17,6 @@ import { CheckboxSelectionProvider } from '@/components/ui/CheckboxSelectionProv
 import { StickyCompareBar } from '@/components/ui/StickyCompareBar';
 import { Politician } from '@/lib/types';
 import { FilterSidebar } from '@/components/politicians/FilterSidebar';
-import { FilterDrawer } from '@/components/politicians/FilterDrawer';
 import { SortBar } from '@/components/politicians/SortBar';
 import { PoliticianGrid } from '@/components/politicians/PoliticianGrid';
 
@@ -137,43 +144,13 @@ export function PoliticiansClient({ initialPoliticians }: { initialPoliticians: 
     setDiscoverMode('all');
   };
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  // Compute active filters for the badge
-  const activeFilterCount = useMemo(() => {
-    let count = 0;
-    if (activeFilter !== 'All') count++;
-    if (filterState !== '') count++;
-    if (filterConst !== '') count++;
-    if (inputValue !== '') count++;
-    if (discoverMode !== 'all') count++;
-    return count;
-  }, [activeFilter, filterState, filterConst, inputValue, discoverMode]);
-
   return (
     <CheckboxSelectionProvider type="politician">
-      <div className="flex min-h-screen bg-[var(--bg-base)] lg:gap-4 xl:gap-6">
+      <div className="flex min-h-screen bg-[#05060a] lg:gap-4 xl:gap-6">
         
         <FilterSidebar 
           sidebarWidth={sidebarWidth}
           isResizing={isResizing}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          discoverMode={discoverMode}
-          setDiscoverMode={setDiscoverMode}
-          activeFilter={activeFilter}
-          setActiveFilter={setActiveFilter}
-          filterState={filterState}
-          setFilterState={setFilterState}
-          filterConst={filterConst}
-          setFilterConst={setFilterConst}
-          availableStates={availableStates}
-          availableConsts={availableConsts}
-        />
-
-        <FilterDrawer
-          isOpen={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
           inputValue={inputValue}
           setInputValue={setInputValue}
           discoverMode={discoverMode}
@@ -197,8 +174,6 @@ export function PoliticiansClient({ initialPoliticians }: { initialPoliticians: 
             setSortBy={setSortBy}
             viewMode={viewMode}
             setViewMode={setViewMode}
-            setIsDrawerOpen={setIsDrawerOpen}
-            activeFilterCount={activeFilterCount}
           />
 
           <PoliticianGrid 
@@ -215,3 +190,8 @@ export function PoliticiansClient({ initialPoliticians }: { initialPoliticians: 
     </CheckboxSelectionProvider>
   );
 }
+"""
+
+with open("app/politicians/PoliticiansClient.tsx", "w") as f:
+    f.write(new_client)
+

@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://upload.wikimedia.org https://imagedelivery.net https://res.cloudinary.com https://*.s3.amazonaws.com; font-src 'self'; connect-src 'self';",
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://upload.wikimedia.org https://imagedelivery.net https://res.cloudinary.com https://*.s3.amazonaws.com https://ui-avatars.com; font-src 'self'; connect-src 'self';",
           },
           {
             key: "X-Frame-Options",
@@ -52,6 +52,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: '**.s3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
       },
     ],
   },

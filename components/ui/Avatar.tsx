@@ -26,8 +26,14 @@ const BLUR_B64 =
 export function Avatar({ photoUrl, name, size = 40, className = '', priority = false }: AvatarProps) {
   const [error, setError] = useState(false);
 
-  // Treat 'placeholder' strings in our raw data as missing images
-  const isMissing = !photoUrl || photoUrl.includes('placeholder.jpg') || error;
+  // Treat 'placeholder' strings in our raw data as missing images.
+  // Also treat the Wikimedia Generic_man_silhouette.svg URL as missing — 
+  // Wikimedia returns HTTP 403 for hotlinked SVG thumbnails, so the <img> fires
+  // onerror anyway, but this avoids the failed network round-trip entirely.
+  const isMissing = !photoUrl 
+    || photoUrl.includes('placeholder.jpg') 
+    || photoUrl.includes('Generic_man_silhouette') 
+    || error;
 
   if (isMissing) {
     return (
@@ -65,6 +71,7 @@ export function Avatar({ photoUrl, name, size = 40, className = '', priority = f
         placeholder="blur"
         blurDataURL={BLUR_B64}
         priority={priority}
+        unoptimized={true}
         onError={() => setError(true)}
       />
     </div>

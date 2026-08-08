@@ -125,8 +125,8 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
                 className="absolute inset-0 w-full h-full -rotate-90 transform"
                 viewBox="0 0 100 100"
               >
-                <title>Overall performance score: {quickLook.score.value} / 100</title>
-                <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="6" />
+                <title>{`Overall performance score: ${quickLook.score.value} / 100`}</title>
+                <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
                 <circle
                   cx="50" cy="50" r="46" fill="none"
                   stroke="var(--color-accent-positive)" strokeWidth="6"

@@ -60,7 +60,7 @@ export function SearchClient() {
   }, [setDebouncedQueryURL]);
 
   const { politicians, promises, evidence } = results;
-  const totalResults = politicians.length + promises.length + evidence.length;
+  const totalResults = (politicians?.length ?? 0) + (promises?.length ?? 0) + (evidence?.length ?? 0);
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)] flex flex-col">
@@ -74,16 +74,17 @@ export function SearchClient() {
             onDebounced={handleDebouncedSearch}
             placeholder="Search politicians, promises, or evidence..."
             ariaLabel="Search politicians, parties, promises, and evidence"
-            className="mb-6 [&_input]:h-[64px] [&_input]:text-[18px] [&_input]:pl-14 [&_input]:border-[rgba(255,255,255,0.08)] [&_input]:focus:border-white/20"
+            className="mb-6"
+            inputClassName="h-[64px] text-[18px] pl-14 border-[rgba(255,255,255,0.08)] focus:border-white/20"
             id="global-search"
           />
 
           <div className="flex items-center gap-8 border-b border-[var(--border-subtle)] overflow-x-auto no-scrollbar">
             {['All', 'Politicians', 'Promises', 'Evidence'].map((tab) => {
               const count = tab === 'All' ? totalResults :
-                            tab === 'Politicians' ? politicians.length :
-                            tab === 'Promises' ? promises.length :
-                            evidence.length;
+                            tab === 'Politicians' ? (politicians?.length ?? 0) :
+                            tab === 'Promises' ? (promises?.length ?? 0) :
+                            (evidence?.length ?? 0);
               
               const isActive = activeTab === tab;
               
@@ -164,9 +165,9 @@ export function SearchClient() {
           <div className="flex flex-col gap-12">
             
             {/* Politicians */}
-            {(activeTab === 'All' || activeTab === 'Politicians') && politicians.length > 0 && (
+            {(activeTab === 'All' || activeTab === 'Politicians') && (politicians?.length ?? 0) > 0 && (
               <div>
-                <h4 className="text-[11px] font-bold uppercase tracking-widest text-[#71717A] mb-6">Politicians ({politicians.length})</h4>
+                <h4 className="text-[11px] font-bold uppercase tracking-widest text-[#71717A] mb-6">Politicians ({politicians?.length ?? 0})</h4>
                 <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
                   {politicians.map(p => (
                     <PoliticianCard key={p.id} politician={p} viewMode="grid" />
@@ -176,9 +177,9 @@ export function SearchClient() {
             )}
 
             {/* Promises */}
-            {(activeTab === 'All' || activeTab === 'Promises') && promises.length > 0 && (
+            {(activeTab === 'All' || activeTab === 'Promises') && (promises?.length ?? 0) > 0 && (
               <div>
-                <h4 className="text-[11px] font-bold uppercase tracking-widest text-[#71717A] mb-6">Promises ({promises.length})</h4>
+                <h4 className="text-[11px] font-bold uppercase tracking-widest text-[#71717A] mb-6">Promises ({promises?.length ?? 0})</h4>
                 <div className="flex flex-col gap-6">
                   {promises.map(pr => (
                     <PromiseCard key={pr.id} promise={pr} viewMode="compact" />
@@ -188,9 +189,9 @@ export function SearchClient() {
             )}
 
             {/* Evidence */}
-            {(activeTab === 'All' || activeTab === 'Evidence') && evidence.length > 0 && (
+            {(activeTab === 'All' || activeTab === 'Evidence') && (evidence?.length ?? 0) > 0 && (
               <div>
-                <h4 className="text-[11px] font-bold uppercase tracking-widest text-[#71717A] mb-6">Evidence ({evidence.length})</h4>
+                <h4 className="text-[11px] font-bold uppercase tracking-widest text-[#71717A] mb-6">Evidence ({evidence?.length ?? 0})</h4>
                 <div className="flex flex-col gap-6">
                   {evidence.map(ev => (
                     <ArchiveCard key={ev.id} doc={ev} />

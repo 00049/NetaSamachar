@@ -3,41 +3,40 @@ import { NewsletterForm } from '@/components/home/NewsletterForm';
 
 export function GlobalFooter() {
   return (
-    <footer className="bg-[var(--color-panel)] border-t border-white/5 mt-32 pt-24 pb-16">
-      <div className="max-w-[1440px] mx-auto px-8 md:px-12 xl:px-24">
+    <footer className="bg-[var(--color-panel)] border-t border-white/5 pt-8 pb-12">
+      <div className="w-full max-w-7xl mx-auto px-6 md:px-10 xl:px-16">
         
         <NewsletterForm />
 
-        
         {/* TOP SECTION: 5 Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 xl:gap-24 mb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 xl:gap-24 mb-8">
           
-          {/* COLUMN 1: BRANDING (Span 5) */}
-          <div className="lg:col-span-5 lg:pr-12">
-            <div className="flex items-center gap-5 mb-5">
-              <div className="w-14 h-14 rounded-2xl border border-[#e6b16a]/50 flex items-center justify-center bg-transparent">
-                <span className="text-white font-bold text-3xl tracking-tighter">N</span>
+          {/* COLUMN 1: BRANDING (Span 4) */}
+          <div className="lg:col-span-4 lg:pr-8">
+            <div className="flex items-center gap-4 mb-5">
+              <div className="w-12 h-12 rounded-2xl border border-[#e6b16a]/50 flex items-center justify-center bg-transparent">
+                <span className="text-white font-bold text-2xl tracking-tighter">N</span>
               </div>
               <div>
-                <div className="text-white font-bold text-xl leading-tight tracking-[0.2em]">NETA</div>
-                <div className="text-white font-bold text-xl leading-tight tracking-[0.2em]">SAMACHAR</div>
+                <div className="text-white font-bold text-lg leading-tight tracking-[0.15em]">NETA</div>
+                <div className="text-white font-bold text-lg leading-tight tracking-[0.15em]">SAMACHAR</div>
               </div>
             </div>
-            <div className="text-[#e6b16a] text-[11px] font-bold tracking-[0.2em] mb-8 uppercase">
+            <div className="text-[#e6b16a] text-xs font-semibold tracking-widest mb-6 uppercase">
               Political Intelligence Platform
             </div>
             
-            <p className="text-white/60 text-[15px] sm:text-[16px] leading-[1.8] max-w-[340px]">
+            <p className="text-white/60 text-sm leading-relaxed max-w-[340px]">
               Independent, non-partisan platform for political transparency and accountability. All data sourced from official and public records.
             </p>
           </div>
 
-          {/* COLUMNS 2, 3, 4: LINKS (Span 7) */}
-          <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10">
+          {/* COLUMNS 2, 3, 4: LINKS (Span 8) */}
+          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-12 xl:gap-16">
             {/* PLATFORM */}
             <div>
-              <h4 className="text-white/60 font-bold text-[12px] tracking-[0.15em] mb-8 uppercase">Platform</h4>
-              <ul className="flex flex-col gap-5">
+              <h4 className="text-white/40 font-semibold text-xs tracking-widest mb-6 uppercase">Platform</h4>
+              <ul className="flex flex-col gap-4">
                 {[
                   { label: 'Politicians', href: '/politicians' },
                   { label: 'Parties', href: '/parties' },
@@ -46,7 +45,7 @@ export function GlobalFooter() {
                   { label: 'Methodology', href: '/methodology' },
                 ].map(link => (
                   <li key={link.label}>
-                    <Link href={link.href} className="text-white/80 hover:text-[#e6b16a] text-[15px] sm:text-[16px] transition-colors">{link.label}</Link>
+                    <Link href={link.href} className="text-sm text-white/70 hover:text-white transition-colors">{link.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -54,14 +53,14 @@ export function GlobalFooter() {
             
             {/* RESOURCES */}
             <div>
-              <h4 className="text-white/60 font-bold text-[12px] tracking-[0.15em] mb-8 uppercase">Resources</h4>
-              <ul className="flex flex-col gap-5">
+              <h4 className="text-white/40 font-semibold text-xs tracking-widest mb-6 uppercase">Resources</h4>
+              <ul className="flex flex-col gap-4">
                 {[
                   { label: 'Evidence Archive', href: '/archive' },
                   { label: 'Search', href: '/search' },
                 ].map(link => (
                   <li key={link.label}>
-                    <Link href={link.href} className="text-white/80 hover:text-[#e6b16a] text-[15px] sm:text-[16px] transition-colors">{link.label}</Link>
+                    <Link href={link.href} className="text-sm text-white/70 hover:text-white transition-colors">{link.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -69,13 +68,13 @@ export function GlobalFooter() {
 
             {/* COMPANY */}
             <div>
-              <h4 className="text-white/60 font-bold text-[12px] tracking-[0.15em] mb-8 uppercase">Company</h4>
-              <ul className="flex flex-col gap-5">
+              <h4 className="text-white/40 font-semibold text-xs tracking-widest mb-6 uppercase">Company</h4>
+              <ul className="flex flex-col gap-4">
                 {[
                   { label: 'About Us', href: '/about' },
                 ].map(link => (
                   <li key={link.label}>
-                    <Link href={link.href} className="text-white/80 hover:text-[#e6b16a] text-[15px] sm:text-[16px] transition-colors">{link.label}</Link>
+                    <Link href={link.href} className="text-sm text-white/70 hover:text-white transition-colors">{link.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -85,12 +84,12 @@ export function GlobalFooter() {
         </div>
 
         {/* MIDDLE SECTION: Data Sourced string */}
-        <div className="border-t border-white/5 pt-12 pb-12 text-center text-white/50 text-[14px] sm:text-[15px]">
+        <div className="border-t border-white/5 py-8 text-center text-white/50 text-[14px] sm:text-[15px]">
           Data sourced from official public records
         </div>
 
         {/* BOTTOM SECTION: Copyright & Legal */}
-        <div className="border-t border-white/5 pt-10 flex flex-col xl:flex-row items-center justify-between gap-8 text-white/50 text-[14px] sm:text-[15px]">
+        <div className="border-t border-white/5 pt-8 flex flex-col xl:flex-row items-center justify-between gap-8 text-white/50 text-[14px] sm:text-[15px]">
           
           <div>
             © 2026 Neta Samachar. All rights reserved.

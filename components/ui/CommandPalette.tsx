@@ -146,7 +146,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-[2px]"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -190,7 +190,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
           <div className="max-h-[420px] overflow-y-auto py-2" role="listbox" aria-label="Search results">
             {query.trim() === '' ? (
               <div className="px-5 py-10 text-center text-[var(--text-tertiary)] text-[14px]">
-                <Search className="w-8 h-8 mx-auto mb-3 opacity-30" aria-hidden="true" />
+                <Search className="w-6 h-6 mx-auto mb-3 opacity-30" aria-hidden="true" />
                 Type to search across politicians, parties, and promises
               </div>
             ) : results.length === 0 ? (
@@ -221,9 +221,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                     aria-selected={isSelected}
                     onClick={() => navigate(result.href)}
                     onMouseEnter={() => setSelectedIndex(fi)}
-                    className={`w-full text-left px-5 py-3 flex items-center justify-between gap-4 transition-colors duration-100 ${
-                      isSelected ? 'bg-white/8' : 'hover:bg-white/4'
-                    }`}
+                    className={`w-full text-left px-5 py-3 flex items-center justify-between gap-4 transition-colors duration-100 ${isSelected ? 'bg-white/8' : 'hover:bg-white/4'
+                      }`}
                   >
                     <div className="min-w-0">
                       <div className="text-[14px] font-semibold text-white truncate">{result.title}</div>

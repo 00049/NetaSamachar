@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Politician } from '@/lib/types';
 import { PARTIES } from '@/data/politicians';
 import { formatCurrency, getPromiseFulfillmentRate } from '@/lib/utils';
 import { Avatar } from '@/components/ui/Avatar';
 import { HoverPrefetchLink } from '@/components/ui/HoverPrefetchLink';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import clsx from 'clsx';
 import { CheckSquare, Square, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useSelection } from '@/components/ui/CheckboxSelectionProvider';
@@ -26,6 +26,9 @@ export function PoliticianCard({
   onClickPreview,
   lazy = false,
 }: Props) {
+  const [isStarred, setIsStarred] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
+  
   const party           = PARTIES.find(p => p.id === politician.partyId);
   const fulfillmentRate = getPromiseFulfillmentRate(politician.promisesFulfilled, politician.promisesTotal);
   const hasSevereCases  = politician.criminalCases.some(c => c.severity === 'heinous');
@@ -165,7 +168,7 @@ export function PoliticianCard({
           />
 
           <div className="mt-auto w-full flex justify-center">
-            <div className="inline-flex items-center text-white text-[13px] uppercase tracking-[0.08em] font-medium group-focus-visible:ring-2 ring-white/50 ring-offset-4 ring-offset-[#090B12]">
+            <div className="inline-flex items-center text-white text-[13px] uppercase tracking-[0.08em] font-medium group-focus-visible:ring-2 ring-white/50 ring-offset-4 ring-offset-[var(--bg-base)]">
               VIEW PROFILE
               <ChevronRight className="w-4 h-4 ml-2 transition-transform duration-200 ease-out group-hover:translate-x-1" />
             </div>
@@ -178,44 +181,78 @@ export function PoliticianCard({
   // ── Grid view ──────────────────────────────────────────────
   return (
     <motion.div
-      whileHover={{ y: -3 }}
-      className="group relative bg-[#0a0c12] border border-white/5 rounded-2xl flex flex-col cursor-pointer overflow-hidden transition-all duration-300 hover:border-white/10"
+      whileHover={shouldReduceMotion ? {} : {
+        y: -4,
+        boxShadow: [
+          'inset 0 0 0 1px rgba(255,255,255,0.12)',
+          '0 8px 24px rgba(0,0,0,0.4)',
+          '0 20px 48px rgba(0,0,0,0.28)',
+          '0 1px 0 rgba(255,255,255,0.04)',
+        ].join(', '),
+      }}
+      transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
+      className="card-elevated h-full group relative flex flex-col cursor-pointer overflow-hidden"
       onClick={() => onClickPreview?.(politician)}
     >
-      <div className="p-6 flex flex-col items-center text-center flex-1 relative">
-        {/* Star Icon */}
-        <div className="absolute top-6 right-6">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/30 hover:text-white transition-colors">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
+      <div className="px-7 pt-7 pb-6 flex flex-col items-center text-center flex-1 relative">
+        {/* Star Icon — interactive with micro-animation */}
+        <div className="absolute top-5 right-5 z-20">
+          <motion.button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsStarred(!isStarred);
+            }}
+            whileTap={shouldReduceMotion ? {} : { scale: 0.85 }}
+            className="focus:outline-none p-1 -m-1 rounded-full"
+          >
+            <motion.svg 
+              width="16" height="16" viewBox="0 0 24 24" strokeWidth="1.5" 
+              className="transition-colors duration-200"
+              initial={false}
+              animate={{ 
+                fill: "var(--color-brand-primary)",
+                fillOpacity: isStarred ? 1 : 0,
+                stroke: isStarred ? "var(--color-brand-primary)" : "rgba(255,255,255,0.2)",
+                scale: isStarred && !shouldReduceMotion ? [1, 1.25, 1] : 1 
+              }}
+              transition={{
+                default: shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 400, damping: 17 },
+                scale: { type: 'tween', duration: 0.3 }
+              }}
+            >
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </motion.svg>
+          </motion.button>
         </div>
 
-        {/* Avatar */}
-        <div className="mt-4 mb-4">
-          <Avatar 
-            photoUrl={politician.photoUrl} 
-            name={politician.name} 
-            size={88} 
-            priority={!lazy}
-            className="group-hover:ring-2 ring-white/10 transition-all duration-300" 
-          />
+        {/* Avatar — inset ring matches detail page avatar treatment */}
+        <div className="mt-4 mb-5 relative">
+          <div className="rounded-full shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)]">
+            <Avatar
+              photoUrl={politician.photoUrl}
+              name={politician.name}
+              size={84}
+              priority={!lazy}
+            />
+          </div>
         </div>
 
-        {/* Name */}
-        <h3 className="font-serif font-bold text-white text-[20px] leading-tight mb-2">
+        {/* Name — serif, tight tracking, matches detail page h1 treatment */}
+        <h3 className="font-serif font-bold text-white text-[19px] leading-[1.2] tracking-[-0.01em] mb-1.5 px-2">
           {politician.name}
         </h3>
 
         {/* Party Badge */}
         {party && (
-          <div className="mb-4">
-            <span 
+          <div className="mb-3">
+            <span
               className={clsx(
-                "px-2 py-0.5 rounded text-[10px] font-bold tracking-wider",
-                party.id === 'bjp' ? "bg-[#f97316]/20 text-[#f97316]" : 
-                party.id === 'inc' ? "bg-[#3b82f6]/20 text-[#3b82f6]" : 
-                party.id === 'aap' ? "bg-[#0ea5e9]/20 text-[#0ea5e9]" : 
-                "bg-white/10 text-white/70"
+                'px-2 py-0.5 rounded text-[10px] font-bold tracking-[0.06em] uppercase',
+                party.id === 'bjp' ? 'bg-[#f97316]/15 text-[#f97316]' :
+                party.id === 'inc' ? 'bg-[#3b82f6]/15 text-[#3b82f6]' :
+                party.id === 'aap' ? 'bg-[#0ea5e9]/15 text-[#0ea5e9]' :
+                'bg-white/8 text-white/60'
               )}
             >
               {party.abbreviation || party.name}
@@ -224,55 +261,57 @@ export function PoliticianCard({
         )}
 
         {/* Location & Role */}
-        <div className="flex flex-col items-center gap-1.5 mb-8">
-          <div className="flex items-center gap-1.5 text-white/40 text-[12px]">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        <div className="flex flex-col items-center gap-1 mb-6">
+          <div className="flex items-center gap-1.5 text-[var(--text-tertiary)] text-[11px] tracking-wide">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
             <span>{politician.constituency}, {politician.state}</span>
           </div>
+          {/* Position is biographical metadata — secondary text, not brand green */}
           {politician.position && (
-            <div className="text-emerald-500/90 text-[12px] font-medium">
+            <div className="text-[var(--text-secondary)] text-[11px] font-medium tracking-wide">
               {politician.position}
             </div>
           )}
         </div>
 
-        {/* Stats Grid */}
-        <div className="w-full grid grid-cols-3 gap-2 mt-auto pb-4 border-b border-white/5">
+        {/* Stats Grid — mono labels for editorial hierarchy */}
+        <div className="w-full grid grid-cols-3 gap-2 mt-auto pt-4 border-t border-white/[0.06]">
           <div className="text-center">
-            <div className="text-white text-[16px] font-bold mb-0.5">
+            <div className="text-white text-[15px] font-bold tabular-nums mb-0.5">
               {Math.max(1, Math.floor((2024 - (politician.termsSince || 2014)) / 5))}
             </div>
-            <div className="text-white/60 text-[10px] uppercase tracking-wider">
+            <div className="font-mono text-[var(--text-tertiary)] text-[9px] uppercase tracking-[0.08em]">
               Terms
             </div>
           </div>
           <div className="text-center">
-            <div className="text-white text-[16px] font-bold mb-0.5">
+            <div className="text-white text-[15px] font-bold tabular-nums mb-0.5">
               {politician.yearsInPolitics || '10+'}
             </div>
-            <div className="text-white/60 text-[10px] uppercase tracking-wider">
-              Years in Politics
+            <div className="font-mono text-[var(--text-tertiary)] text-[9px] uppercase tracking-[0.08em]">
+              Yrs Active
             </div>
           </div>
           <div className="text-center">
-            <div className="text-white text-[16px] font-bold mb-0.5">
+            <div className="text-white text-[15px] font-bold tabular-nums mb-0.5">
               {politician.attendancePercent}%
             </div>
-            <div className="text-white/60 text-[10px] uppercase tracking-wider">
+            <div className="font-mono text-[var(--text-tertiary)] text-[9px] uppercase tracking-[0.08em]">
               Attendance
             </div>
           </div>
         </div>
       </div>
 
-      {/* Footer link */}
+      {/* Footer CTA — brand-primary green is correct here: it's the site's action accent */}
       <HoverPrefetchLink
         href={`/politicians/${politician.id}`}
         onClick={(e: React.MouseEvent) => e.stopPropagation()}
-        className="w-full py-4 flex items-center justify-center gap-2 text-emerald-500/80 hover:text-emerald-400 bg-emerald-500/[0.02] hover:bg-emerald-500/[0.05] transition-all"
-        style={{ fontSize: '12px', fontWeight: 600 }}
+        className="w-full py-3.5 flex items-center justify-center gap-2 text-[var(--color-brand-primary)]/70 hover:text-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/[0.03] hover:bg-[var(--color-brand-primary)]/[0.07] transition-all duration-200 border-t border-white/[0.04]"
+        style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em' }}
       >
-        View Profile <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+        VIEW PROFILE
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
       </HoverPrefetchLink>
     </motion.div>
   );

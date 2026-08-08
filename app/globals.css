@@ -82,10 +82,12 @@
 }
 
 /* ── RESET & BASE ────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
 }
 
 /* ── ACCESSIBILITY ───────────────────────────────────────── */
@@ -349,6 +351,34 @@ body {
   border-color: var(--color-border-default);
   transform: translateY(-2px);
   box-shadow: 0 16px 40px -8px rgba(0,0,0,0.5);
+}
+
+/* ── ELEVATED CARD ────────────────────────────────────────── */
+/* Shared by PoliticianCard grid view, PartyCard, and any                */
+/* future entity-grid card. Layered shadow system:                       */
+/*   Layer 1 — inset 1px rgba white ring (detail page technique)         */
+/*   Layer 2 — ambient depth at rest                                     */
+/*   Layer 3 (hover) — dramatic lift shadow, border brightens            */
+.card-elevated {
+  background: var(--color-panel);
+  border: 1px solid transparent;   /* border color comes from box-shadow L1 */
+  border-radius: var(--radius-sm); /* 12px — matches detail page card radius */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06), /* inner border ring */
+    0 2px 8px rgba(0, 0, 0, 0.3),              /* ambient depth     */
+    0 0 0 0 rgba(0, 0, 0, 0);                  /* placeholder for hover expansion */
+  transition:
+    box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 280ms ease;
+}
+
+.card-elevated:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12), /* inner ring brightens  */
+    0 8px 24px rgba(0, 0, 0, 0.4),             /* mid-depth lift shadow */
+    0 20px 48px rgba(0, 0, 0, 0.28),           /* ambient spread        */
+    0 1px 0 rgba(255, 255, 255, 0.04);         /* top-edge highlight    */
 }
 
 /* ── LAYOUT UTILITIES ────────────────────────────────────── */

@@ -37,7 +37,7 @@ export async function performSearch(query: string) {
 
   // 3. Search Evidence
   // searchEvidence handles filtering internally for title, excerpt, sha256Hash
-  const evidence = searchEvidence(q);
+  const evidence = await searchEvidence(q);
 
   return { politicians, promises, evidence };
 }
