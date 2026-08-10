@@ -2,15 +2,15 @@
 import { Politician, Party } from '../lib/types';
 
 export const PARTIES: Party[] = [
-  { id: 'bjp', name: 'Bharatiya Janata Party', abbreviation: 'BJP', color: '#FF6B00', ideology: 'Hindu nationalism, Conservatism', founded: 1980 },
-  { id: 'inc', name: 'Indian National Congress', abbreviation: 'INC', color: '#19AAED', ideology: 'Social democracy, Secularism', founded: 1885 },
-  { id: 'cpi-m', name: 'Communist Party of India (Marxist)', abbreviation: 'CPI(M)', color: '#FF0000', ideology: 'Communism, Marxism-Leninism', founded: 1964 },
-  { id: 'aap', name: 'Aam Aadmi Party', abbreviation: 'AAP', color: '#0066A4', ideology: 'Populism, Anti-corruption', founded: 2012 },
-  { id: 'jdu', name: 'Janata Dal (United)', abbreviation: 'JD(U)', color: '#003366', ideology: 'Socialism, Secularism', founded: 2003 },
-  { id: 'rjd', name: 'Rashtriya Janata Dal', abbreviation: 'RJD', color: '#008000', ideology: 'Social justice, Secularism', founded: 1997 },
-  { id: 'ss', name: 'Shiv Sena', abbreviation: 'SS', color: '#F26F21', ideology: 'Hindutva, Marathi regionalism', founded: 1966 },
-  { id: 'agp', name: 'Asom Gana Parishad', abbreviation: 'AGP', color: '#FF9933', ideology: 'Assamese regionalism', founded: 1985 },
-  { id: 'jsp', name: 'Jan Suraaj Party', abbreviation: 'JSP', color: '#FFD700', ideology: 'Good governance, Anti-corruption', founded: 2024 },
+  { id: 'bjp', name: 'Bharatiya Janata Party', abbreviation: 'BJP', color: '#FF6B00', ideology: 'Hindu nationalism, Conservatism', founded: 1980, isNational: true },
+  { id: 'inc', name: 'Indian National Congress', abbreviation: 'INC', color: '#19AAED', ideology: 'Social democracy, Secularism', founded: 1885, isNational: true },
+  { id: 'cpi-m', name: 'Communist Party of India (Marxist)', abbreviation: 'CPI(M)', color: '#FF0000', ideology: 'Communism, Marxism-Leninism', founded: 1964, isNational: true },
+  { id: 'aap', name: 'Aam Aadmi Party', abbreviation: 'AAP', color: '#0066A4', ideology: 'Populism, Anti-corruption', founded: 2012, isNational: true },
+  { id: 'jdu', name: 'Janata Dal (United)', abbreviation: 'JD(U)', color: '#003366', ideology: 'Socialism, Secularism', founded: 2003, isNational: false },
+  { id: 'rjd', name: 'Rashtriya Janata Dal', abbreviation: 'RJD', color: '#008000', ideology: 'Social justice, Secularism', founded: 1997, isNational: false },
+  { id: 'ss', name: 'Shiv Sena', abbreviation: 'SS', color: '#F26F21', ideology: 'Hindutva, Marathi regionalism', founded: 1966, isNational: false },
+  { id: 'agp', name: 'Asom Gana Parishad', abbreviation: 'AGP', color: '#FF9933', ideology: 'Assamese regionalism', founded: 1985, isNational: false },
+  { id: 'jsp', name: 'Jan Suraaj Party', abbreviation: 'JSP', color: '#FFD700', ideology: 'Good governance, Anti-corruption', founded: 2024, isNational: false },
 ];
 
 export const POLITICIANS: Politician[] = [

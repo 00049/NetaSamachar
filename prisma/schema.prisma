@@ -28,6 +28,7 @@ model Party {
   ideology     String
   founded      Int
   logoUrl      String?
+  isNational   Boolean      @default(false)
   politicians  Politician[]
   promises     Promise[]
 }

@@ -17,11 +17,18 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 
+import { Pagination } from '@/components/ui/Pagination';
 
 export function SourcesTab({ politician, evidence = [] }: { politician: Politician, evidence?: Evidence[] }) {
   const router = useRouter();
+  const shouldReduceMotion = useReducedMotion();
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 8;
+  const totalPages = Math.ceil((evidence?.length || 0) / ITEMS_PER_PAGE);
+  const paginatedEvidence = evidence.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
   
   if (!evidence || evidence.length === 0) {
     return (
@@ -51,8 +58,8 @@ export function SourcesTab({ politician, evidence = [] }: { politician: Politici
         <div className="flex flex-col gap-[24px]">
           
           {/* Top Summary Cards */}
-          <div className="grid grid-cols-4 gap-[16px]">
-            <div className="premium-card p-[20px] flex gap-[16px] items-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
+            <div className="card-elevated p-[20px] flex gap-[16px] items-center">
               <div className="w-[48px] h-[48px] shrink-0 rounded-xl bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/20">
                 <FileText className="w-[24px] h-[24px] text-[#10B981]" />
               </div>
@@ -63,7 +70,7 @@ export function SourcesTab({ politician, evidence = [] }: { politician: Politici
               </div>
             </div>
             
-            <div className="premium-card p-[20px] flex gap-[16px] items-center">
+            <div className="card-elevated p-[20px] flex gap-[16px] items-center">
               <div className="w-[48px] h-[48px] shrink-0 rounded-xl bg-[#8B5CF6]/10 flex items-center justify-center border border-[#8B5CF6]/20">
                 <Folder className="w-[24px] h-[24px] text-[#8B5CF6]" />
               </div>
@@ -74,18 +81,7 @@ export function SourcesTab({ politician, evidence = [] }: { politician: Politici
               </div>
             </div>
 
-            <div className="premium-card p-[20px] flex gap-[16px] items-center">
-              <div className="w-[48px] h-[48px] shrink-0 rounded-xl bg-[#F59E0B]/10 flex items-center justify-center border border-[#F59E0B]/20">
-                <Globe className="w-[24px] h-[24px] text-[#F59E0B]" />
-              </div>
-              <div>
-                <div className="text-[#A1A1AA] text-[12px] font-semibold mb-[2px]">Official Portals</div>
-                <div className="text-white text-[24px] font-bold leading-none mb-[4px]">72</div>
-                <div className="text-[#A1A1AA] text-[11px]">Government & official websites</div>
-              </div>
-            </div>
-
-            <div className="premium-card p-[20px] flex gap-[16px] items-center">
+            <div className="card-elevated p-[20px] flex gap-[16px] items-center">
               <div className="w-[48px] h-[48px] shrink-0 rounded-xl bg-[#3B82F6]/10 flex items-center justify-center border border-[#3B82F6]/20">
                 <LinkIcon className="w-[24px] h-[24px] text-[#3B82F6]" />
               </div>
@@ -98,7 +94,7 @@ export function SourcesTab({ politician, evidence = [] }: { politician: Politici
           </div>
 
           {/* Table Area */}
-          <div className="premium-card flex flex-col overflow-hidden">
+          <div className="card-elevated flex flex-col overflow-hidden">
             
             {/* Filters */}
             <div className="p-[20px] border-b border-white/5 flex items-center gap-[12px]">
@@ -142,16 +138,17 @@ export function SourcesTab({ politician, evidence = [] }: { politician: Politici
                   </tr>
                 </thead>
                 <tbody>
-                  {evidence.map((src, i) => (
-                    <tr 
+                  {paginatedEvidence.map((src, i) => (
+                    <motion.tr 
                       key={i} 
+                      initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-50px" }}
+                      transition={{ duration: 0.3, delay: shouldReduceMotion ? 0 : i * 0.05, ease: [0.22, 1, 0.36, 1] }}
                       className="border-b border-white/5 hover:bg-white/[0.04] transition-colors group"
                     >
                       <td className="py-[16px] px-[20px]">
                         <div className="text-white text-[13px] font-semibold mb-[2px]">{src.title}</div>
-                        <div className="flex items-center gap-[4px] text-[#10B981] text-[11px] truncate max-w-[200px]">
-                          <ShieldCheck className="w-[12px] h-[12px]" /> {src.sha256Hash}
-                        </div>
                       </td>
                       <td className="py-[16px] px-[20px]">
                         <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-white/[0.03] border border-white/10 text-[#A1A1AA] text-[12px]">
@@ -166,7 +163,7 @@ export function SourcesTab({ politician, evidence = [] }: { politician: Politici
                           {src.confidenceScore}%
                         </span>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
@@ -174,16 +171,14 @@ export function SourcesTab({ politician, evidence = [] }: { politician: Politici
 
             {/* Pagination / Footer */}
             <div className="p-[20px] flex items-center justify-between border-t border-white/5">
-              <div className="text-[#A1A1AA] text-[13px]">Showing 1 to {evidence.length} of {evidence.length} sources</div>
-              <div className="flex items-center gap-[4px]">
-                <button className="w-[32px] h-[32px] flex items-center justify-center rounded-lg border border-white/10 text-[#A1A1AA] hover:bg-white/[0.05]">&lt;</button>
-                <button className="w-[32px] h-[32px] flex items-center justify-center rounded-lg border border-[#10B981]/30 bg-[#10B981]/10 text-[#10B981] font-semibold">1</button>
-                <button className="w-[32px] h-[32px] flex items-center justify-center rounded-lg border border-white/10 text-white hover:bg-white/[0.05]">2</button>
-                <button className="w-[32px] h-[32px] flex items-center justify-center rounded-lg border border-white/10 text-white hover:bg-white/[0.05]">3</button>
-                <span className="text-[#A1A1AA] px-1">...</span>
-                <button className="w-[32px] h-[32px] flex items-center justify-center rounded-lg border border-white/10 text-white hover:bg-white/[0.05]">15</button>
-                <button className="w-[32px] h-[32px] flex items-center justify-center rounded-lg border border-white/10 text-[#A1A1AA] hover:bg-white/[0.05]">&gt;</button>
+              <div className="text-[#A1A1AA] text-[13px]">
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, docsCount)} of {docsCount} documents
               </div>
+              <Pagination 
+                currentPage={currentPage} 
+                totalPages={totalPages} 
+                onPageChange={setCurrentPage} 
+              />
             </div>
 
           </div>

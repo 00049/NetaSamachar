@@ -61,7 +61,7 @@ export function PoliticianGrid({
           {filteredAndSorted.map((politician: Politician, idx: number) => (
             <motion.div
               key={politician.id}
-              layout="position"
+              layout={shouldReduceMotion ? false : "position"}
               initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
@@ -111,7 +111,7 @@ export function PoliticianGrid({
                 {rowPoliticians.map((politician: Politician) => (
                   <motion.div
                     key={politician.id}
-                    layout="position"
+                    layout={shouldReduceMotion ? false : "position"}
                     initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}

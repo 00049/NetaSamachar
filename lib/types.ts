@@ -309,4 +309,5 @@ export interface Party {
   ideology: string;
   founded: number;
   logoUrl?: string;
+  isNational?: boolean;
 }

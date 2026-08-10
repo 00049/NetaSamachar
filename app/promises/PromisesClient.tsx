@@ -171,7 +171,7 @@ export function PromisesClient() {
                   paddingBottom: '40px',
                 }}
               >
-                <PromiseCard promise={filteredPromises[vRow.index]} />
+                <PromiseCard promise={filteredPromises[vRow.index]} index={vRow.index} />
               </div>
             ))}
           </div>

@@ -61,6 +61,12 @@ export function OverviewTab({ politician }: { politician: Politician }) {
           <h2 className="text-xs font-bold uppercase tracking-widest text-white mb-6">
             Financial Disclosures
           </h2>
+          {politician.assetDeclarations.length === 0 ? (
+            <div className="border border-[var(--border-subtle)] p-6">
+              <div className="text-white font-bold mb-1">No Financial Declarations Filed</div>
+              <div className="text-gray-500 text-sm">No affidavit data is currently available for this politician.</div>
+            </div>
+          ) : (
           <div className="space-y-8">
             {politician.assetDeclarations.map((decl, i) => (
               <div key={i} className="border border-[var(--border-subtle)] p-6">
@@ -91,8 +97,10 @@ export function OverviewTab({ politician }: { politician: Politician }) {
               </div>
             ))}
           </div>
+          )}
         </div>
       </div>
+
     </div>
   );
 }

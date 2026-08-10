@@ -90,7 +90,12 @@ export function EntityScorecard({
         </div>
         
         {politicians.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className={`grid gap-8 ${
+            politicians.length === 1 ? 'grid-cols-1 max-w-sm' :
+            politicians.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl' :
+            politicians.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl' :
+            'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+          }`}>
             {politicians.map((pol) => (
               <div key={pol.id}>
                 <PoliticianCard politician={pol} viewMode="compact" />
@@ -114,10 +119,14 @@ export function EntityScorecard({
         </div>
 
         {promises.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {promises.map((promise) => (
+          <div className={`grid gap-8 ${
+            promises.length === 1 ? 'grid-cols-1 max-w-md' :
+            promises.length === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-3xl' :
+            'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+          }`}>
+            {promises.map((promise, index) => (
               <div key={promise.id} className="h-full">
-                <PromiseCard promise={promise} viewMode="compact" />
+                <PromiseCard promise={promise} viewMode="compact" index={index} />
               </div>
             ))}
           </div>

@@ -59,7 +59,7 @@ export function IntelligenceOverview({ politicianId }: IntelligenceOverviewProps
 
   if (loading && !data) {
     return (
-      <div className="premium-card p-[24px] flex items-center justify-center animate-pulse min-h-[140px]">
+      <div className="card-elevated p-[24px] flex items-center justify-center animate-pulse min-h-[140px]">
         <div className="flex items-center gap-[12px] text-[#A1A1AA]">
           <RefreshCw className="w-[16px] h-[16px] animate-spin text-[#3B82F6]" />
           <span className="text-[14px]">Updating Intelligence Overview...</span>
@@ -70,7 +70,7 @@ export function IntelligenceOverview({ politicianId }: IntelligenceOverviewProps
 
   if (error && !data) {
     return (
-      <div className="premium-card p-[24px] flex flex-col items-center justify-center min-h-[140px] text-center gap-3">
+      <div className="card-elevated p-[24px] flex flex-col items-center justify-center min-h-[140px] text-center gap-3">
         <span className="text-[#F87171] text-[14px] font-medium">Failed to load intelligence overview</span>
         <button 
           onClick={fetchSummary}
@@ -94,7 +94,7 @@ export function IntelligenceOverview({ politicianId }: IntelligenceOverviewProps
   const isGenerating = data?.status === 'GENERATING';
 
   return (
-    <div className="premium-card p-[24px] flex flex-col gap-[16px] relative overflow-hidden">
+    <div className="card-elevated p-[24px] flex flex-col gap-[16px] relative overflow-hidden">
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[8px]">

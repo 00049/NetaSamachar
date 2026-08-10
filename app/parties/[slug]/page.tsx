@@ -1,6 +1,5 @@
 import { EntityScorecard } from '@/components/shared/EntityScorecard';
-import { PARTIES, POLITICIANS } from '@/data/politicians';
-import { PROMISES } from '@/data/promises';
+import { getParty, getPoliticiansByParty, getPromisesByParty } from '@/lib/api';
 import { aggregateStats } from '@/lib/aggregation';
 import { notFound } from 'next/navigation';
 
@@ -8,7 +7,7 @@ import type { Metadata } from 'next';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const party = PARTIES.find(p => p.id === slug);
+  const party = await getParty(slug);
   if (!party) return { title: 'Party Not Found' };
   
   return {
@@ -22,14 +21,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PartyScorecardPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const party = PARTIES.find(p => p.id === slug);
+  const party = await getParty(slug);
   
   if (!party) {
     notFound();
   }
 
-  const partyPoliticians = POLITICIANS.filter(p => p.partyId === party.id);
-  const partyPromises = PROMISES.filter(p => p.partyId === party.id);
+  const partyPoliticians = await getPoliticiansByParty(party.id);
+  const partyPromises = await getPromisesByParty(party.id);
   const stats = aggregateStats(partyPoliticians, partyPromises);
 
   return (

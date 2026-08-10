@@ -35,7 +35,7 @@ export function FilterControls({
         >
           {discoverMode === 'all' && (
             <motion.div
-              layoutId="discoverModeActiveBg"
+              layoutId={shouldReduceMotion ? undefined : "discoverModeActiveBg"}
               className="absolute inset-0 bg-white/[0.06] border border-white/12 rounded-xl z-0"
               transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 400, damping: 30 }}
             />
@@ -66,7 +66,7 @@ export function FilterControls({
         >
           {discoverMode === 'trending' && (
             <motion.div
-              layoutId="discoverModeActiveBg"
+              layoutId={shouldReduceMotion ? undefined : "discoverModeActiveBg"}
               className="absolute inset-0 bg-white/[0.06] border border-white/12 rounded-xl z-0"
               transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 400, damping: 30 }}
             />
@@ -97,7 +97,7 @@ export function FilterControls({
         >
           {discoverMode === 'new' && (
             <motion.div
-              layoutId="discoverModeActiveBg"
+              layoutId={shouldReduceMotion ? undefined : "discoverModeActiveBg"}
               className="absolute inset-0 bg-white/[0.06] border border-white/12 rounded-xl z-0"
               transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 400, damping: 30 }}
             />
@@ -128,7 +128,7 @@ export function FilterControls({
         >
           {discoverMode === 'featured' && (
             <motion.div
-              layoutId="discoverModeActiveBg"
+              layoutId={shouldReduceMotion ? undefined : "discoverModeActiveBg"}
               className="absolute inset-0 bg-white/[0.06] border border-white/12 rounded-xl z-0"
               transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 400, damping: 30 }}
             />

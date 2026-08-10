@@ -181,8 +181,8 @@ export function SearchClient() {
               <div>
                 <h4 className="text-[11px] font-bold uppercase tracking-widest text-[#71717A] mb-6">Promises ({promises?.length ?? 0})</h4>
                 <div className="flex flex-col gap-6">
-                  {promises.map(pr => (
-                    <PromiseCard key={pr.id} promise={pr} viewMode="compact" />
+                  {promises.map((pr, i) => (
+                    <PromiseCard key={pr.id} promise={pr} viewMode="compact" index={i} />
                   ))}
                 </div>
               </div>

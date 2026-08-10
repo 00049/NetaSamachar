@@ -18,14 +18,31 @@ export function SectionWrapper({ id, label, heading, description, children, righ
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    // 1. Dynamic Scroll Margin for native hash linking
+    const updateScrollMargin = () => {
+      if (!sectionRef.current) return;
+      
+      const navbar = document.querySelector('header');
+      const stickyNav = document.getElementById('sticky-navigator');
+      
+      const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 80;
+      const stickyNavHeight = stickyNav ? stickyNav.getBoundingClientRect().height : 0;
+      
+      // Add 24px of breathing room
+      const totalOffset = navbarHeight + stickyNavHeight + 24;
+      
+      sectionRef.current.style.scrollMarginTop = `${totalOffset}px`;
+    };
+
+    updateScrollMargin();
+    window.addEventListener('resize', updateScrollMargin);
+
+    // 2. Intersection Observer for fade-in
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsVisible(true);
-            // Once visible, we can stop observing if we only want animate-in once.
-            // Or we could leave it observing if we want it to animate in/out, but 
-            // usually animate-in once is preferred for performance and less distraction.
             if (sectionRef.current) {
               observer.unobserve(sectionRef.current);
             }
@@ -46,6 +63,7 @@ export function SectionWrapper({ id, label, heading, description, children, righ
     }
 
     return () => {
+      window.removeEventListener('resize', updateScrollMargin);
       if (currentRef) {
         observer.unobserve(currentRef);
       }
@@ -56,13 +74,14 @@ export function SectionWrapper({ id, label, heading, description, children, righ
     <section
       id={id}
       ref={sectionRef}
-      className={clsx(
-        "py-24 sm:py-32", // Generous vertical spacing
-        "transition-all duration-500 ease-out",
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-      )}
+      className="py-24 sm:py-32" // Generous vertical spacing
     >
-      <div className="w-full">
+      <div 
+        className={clsx(
+          "w-full transition-all duration-500 ease-out",
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        )}
+      >
         {/* Section Header */}
         <div className="mb-16 flex flex-col sm:flex-row justify-between items-start gap-[24px]">
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">

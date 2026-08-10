@@ -22,13 +22,16 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { useState } from 'react';
+import { Pagination } from '@/components/ui/Pagination';
 
 interface Props {
   politician: Politician;
 }
 
 export function CasesTab({ politician }: Props) {
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
   const cases = politician.criminalCases || [];
 
   if (cases.length === 0) {
@@ -41,6 +44,9 @@ export function CasesTab({ politician }: Props) {
   }
 
   const totalCases = cases.length;
+  const totalPages = Math.ceil(totalCases / ITEMS_PER_PAGE);
+  const paginatedCases = cases.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
   const pendingCases = cases.filter(c => c.status === 'pending').length;
   const convictedCases = cases.filter(c => c.status === 'convicted').length;
   const closedCases = cases.filter(c => ['acquitted', 'withdrawn', 'quashed'].includes(c.status)).length;
@@ -95,7 +101,7 @@ export function CasesTab({ politician }: Props) {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-[12px]">
             
             {/* Total Cases */}
-            <div className="premium-card p-[16px]">
+            <div className="card-elevated p-[16px]">
               <div className="flex items-center gap-[12px] mb-[12px]">
                 <div className="w-[32px] h-[32px] rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
                   <Scale className="w-[16px] h-[16px] text-red-500" />
@@ -107,7 +113,7 @@ export function CasesTab({ politician }: Props) {
             </div>
 
             {/* Cases with Charges */}
-            <div className="premium-card p-[16px]">
+            <div className="card-elevated p-[16px]">
               <div className="flex items-center gap-[12px] mb-[12px]">
                 <div className="w-[32px] h-[32px] rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
                   <FileText className="w-[16px] h-[16px] text-yellow-500" />
@@ -119,7 +125,7 @@ export function CasesTab({ politician }: Props) {
             </div>
 
             {/* Convictions */}
-            <div className="premium-card p-[16px]">
+            <div className="card-elevated p-[16px]">
               <div className="flex items-center gap-[12px] mb-[12px]">
                 <div className="w-[32px] h-[32px] rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
                   <Gavel className="w-[16px] h-[16px] text-yellow-500" />
@@ -131,7 +137,7 @@ export function CasesTab({ politician }: Props) {
             </div>
 
             {/* Cases Pending */}
-            <div className="premium-card p-[16px]">
+            <div className="card-elevated p-[16px]">
               <div className="flex items-center gap-[12px] mb-[12px]">
                 <div className="w-[32px] h-[32px] rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
                   <Clock className="w-[16px] h-[16px] text-purple-500" />
@@ -143,7 +149,7 @@ export function CasesTab({ politician }: Props) {
             </div>
 
             {/* Cases Closed */}
-            <div className="premium-card p-[16px]">
+            <div className="card-elevated p-[16px]">
               <div className="flex items-center gap-[12px] mb-[12px]">
                 <div className="w-[32px] h-[32px] rounded-lg bg-[#3b82f6]/10 border border-[#3b82f6]/20 flex items-center justify-center">
                   <ShieldAlert className="w-[16px] h-[16px] text-[#3b82f6]" />
@@ -189,7 +195,7 @@ export function CasesTab({ politician }: Props) {
           </div>
 
           {/* MAIN TABLE */}
-          <div className="premium-card overflow-x-auto flex flex-col justify-between h-fit">
+          <div className="card-elevated overflow-x-auto flex flex-col justify-between h-fit">
             <div className="p-[20px] pb-0">
                <h3 className="text-white text-[15px] font-bold">All Cases ({totalCases})</h3>
             </div>
@@ -209,7 +215,7 @@ export function CasesTab({ politician }: Props) {
 
               {/* Table Rows */}
               <div className="flex flex-col">
-                {cases.map((c, index) => (
+                {paginatedCases.map((c, index) => (
                   <Link href={`#`} key={index} className="grid grid-cols-12 gap-[16px] px-[20px] py-[20px] border-b border-white/5 hover:bg-white/[0.02] transition-colors items-center group cursor-pointer">
                     
                     {/* Case Title */}
@@ -272,24 +278,14 @@ export function CasesTab({ politician }: Props) {
             
             {/* Pagination Footer */}
             <div className="flex items-center justify-between px-[20px] py-[16px] bg-[#111111]/50">
-               <div className="text-[#A1A1AA] text-[12px]">Showing 1 to {Math.min(5, totalCases)} of {totalCases} cases</div>
-               <div className="flex items-center gap-[8px]">
-                  <button className="w-[28px] h-[28px] flex items-center justify-center rounded border border-white/5 text-white/20 hover:text-white hover:bg-white/5 transition-colors">
-                    <ChevronRight className="w-[14px] h-[14px] rotate-180" />
-                  </button>
-                  <button className="w-[28px] h-[28px] flex items-center justify-center rounded border border-[var(--color-accent-positive)]/50 bg-[var(--color-accent-positive)]/10 text-[var(--color-accent-positive)] font-bold text-[12px]">
-                    1
-                  </button>
-                  <button className="w-[28px] h-[28px] flex items-center justify-center rounded border border-white/5 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors font-bold text-[12px]">
-                    2
-                  </button>
-                  <button className="w-[28px] h-[28px] flex items-center justify-center rounded border border-white/5 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors font-bold text-[12px]">
-                    3
-                  </button>
-                  <button className="w-[28px] h-[28px] flex items-center justify-center rounded border border-white/5 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors">
-                    <ChevronRight className="w-[14px] h-[14px]" />
-                  </button>
+               <div className="text-[#A1A1AA] text-[12px]">
+                 Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalCases)} of {totalCases} cases
                </div>
+               <Pagination 
+                 currentPage={currentPage}
+                 totalPages={totalPages}
+                 onPageChange={setCurrentPage}
+               />
             </div>
           </div>
           
@@ -303,7 +299,7 @@ export function CasesTab({ politician }: Props) {
         <div className="flex flex-col gap-[24px]">
           
           {/* Legal Risk Score */}
-          <div className="premium-card p-[24px]">
+          <div className="card-elevated p-[24px]">
             <div className="flex items-center justify-between mb-[16px]">
               <h3 className="text-white text-[14px] font-bold flex items-center gap-[6px]">Legal Risk Score <Info className="w-[14px] h-[14px] text-[#A1A1AA]" /></h3>
             </div>
@@ -332,7 +328,7 @@ export function CasesTab({ politician }: Props) {
           </div>
 
           {/* Cases by Status */}
-          <div className="premium-card p-[24px]">
+          <div className="card-elevated p-[24px]">
             <h3 className="text-white text-[14px] font-bold mb-[24px]">Cases by Status</h3>
             <div className="flex items-center gap-[24px]">
               <div className="relative w-[110px] h-[110px] shrink-0">
@@ -375,7 +371,7 @@ export function CasesTab({ politician }: Props) {
           </div>
 
           {/* Cases by Severity */}
-          <div className="premium-card p-[24px]">
+          <div className="card-elevated p-[24px]">
             <h3 className="text-white text-[14px] font-bold mb-[24px]">Cases by Severity</h3>
             <div className="flex flex-col gap-[16px]">
               
@@ -411,7 +407,7 @@ export function CasesTab({ politician }: Props) {
           </div>
 
           {/* Key Insights */}
-          <div className="premium-card p-[24px]">
+          <div className="card-elevated p-[24px]">
             <h3 className="text-white text-[14px] font-bold mb-[24px]">Key Insights</h3>
             <div className="flex flex-col gap-[20px]">
               

@@ -24,6 +24,8 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { Pagination } from '@/components/ui/Pagination';
 
 interface Props {
   politician: Politician;
@@ -83,7 +85,16 @@ const getBillIcon = (title: string, type: string) => {
   return <FileCode className="w-[20px] h-[20px] text-[#3B82F6]" />;
 };
 
+// Explicit column widths: Title(flex) | Type | Date | Status | Progress | LastUpdated | Actions
+const BILLS_TABLE_GRID = 'grid-cols-[minmax(180px,1fr)_minmax(90px,110px)_minmax(100px,130px)_minmax(100px,130px)_minmax(70px,90px)_minmax(90px,110px)_48px]';
+
 export function BillsTab({ politician, bills }: Props) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const shouldReduceMotion = useReducedMotion();
+  const ITEMS_PER_PAGE = 6;
+  const totalPages = Math.ceil(bills.length / ITEMS_PER_PAGE);
+  const currentBills = bills.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
   if (bills.length === 0) {
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 p-12 text-center rounded-md bg-white/[0.02]">
@@ -122,7 +133,7 @@ export function BillsTab({ politician, bills }: Props) {
       {/* SUMMARY CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-[16px] mb-[24px]">
         {/* Total Bills */}
-        <div className="premium-card p-[16px] flex items-center justify-between">
+        <div className="card-elevated p-[16px] flex items-center justify-between">
           <div>
             <div className="text-[#A1A1AA] text-[12px] font-medium mb-[8px]">Total Bills</div>
             <div className="text-white font-bold text-[28px] leading-none mb-[8px]">{totalBills}</div>
@@ -134,7 +145,7 @@ export function BillsTab({ politician, bills }: Props) {
         </div>
 
         {/* Passed */}
-        <div className="premium-card p-[16px] flex flex-col justify-between">
+        <div className="card-elevated p-[16px] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-[16px]">
             <div className="w-[32px] h-[32px] rounded-full bg-[var(--color-accent-positive)]/10 border border-[var(--color-accent-positive)]/20 flex items-center justify-center">
               <CheckCircle2 className="w-[16px] h-[16px] text-[var(--color-accent-positive)]" />
@@ -148,7 +159,7 @@ export function BillsTab({ politician, bills }: Props) {
         </div>
 
         {/* In Progress */}
-        <div className="premium-card p-[16px] flex flex-col justify-between">
+        <div className="card-elevated p-[16px] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-[16px]">
             <div className="w-[32px] h-[32px] rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
               <Hourglass className="w-[16px] h-[16px] text-yellow-500" />
@@ -162,7 +173,7 @@ export function BillsTab({ politician, bills }: Props) {
         </div>
 
         {/* Not Passed */}
-        <div className="premium-card p-[16px] flex flex-col justify-between">
+        <div className="card-elevated p-[16px] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-[16px]">
             <div className="w-[32px] h-[32px] rounded-full bg-[var(--color-accent-negative)]/10 border border-[var(--color-accent-negative)]/20 flex items-center justify-center">
               <XCircle className="w-[16px] h-[16px] text-[var(--color-accent-negative)]" />
@@ -176,7 +187,7 @@ export function BillsTab({ politician, bills }: Props) {
         </div>
 
         {/* Withdrawn */}
-        <div className="premium-card p-[16px] flex flex-col justify-between">
+        <div className="card-elevated p-[16px] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-[16px]">
             <div className="w-[32px] h-[32px] rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
               <FileMinus className="w-[16px] h-[16px] text-purple-500" />
@@ -242,110 +253,120 @@ export function BillsTab({ politician, bills }: Props) {
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-[24px]">
 
         {/* LEFT MAIN TABLE */}
-        <div className="premium-card overflow-x-auto flex flex-col justify-between h-fit">
+        <div className="card-elevated overflow-x-auto flex flex-col justify-between h-fit">
           <div className="min-w-[900px]">
             {/* Table Header */}
-            <div className="grid grid-cols-12 gap-[16px] px-[24px] py-[16px] border-b border-white/5">
-              <div className="col-span-4 text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Bill / Act Name</div>
-              <div className="col-span-1 text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Type</div>
-              <div className="col-span-2 text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Introduced / Sponsored On</div>
-              <div className="col-span-2 text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Current Status</div>
-              <div className="col-span-1 text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Progress</div>
-              <div className="col-span-1 text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Last Updated</div>
-              <div className="col-span-1 text-[#A1A1AA] text-[11px] font-semibold tracking-wider text-right pr-[8px]">Actions</div>
+            <div className={clsx('grid gap-[16px] px-[24px] py-[16px] border-b border-white/5', BILLS_TABLE_GRID)}>
+              <div className="text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Bill / Act Name</div>
+              <div className="text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Type</div>
+              <div className="text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Introduced On</div>
+              <div className="text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Status</div>
+              <div className="text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Progress</div>
+              <div className="text-[#A1A1AA] text-[11px] font-semibold tracking-wider">Last Updated</div>
+              <div className="text-[#A1A1AA] text-[11px] font-semibold tracking-wider text-right">↗</div>
             </div>
 
             {/* Table Rows */}
             <div className="flex flex-col">
-              {bills.map(bill => {
-                const type = getBillType(bill.title);
-                const progress = getProgress(bill.status);
-                const statusMeta = getStatusDisplay(bill.status);
+              <AnimatePresence mode="popLayout">
+                {currentBills.map((bill, i) => {
+                  const type = getBillType(bill.title);
+                  const progress = getProgress(bill.status);
+                  const statusMeta = getStatusDisplay(bill.status);
 
-                return (
-                  <Link href={`/bills/${bill.id}`} key={bill.id} className="grid grid-cols-12 gap-[16px] px-[24px] py-[20px] border-b border-white/5 hover:bg-white/[0.02] transition-colors items-center group">
+                  return (
+                    <motion.div
+                      key={bill.id}
+                      layout={!shouldReduceMotion}
+                      initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.98 }}
+                      transition={{ 
+                        duration: shouldReduceMotion ? 0 : 0.25, 
+                        delay: shouldReduceMotion ? 0 : i * 0.04,
+                        ease: [0.22, 1, 0.36, 1]
+                      }}
+                    >
+                      <Link href={`/bills/${bill.id}`} className={clsx('grid gap-[16px] px-[24px] py-[20px] border-b border-white/5 hover:bg-white/[0.04] transition-colors items-center group', BILLS_TABLE_GRID)}>
 
-                    {/* Bill Name */}
-                    <div className="col-span-4 flex gap-[12px] items-start pr-[24px]">
-                      <div className="w-[40px] h-[40px] shrink-0 rounded-sm bg-white/[0.02] border border-white/10 flex items-center justify-center group-hover:border-white/20 transition-colors mt-[2px]">
-                        {getBillIcon(bill.title, type)}
-                      </div>
-                      <div>
-                        <h4 className="text-white text-[13px] font-bold leading-snug mb-[4px] group-hover:text-[#3B82F6] transition-colors">{bill.title}</h4>
-                        <div className="text-[#A1A1AA] text-[11px]">Bill No. {bill.id.split('-').pop()} of 2023</div>
-                      </div>
-                    </div>
+                        {/* Bill Name */}
+                        <div className="flex gap-[12px] items-start min-w-0">
+                          <div className="w-[36px] h-[36px] shrink-0 rounded-sm bg-white/[0.02] border border-white/10 flex items-center justify-center group-hover:border-white/20 transition-colors mt-[2px]">
+                            {getBillIcon(bill.title, type)}
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-white text-[13px] font-bold leading-snug mb-[4px] group-hover:text-[#3B82F6] transition-colors line-clamp-2">{bill.title}</h4>
+                            <div className="text-[#A1A1AA] text-[11px]">Bill No. {bill.id.split('-').pop()} of 2023</div>
+                          </div>
+                        </div>
 
-                    {/* Type */}
-                    <div className="col-span-1 flex items-center">
-                      <span className={clsx("px-[6px] py-[2px] rounded-sm text-[10px] font-bold whitespace-nowrap", getBillTypeColor(type))}>
-                        {type}
-                      </span>
-                    </div>
+                        {/* Type */}
+                        <div className="flex items-center">
+                          <span className={clsx('px-[6px] py-[2px] rounded-sm text-[10px] font-bold whitespace-nowrap', getBillTypeColor(type))}>
+                            {type}
+                          </span>
+                        </div>
 
-                    {/* Introduced On */}
-                    <div className="col-span-2 flex flex-col justify-center">
-                      <span className="text-white text-[13px] font-medium">{new Date(bill.introducedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
-                      <span className="text-[#A1A1AA] text-[11px]">Introduced</span>
-                    </div>
+                        {/* Introduced On */}
+                        <div className="flex flex-col justify-center">
+                          <span className="text-white text-[13px] font-bold">{new Date(bill.introducedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                          <span className="text-[10px] uppercase tracking-wider text-[#A1A1AA] font-semibold">Introduced</span>
+                        </div>
 
-                    {/* Status */}
-                    <div className="col-span-2 flex flex-col justify-center gap-[4px] pr-[16px]">
-                      <div className={clsx("w-fit px-[8px] py-[2px] rounded border border-current/20 text-[11px] font-bold", statusMeta.bg)} style={{ color: statusMeta.color }}>
-                        {statusMeta.label}
-                      </div>
-                      <span className="text-[#A1A1AA] text-[11px] line-clamp-1">{bill.status === 'passed' ? 'Assented' : bill.status === 'rejected' ? 'House Dissolved' : 'Under Consideration'}</span>
-                    </div>
+                        {/* Status */}
+                        <div className="flex flex-col justify-center gap-[4px]">
+                          <div className={clsx('w-fit px-[8px] py-[2px] rounded border border-current/20 text-[11px] font-bold', statusMeta.bg)} style={{ color: statusMeta.color }}>
+                            {statusMeta.label}
+                          </div>
+                          <span className="text-[10px] uppercase tracking-wider text-[#A1A1AA] font-semibold line-clamp-1">{bill.status === 'passed' ? 'Assented' : bill.status === 'rejected' ? 'House Dissolved' : 'Under Consideration'}</span>
+                        </div>
 
-                    {/* Progress */}
-                    <div className="col-span-1 flex items-center gap-[12px]">
-                      <div className="w-[40px] h-[4px] bg-white/10 rounded-full overflow-hidden shrink-0">
-                        <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${progress}%`, backgroundColor: statusMeta.color }} />
-                      </div>
-                      <span className="text-[#A1A1AA] text-[11px] font-semibold">{progress}%</span>
-                    </div>
+                        {/* Progress */}
+                        <div className="flex items-center gap-[8px]">
+                          <div className="flex-1 h-[4px] bg-white/10 rounded-full overflow-hidden min-w-[30px]">
+                            <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${progress}%`, backgroundColor: statusMeta.color }} />
+                          </div>
+                          <span className="text-white text-[12px] font-bold tabular-nums shrink-0">{progress}%</span>
+                        </div>
 
-                    {/* Last Updated */}
-                    <div className="col-span-1 flex items-center">
-                      <span className="text-[#A1A1AA] text-[12px]">{new Date(bill.introducedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
-                    </div>
+                        {/* Last Updated */}
+                        <div className="flex items-center">
+                          <span className="text-[10px] uppercase tracking-wider text-[#A1A1AA] font-semibold">{new Date(bill.introducedDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                        </div>
 
-                    {/* Actions */}
-                    <div className="col-span-1 flex justify-end pr-[8px]">
-                      <ChevronRight className="w-[16px] h-[16px] text-[#A1A1AA] group-hover:text-white transition-colors" />
-                    </div>
+                        {/* Actions */}
+                        <div className="flex justify-end">
+                          <ChevronRight className="w-[16px] h-[16px] text-[#A1A1AA] group-hover:text-white transition-colors" />
+                        </div>
 
-                  </Link>
-                )
-              })}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           </div>
 
           {/* Pagination Footer */}
-          <div className="flex items-center justify-between px-[24px] py-[16px] border-t border-white/5 bg-[#111111]/50">
-            <div className="text-[#A1A1AA] text-[12px]">Showing 1 to {Math.min(6, totalBills)} of {totalBills} bills</div>
-            <div className="flex items-center gap-[8px]">
-              <button className="w-[28px] h-[28px] flex items-center justify-center rounded border border-white/5 text-white/20 hover:text-white hover:bg-white/5 transition-colors">
-                <ChevronRight className="w-[14px] h-[14px] rotate-180" />
-              </button>
-              <button className="w-[28px] h-[28px] flex items-center justify-center rounded border border-[var(--color-accent-positive)]/50 bg-[var(--color-accent-positive)]/10 text-[var(--color-accent-positive)] font-bold text-[12px]">
-                1
-              </button>
-              <button className="w-[28px] h-[28px] flex items-center justify-center rounded border border-white/5 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors font-bold text-[12px]">
-                2
-              </button>
-              <button className="w-[28px] h-[28px] flex items-center justify-center rounded border border-white/5 text-[#A1A1AA] hover:text-white hover:bg-white/5 transition-colors">
-                <ChevronRight className="w-[14px] h-[14px]" />
-              </button>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-[24px] py-[16px] border-t border-white/5 bg-[#111111]/50">
+              <div className="text-[#A1A1AA] text-[12px]">
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalBills)} of {totalBills} bills
+              </div>
+              <Pagination 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </div>
-          </div>
+          )}
         </div>
 
         {/* RIGHT SIDEBAR */}
         <div className="flex flex-col gap-[24px]">
 
           {/* Bills by Current Status */}
-          <div className="premium-card p-[24px]">
+          <div className="card-elevated p-[24px]">
             <h3 className="text-white text-[14px] font-bold mb-[24px]">Bills by Current Status</h3>
             <div className="flex items-center gap-[24px]">
               <div className="relative w-[100px] h-[100px] shrink-0">
@@ -396,7 +417,7 @@ export function BillsTab({ politician, bills }: Props) {
           </div>
 
           {/* Bills by Type */}
-          <div className="premium-card p-[24px]">
+          <div className="card-elevated p-[24px]">
             <h3 className="text-white text-[14px] font-bold mb-[24px]">Bills by Type</h3>
             <div className="flex flex-col gap-[20px]">
 
@@ -425,7 +446,7 @@ export function BillsTab({ politician, bills }: Props) {
               </div>
 
               <div className="flex items-center justify-between gap-[16px]">
-                <span className="text-[#A1A1AA] text-[12px] w-[100px] shrink-0 line-clamp-1 pr-2">Private Member Bill</span>
+                <span className="text-[#A1A1AA] text-[12px] w-[100px] shrink-0">Private Member Bill</span>
                 <div className="w-full h-[6px] bg-white/5 rounded-full overflow-hidden">
                   <div className="h-full bg-[#8B5CF6] rounded-full" style={{ width: `${totalBills ? (privateCount / totalBills) * 100 : 0}%` }} />
                 </div>
@@ -440,7 +461,7 @@ export function BillsTab({ politician, bills }: Props) {
           </div>
 
           {/* Recent Legislative Activity */}
-          <div className="premium-card p-[24px]">
+          <div className="card-elevated p-[24px]">
             <h3 className="text-white text-[14px] font-bold mb-[24px]">Recent Legislative Activity</h3>
 
             <div className="flex flex-col gap-[20px]">

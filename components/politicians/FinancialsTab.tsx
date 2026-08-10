@@ -65,7 +65,7 @@ export function FinancialsTab({ politician }: Props) {
 
   // Financial Growth Indicator Logic (Neutral Language)
   const getGrowthIndicator = () => {
-    if (yearsCovered === 0) return { label: 'Stable', color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/20' };
+    if (declarations.length === 1 || yearsCovered === 0) return { label: 'Insufficient Data', color: 'text-[#A1A1AA]', bg: 'bg-white/[0.05]', border: 'border-white/10' };
     if (cagr > 30) return { label: 'High Growth Relative to Timeline', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20' };
     if (cagr > 15) return { label: 'Above Expected Growth', color: 'text-yellow-400', bg: 'bg-yellow-400/10', border: 'border-yellow-400/20' };
     if (cagr > 5) return { label: 'Normal Growth', color: 'text-green-400', bg: 'bg-green-400/10', border: 'border-green-400/20' };
@@ -75,7 +75,8 @@ export function FinancialsTab({ politician }: Props) {
 
   // Extract unique offices held
   const timeline = politician.careerTimeline || [];
-  const uniqueOffices = Array.from(new Set(timeline.map(t => t.title.split('(')[0].trim()))).join(' • ');
+  const startYears = timeline.map(t => t.startYear).filter(Boolean);
+  const subtitle = startYears.length > 0 ? `Since ${Math.min(...startYears)}` : '';
 
   // State
   const [hoveredYear, setHoveredYear] = useState<number | null>(null);
@@ -97,7 +98,7 @@ export function FinancialsTab({ politician }: Props) {
 
       {/* HERO CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[16px]">
-        <div className="premium-card p-[20px] flex flex-col justify-between">
+        <div className="card-elevated p-[20px] flex flex-col justify-between">
           <div className="text-[#A1A1AA] text-[12px] font-medium mb-[12px] flex items-center gap-[6px]">
             <Wallet className="w-[14px] h-[14px] text-purple-400" />
             Current Net Worth
@@ -114,7 +115,7 @@ export function FinancialsTab({ politician }: Props) {
           </div>
         </div>
 
-        <div className="premium-card p-[20px] flex flex-col justify-between">
+        <div className="card-elevated p-[20px] flex flex-col justify-between">
           <div className="text-[#A1A1AA] text-[12px] font-medium mb-[12px] flex items-center gap-[6px]">
             <TrendingUp className="w-[14px] h-[14px] text-blue-400" />
             Total Asset Growth
@@ -122,29 +123,35 @@ export function FinancialsTab({ politician }: Props) {
           <div>
             <div className="text-white text-[28px] font-bold leading-none mb-[8px]">{formatCurrency(latest.totalAssets)}</div>
             <div className="text-[12px] text-[#A1A1AA] flex items-center gap-[4px]">
-              <span className={clsx("font-semibold flex items-center", totalAssetGrowthPercent >= 0 ? "text-[var(--color-accent-positive)]" : "text-red-500")}>
-                {totalAssetGrowthPercent >= 0 ? <ArrowUp className="w-[12px] h-[12px] mr-[2px]"/> : <ArrowDown className="w-[12px] h-[12px] mr-[2px]"/>}
-                {Math.abs(totalAssetGrowthPercent).toFixed(1)}%
-              </span>
-              (+{formatCurrency(absoluteAssetIncrease)})
+              {declarations.length === 1 ? (
+                <span className="font-semibold text-[#A1A1AA]">---</span>
+              ) : (
+                <>
+                  <span className={clsx("font-semibold flex items-center", totalAssetGrowthPercent >= 0 ? "text-[var(--color-accent-positive)]" : "text-red-500")}>
+                    {totalAssetGrowthPercent >= 0 ? <ArrowUp className="w-[12px] h-[12px] mr-[2px]"/> : <ArrowDown className="w-[12px] h-[12px] mr-[2px]"/>}
+                    {Math.abs(totalAssetGrowthPercent).toFixed(1)}%
+                  </span>
+                  (+{formatCurrency(absoluteAssetIncrease)})
+                </>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="premium-card p-[20px] flex flex-col justify-between">
+        <div className="card-elevated p-[20px] flex flex-col justify-between">
           <div className="text-[#A1A1AA] text-[12px] font-medium mb-[12px] flex items-center gap-[6px]">
             <Award className="w-[14px] h-[14px] text-emerald-400" />
             Years in Public Office
           </div>
           <div>
             <div className="text-white text-[28px] font-bold leading-none mb-[8px]">{politician.yearsInPolitics} Years</div>
-            <div className="text-[12px] text-[#A1A1AA] truncate" title={uniqueOffices || 'Various Offices'}>
-              {uniqueOffices || 'Various Offices'}
+            <div className="text-[12px] text-[#A1A1AA] truncate" title={subtitle}>
+              {subtitle}
             </div>
           </div>
         </div>
 
-        <div className="premium-card p-[20px] flex flex-col justify-between">
+        <div className="card-elevated p-[20px] flex flex-col justify-between">
           <div className="text-[#A1A1AA] text-[12px] font-medium mb-[12px] flex items-center justify-between">
             <span className="flex items-center gap-[6px]">
               <Activity className="w-[14px] h-[14px] text-amber-400" />
@@ -171,7 +178,7 @@ export function FinancialsTab({ politician }: Props) {
       {declarations.length > 1 ? (
         <TimelineOverlay declarations={declarations} timeline={timeline} hoveredYear={hoveredYear} setHoveredYear={setHoveredYear} formatCurrency={formatCurrency} />
       ) : (
-        <div className="premium-card p-[24px] flex items-center gap-[16px]">
+        <div className="card-elevated p-[24px] flex items-center gap-[16px]">
           <Info className="w-[20px] h-[20px] text-[#3B82F6]" />
           <div>
             <h4 className="text-white font-medium text-[14px]">Only one affidavit is available.</h4>
@@ -191,7 +198,7 @@ export function FinancialsTab({ politician }: Props) {
             const isExpanded = expandedCard === idx;
             const nw = dec.totalAssets - dec.totalLiabilities;
             return (
-              <div key={dec.year} className="premium-card overflow-hidden transition-all duration-300">
+              <div key={dec.year} className="card-elevated overflow-hidden transition-all duration-300">
                 <div 
                   className="p-[20px] cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-[16px] hover:bg-white/[0.02]"
                   onClick={() => setExpandedCard(isExpanded ? null : idx)}
@@ -312,7 +319,7 @@ export function FinancialsTab({ politician }: Props) {
       ) : null}
 
       {/* AI INSIGHTS */}
-      <div className="premium-card p-[24px] relative overflow-hidden">
+      <div className="card-elevated p-[24px] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-blue-500/10 blur-[60px] pointer-events-none rounded-full" />
         <h3 className="text-white text-[16px] font-bold mb-[16px] flex items-center gap-[8px]">
           <BarChart4 className="w-[16px] h-[16px] text-blue-400" />
@@ -346,7 +353,7 @@ export function FinancialsTab({ politician }: Props) {
           <li className="flex items-start gap-[12px]">
             <div className="w-[6px] h-[6px] rounded-full bg-blue-400 mt-[6px] shrink-0" />
             <p className="text-[#A1A1AA] text-[14px] leading-relaxed">
-              Most wealth is historically held in <span className="text-white font-semibold">{latest.immovableAssets > latest.movableAssets ? 'immovable' : 'movable'} assets</span>, constituting {((Math.max(latest.immovableAssets, latest.movableAssets) / (latest.totalAssets || 1)) * 100).toFixed(1)}% of the total portfolio.
+              Most wealth {declarations.length > 1 ? 'is historically' : 'is currently'} held in <span className="text-white font-semibold">{latest.immovableAssets > latest.movableAssets ? 'immovable' : 'movable'} assets</span>, constituting {((Math.max(latest.immovableAssets, latest.movableAssets) / (latest.totalAssets || 1)) * 100).toFixed(1)}% of the total portfolio.
             </p>
           </li>
         </ul>
@@ -376,7 +383,7 @@ function TimelineOverlay({ declarations, timeline, hoveredYear, setHoveredYear, 
   const maxAsset = Math.max(...declarations.map((d: any) => d.totalAssets));
 
   return (
-    <div className="premium-card p-[24px] pt-[32px] overflow-hidden relative">
+    <div className="card-elevated p-[24px] pt-[32px] overflow-hidden relative">
        <h3 className="text-white text-[16px] font-bold mb-[40px] flex items-center gap-[8px]">
          <TrendingUp className="w-[16px] h-[16px] text-emerald-400" />
          Wealth vs Public Office Timeline
@@ -486,7 +493,7 @@ function AssetCompositionCard({ comp, total, format }: any) {
   ].filter(b => b.val > 0).sort((a, b) => b.val - a.val);
 
   return (
-    <div className="premium-card p-[20px] flex flex-col">
+    <div className="card-elevated p-[20px] flex flex-col">
       <h4 className="text-[#A1A1AA] text-[12px] font-medium uppercase tracking-wider mb-[16px]">Asset Composition</h4>
       <div className="flex-1 flex flex-col justify-center gap-[12px]">
         {bars.map(b => (
@@ -521,7 +528,7 @@ function LiabilityBreakdownCard({ comp, total, format }: any) {
   ].filter(b => b.val > 0).sort((a, b) => b.val - a.val);
 
   return (
-    <div className="premium-card p-[20px] flex flex-col">
+    <div className="card-elevated p-[20px] flex flex-col">
       <h4 className="text-[#A1A1AA] text-[12px] font-medium uppercase tracking-wider mb-[16px]">Liability Breakdown</h4>
       <div className="flex-1 flex flex-col justify-center gap-[12px]">
         {bars.map(b => (
@@ -557,7 +564,7 @@ function IncomeSourcesCard({ comp, format }: any) {
   ].filter(b => b.val > 0).sort((a, b) => b.val - a.val);
 
   return (
-    <div className="premium-card p-[20px] flex flex-col">
+    <div className="card-elevated p-[20px] flex flex-col">
       <h4 className="text-[#A1A1AA] text-[12px] font-medium uppercase tracking-wider mb-[16px]">Income Sources</h4>
       <div className="flex-1 flex flex-col justify-center gap-[12px]">
         {bars.map(b => (

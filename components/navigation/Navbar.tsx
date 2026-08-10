@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Menu, X, Search } from 'lucide-react';
 import { CommandPalette } from '@/components/ui/CommandPalette';
 import { SearchBar } from '@/components/shared/SearchBar';
@@ -18,6 +18,7 @@ const NAV_ITEMS = [
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const shouldReduceMotion = useReducedMotion();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -82,7 +83,7 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="relative h-full flex items-center group/navlink outline-none"
+                  className="relative h-full flex items-center group/navlink !outline-none"
                 >
                   <span className={`font-semibold text-[15px] tracking-wide transition-colors duration-200 ${
                     isActive ? 'text-white' : 'text-white/70 group-hover/navlink:text-white group-focus-visible/navlink:text-white'
@@ -93,7 +94,7 @@ export function Navbar() {
                   {/* Active Indicator */}
                   {isActive && (
                     <motion.div
-                      layoutId="activeNavIndicator"
+                      layoutId={shouldReduceMotion ? undefined : "activeNavIndicator"}
                       className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#22C55E] rounded-t-full"
                       transition={{ type: 'spring', bounce: 0.1, duration: 0.5 }}
                     />

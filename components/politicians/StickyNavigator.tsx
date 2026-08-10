@@ -24,9 +24,18 @@ export function StickyNavigator({ lastUpdated }: { lastUpdated?: string }) {
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
+    // Dynamically calculate the combined sticky height for the intersection observer
+    const navbar = document.querySelector('header');
+    const stickyNav = document.getElementById('sticky-navigator');
+    const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 80;
+    // Default to 220px if not yet rendered to prevent layout thrashing
+    const stickyNavHeight = stickyNav ? stickyNav.getBoundingClientRect().height : 220; 
+    const totalOffset = navbarHeight + stickyNavHeight;
+
     const options = {
       root: null,
-      rootMargin: '-100px 0px -60% 0px',
+      // The top margin must account for the sticky headers so it triggers when visible below them
+      rootMargin: `-${totalOffset + 40}px 0px -40% 0px`,
       threshold: 0,
     };
 
@@ -56,57 +65,17 @@ export function StickyNavigator({ lastUpdated }: { lastUpdated?: string }) {
   const handleScrollTo = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      // Less offset on smaller screens where the 3rd row is hidden
-      const isMobile = window.innerWidth < 1024;
-      const offset = isMobile ? 80 : 120;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.scrollY - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   return (
-    <div className="sticky top-4 z-50 w-full px-[40px] mb-12 transition-all duration-[220ms]">
+    <div id="sticky-navigator" className="sticky top-[80px] z-40 w-full px-[40px] mb-12 transition-all duration-[220ms]">
       <div className="bg-[var(--color-panel)]/95 backdrop-blur-xl border border-white/10 rounded-md shadow-[0_20px_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col">
         
-        {/* ROW 1: Header */}
-        <div className="flex items-center justify-between p-5 md:p-6 border-b border-white/5">
-          {/* Left Side */}
-          <div className="flex items-center gap-5">
-            <div className="w-12 h-12 rounded-sm bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner">
-              <LayoutGrid className="w-6 h-6 text-[#22C55E]" />
-            </div>
-            <div>
-              <h2 className="text-white font-bold text-lg md:text-xl tracking-tight">Executive Brief</h2>
-              <p className="text-[#22C55E] text-xs md:text-sm font-medium mt-0.5">
-                {lastUpdated ? `Last Updated: ${lastUpdated}` : 'Data updated regularly'}
-              </p>
-            </div>
-            <div className="ml-2 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/20">
-              <div className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse" />
-              <span className="text-[#22C55E] text-xs font-semibold uppercase tracking-wider">Live</span>
-            </div>
-          </div>
-
-          {/* Right Side */}
-          <div className="flex items-center gap-6">
-            <div className="hidden lg:flex items-center gap-3">
-              <ShieldCheck className="w-6 h-6 text-[#22C55E]" />
-              <div>
-                <p className="text-white font-bold text-sm tracking-tight">Data Verified</p>
-                <p className="text-gray-400 text-xs">Updated regularly</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ROW 2: Navigation Tabs */}
+        {/* Navigation Tabs */}
         <div className="relative">
-          <div className="flex border-b border-white/5 overflow-x-auto no-scrollbar relative pt-2">
+          <div className="flex overflow-x-auto no-scrollbar relative">
             {PAGE_SECTIONS.map((section, index) => {
               const isActive = activeSection === section.id;
               const Icon = section.icon;
@@ -116,7 +85,7 @@ export function StickyNavigator({ lastUpdated }: { lastUpdated?: string }) {
                   key={section.id}
                   onClick={() => handleScrollTo(section.id)}
                   className={clsx(
-                    "relative flex flex-col items-center justify-center flex-1 py-5 px-4 min-w-[140px] transition-all group",
+                    "relative flex flex-col items-center justify-center flex-1 py-3 px-3 min-w-[120px] transition-all group",
                     isActive ? "bg-gradient-to-b from-[#22C55E]/10 to-transparent" : "hover:bg-white/[0.02]",
                     index !== PAGE_SECTIONS.length - 1 ? "border-r border-white/5" : ""
                   )}
@@ -127,20 +96,14 @@ export function StickyNavigator({ lastUpdated }: { lastUpdated?: string }) {
                   )}
                   
                   <Icon className={clsx(
-                    "w-6 h-6 mb-3 transition-colors",
+                    "w-5 h-5 mb-1.5 transition-colors",
                     isActive ? "text-[#22C55E]" : "text-gray-400 group-hover:text-gray-200"
                   )} />
                   <span className={clsx(
-                    "font-bold text-[14px] md:text-[15px] mb-1 tracking-tight whitespace-nowrap transition-colors",
+                    "font-bold text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-colors",
                     isActive ? "text-[#22C55E]" : "text-white"
                   )}>
                     {section.label}
-                  </span>
-                  <span className={clsx(
-                    "text-[11px] md:text-[12px] font-medium whitespace-nowrap transition-colors",
-                    isActive ? "text-[#22C55E]/80" : "text-gray-500 group-hover:text-gray-400"
-                  )}>
-                    {section.subtitle}
                   </span>
                 </button>
               );
@@ -148,41 +111,6 @@ export function StickyNavigator({ lastUpdated }: { lastUpdated?: string }) {
           </div>
           {/* Fade hint for horizontal scroll on smaller screens */}
           <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[var(--color-panel)] to-transparent pointer-events-none xl:hidden" />
-        </div>
-
-        {/* ROW 3: Footer */}
-        <div className="hidden lg:block bg-white/[0.02] p-4 md:p-5 relative overflow-hidden">
-          {/* Subtle wave/gradient background effect */}
-          <div className="absolute top-0 right-0 bottom-0 w-1/2 bg-gradient-to-l from-indigo-500/5 to-transparent pointer-events-none" />
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 relative z-10">
-            {/* Col 1 */}
-            <div className="flex items-center gap-3">
-              <Database className="w-5 h-5 text-indigo-400 shrink-0" />
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <span className="text-indigo-400 text-xs font-bold uppercase tracking-wider whitespace-nowrap">Data Sources:</span>
-                <span className="text-gray-400 text-xs">ECI, Parliament, Govt. Websites, Court Records, Affidavits & more</span>
-              </div>
-            </div>
-
-            {/* Col 2 */}
-            <div className="flex items-center gap-3">
-              <Shield className="w-5 h-5 text-blue-400 shrink-0" />
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <span className="text-blue-400 text-xs font-bold uppercase tracking-wider whitespace-nowrap">Our Commitment</span>
-                <span className="text-gray-400 text-xs">Our data is verified and updated regularly</span>
-              </div>
-            </div>
-
-            {/* Col 3 */}
-            <div className="flex items-center gap-3">
-              <RefreshCw className="w-5 h-5 text-purple-400 shrink-0" />
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                <span className="text-purple-400 text-xs font-bold uppercase tracking-wider whitespace-nowrap">Update Frequency</span>
-                <span className="text-gray-400 text-xs">Real-time checks & scheduled updates</span>
-              </div>
-            </div>
-          </div>
         </div>
 
       </div>

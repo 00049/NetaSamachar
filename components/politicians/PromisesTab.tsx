@@ -5,29 +5,19 @@ import { PromiseRow } from '@/components/promises/PromiseRow';
 import { Promise as PromiseType } from '@/lib/types';
 import { ArrowUpDown, ClipboardCheck, User, Loader, AlertTriangle, List } from 'lucide-react';
 import clsx from 'clsx';
+import { getCompletionPercentage } from '@/lib/promises';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 type FilterOption = 'All' | 'Completed' | 'In Progress' | 'Not Started' | 'Delayed' | 'Broken';
 type SortOption = 'latest' | 'completion';
 
-const getCompletionPercentage = (status: string): number => {
-  switch (status) {
-    case 'completed':
-    case 'operational': return 100;
-    case 'mostly_completed': return 75;
-    case 'partially_completed': return 50;
-    case 'in_progress':
-    case 'construction_started':
-    case 'implementation_started': return 25;
-    case 'tender_issued': return 10;
-    case 'planning': return 5;
-    case 'delayed': return 25;
-    default: return 0;
-  }
-};
+// Column layout shared between header row and PromiseRow
+export const PROMISE_TABLE_COLS = 'grid-cols-[minmax(0,1fr)_minmax(100px,120px)_minmax(120px,150px)_minmax(90px,110px)_minmax(140px,170px)]';
 
 export function PromisesTab({ promises }: { promises: PromiseType[] }) {
   const [activeFilter, setActiveFilter] = useState<FilterOption>('All');
   const [sortBy, setSortBy] = useState<SortOption>('latest');
+  const shouldReduceMotion = useReducedMotion();
 
   // Compute Stats
   const totalPromises = promises.length;
@@ -86,63 +76,63 @@ export function PromisesTab({ promises }: { promises: PromiseType[] }) {
       {/* SUMMARY 4-CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[24px]">
         {/* Total Promises */}
-        <div className="premium-card p-[24px] flex items-center justify-between">
+        <div className="card-elevated p-[24px] flex items-center justify-between">
           <div className="flex gap-[16px] items-center">
             <div className="w-[48px] h-[48px] rounded-sm bg-[var(--color-accent-positive)]/10 border border-[var(--color-accent-positive)]/20 flex items-center justify-center">
               <ClipboardCheck className="w-[24px] h-[24px] text-[var(--color-accent-positive)]" />
             </div>
             <div>
-              <div className="text-[#A1A1AA] text-[12px] font-medium mb-[4px]">Total Promises</div>
-              <div className="text-white font-bold text-[28px] leading-none">{totalPromises}</div>
+              <div className="text-[#A1A1AA] text-[10px] uppercase tracking-wider font-semibold mb-[4px]">Total Promises</div>
+              <div className="text-white font-bold text-[28px] leading-none tabular-nums">{totalPromises}</div>
             </div>
           </div>
         </div>
 
         {/* Delivered */}
-        <div className="premium-card p-[24px] flex items-center justify-between">
+        <div className="card-elevated p-[24px] flex items-center justify-between">
           <div className="flex gap-[16px] items-center">
             <div className="w-[48px] h-[48px] rounded-sm bg-[var(--color-accent-positive)]/10 border border-[var(--color-accent-positive)]/20 flex items-center justify-center">
               <User className="w-[24px] h-[24px] text-[var(--color-accent-positive)]" />
             </div>
             <div>
-              <div className="text-[#A1A1AA] text-[12px] font-medium mb-[4px]">Delivered</div>
-              <div className="text-white font-bold text-[28px] leading-none">{completedCount}</div>
+              <div className="text-[#A1A1AA] text-[10px] uppercase tracking-wider font-semibold mb-[4px]">Delivered</div>
+              <div className="text-white font-bold text-[28px] leading-none tabular-nums">{completedCount}</div>
             </div>
           </div>
-          <div className="text-white text-[20px] font-medium">{completedPercent}%</div>
+          <div className="text-white text-[20px] font-bold tabular-nums">{completedPercent}%</div>
         </div>
 
         {/* In Progress */}
-        <div className="premium-card p-[24px] flex items-center justify-between">
+        <div className="card-elevated p-[24px] flex items-center justify-between">
           <div className="flex gap-[16px] items-center">
             <div className="w-[48px] h-[48px] rounded-sm bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
               <Loader className="w-[24px] h-[24px] text-yellow-500" />
             </div>
             <div>
-              <div className="text-[#A1A1AA] text-[12px] font-medium mb-[4px]">In Progress</div>
-              <div className="text-white font-bold text-[28px] leading-none">{inProgressCount}</div>
+              <div className="text-[#A1A1AA] text-[10px] uppercase tracking-wider font-semibold mb-[4px]">In Progress</div>
+              <div className="text-white font-bold text-[28px] leading-none tabular-nums">{inProgressCount}</div>
             </div>
           </div>
-          <div className="text-white text-[20px] font-medium">{inProgressPercent}%</div>
+          <div className="text-white text-[20px] font-bold tabular-nums">{inProgressPercent}%</div>
         </div>
 
         {/* Not Started */}
-        <div className="premium-card p-[24px] flex items-center justify-between">
+        <div className="card-elevated p-[24px] flex items-center justify-between">
           <div className="flex gap-[16px] items-center">
             <div className="w-[48px] h-[48px] rounded-sm bg-[var(--color-accent-negative)]/10 border border-[var(--color-accent-negative)]/20 flex items-center justify-center">
               <AlertTriangle className="w-[24px] h-[24px] text-[var(--color-accent-negative)]" />
             </div>
             <div>
-              <div className="text-[#A1A1AA] text-[12px] font-medium mb-[4px]">Not Started</div>
-              <div className="text-white font-bold text-[28px] leading-none">{notStartedCount}</div>
+              <div className="text-[#A1A1AA] text-[10px] uppercase tracking-wider font-semibold mb-[4px]">Not Started</div>
+              <div className="text-white font-bold text-[28px] leading-none tabular-nums">{notStartedCount}</div>
             </div>
           </div>
-          <div className="text-white text-[20px] font-medium">{notStartedPercent}%</div>
+          <div className="text-white text-[20px] font-bold tabular-nums">{notStartedPercent}%</div>
         </div>
       </div>
 
       {/* FILTERS & CONTROLS BAR */}
-      <div className="premium-card p-[16px] flex flex-col xl:flex-row xl:items-center justify-between gap-[16px] mt-[16px]">
+      <div className="card-elevated p-[16px] flex flex-col xl:flex-row xl:items-center justify-between gap-[16px] mt-[16px]">
         {/* Filter Pills */}
         <div className="flex items-center gap-[24px] overflow-x-auto no-scrollbar pb-2 xl:pb-0">
           
@@ -193,14 +183,14 @@ export function PromisesTab({ promises }: { promises: PromiseType[] }) {
       </div>
 
       {/* TABLE HEADER & LIST */}
-      <div className="premium-card overflow-hidden">
+      <div className="card-elevated overflow-hidden">
         {/* Header Row */}
-        <div className="grid grid-cols-12 gap-[16px] py-[16px] border-b border-white/5 items-center px-[24px]">
-          <div className="col-span-4 text-[#A1A1AA] text-[12px] font-medium tracking-wider">Promise</div>
-          <div className="col-span-2 text-[#A1A1AA] text-[12px] font-medium tracking-wider">Category</div>
-          <div className="col-span-2 text-[#A1A1AA] text-[12px] font-medium tracking-wider">Status</div>
-          <div className="col-span-2 text-[#A1A1AA] text-[12px] font-medium tracking-wider">Progress</div>
-          <div className="col-span-2 text-[#A1A1AA] text-[12px] font-medium tracking-wider pl-[8px]">Timeline</div>
+        <div className={clsx('grid gap-[16px] py-[16px] border-b border-white/5 items-center px-[24px]', PROMISE_TABLE_COLS)}>
+          <div className="text-[#A1A1AA] text-[10px] uppercase tracking-wider font-semibold">Promise</div>
+          <div className="text-[#A1A1AA] text-[10px] uppercase tracking-wider font-semibold">Category</div>
+          <div className="text-[#A1A1AA] text-[10px] uppercase tracking-wider font-semibold">Status</div>
+          <div className="text-[#A1A1AA] text-[10px] uppercase tracking-wider font-semibold">Progress</div>
+          <div className="text-[#A1A1AA] text-[10px] uppercase tracking-wider font-semibold pl-[8px]">Timeline</div>
         </div>
 
         {/* List Rows */}
@@ -210,9 +200,24 @@ export function PromisesTab({ promises }: { promises: PromiseType[] }) {
           </div>
         ) : (
           <div className="flex flex-col">
-            {filteredAndSorted.map(promise => (
-              <PromiseRow key={promise.id} promise={promise} />
-            ))}
+            <AnimatePresence mode="popLayout">
+              {filteredAndSorted.map((promise, i) => (
+                <motion.div
+                  key={promise.id}
+                  layout={!shouldReduceMotion}
+                  initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.98 }}
+                  transition={{ 
+                    duration: shouldReduceMotion ? 0 : 0.25, 
+                    delay: shouldReduceMotion ? 0 : i * 0.04,
+                    ease: [0.22, 1, 0.36, 1]
+                  }}
+                >
+                  <PromiseRow promise={promise} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         )}
       </div>

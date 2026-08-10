@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { ScrollReveal } from '@/components/ui/ScrollReveal';
 
 interface Props {
   politician: Politician;
@@ -62,14 +63,14 @@ export function TimelineTab({ politician, promises }: Props) {
       <div className="grid grid-cols-1 gap-[24px]">
         
         {/* LEFT MAIN TIMELINE */}
-        <div className="premium-card p-[32px] overflow-hidden">
+        <div className="card-elevated p-[32px] overflow-hidden">
           <div className="relative pl-[110px] sm:pl-[140px] pt-[20px]">
              
             {/* The continuous vertical line behind everything */}
             <div className="absolute left-[88px] sm:left-[108px] top-[24px] bottom-0 w-[2px] bg-gradient-to-b from-[#22c55e] via-[#3b82f6] via-[#a855f7] to-[#eab308] opacity-50" />
 
             {timelineEvents.map((event, i) => (
-              <div key={event.id} className="relative mb-[40px] group">
+              <ScrollReveal key={event.id} delay={i * 70} className="relative mb-[40px] group">
                 
                 {/* Date Labels (Left Side) */}
                 <div className="absolute left-[-110px] sm:left-[-140px] top-[14px] w-[90px] sm:w-[120px] text-right">
@@ -112,29 +113,15 @@ export function TimelineTab({ politician, promises }: Props) {
                       </div>
                       
                       {/* Chevron Arrow */}
-                      <div className="absolute right-[24px] top-1/2 -translate-y-1/2 hidden md:block opacity-0 group-hover:opacity-100 transition-opacity">
-                         <ChevronRight className="w-[16px] h-[16px] text-[#A1A1AA]" />
-                      </div>
-
-                   </div>
-                </div>
-
-              </div>
+                      {/* Removed right chevron as timeline cards do not expand */}
+                    </div>
+                  </div>
+              </ScrollReveal>
             ))}
             
-            {/* View Full Timeline Button */}
-            <div className="relative mt-[20px] mb-[10px]">
-                <div className="absolute left-[-26.5px] sm:left-[-36.5px] top-[18px]">
-                   <div className="w-[12px] h-[12px] rounded-full border-2 border-white/20 bg-[#111111]" />
-                </div>
-                
-                <button className="flex items-center gap-[8px] px-[24px] py-[10px] rounded-full border border-white/10 text-white text-[13px] hover:bg-white/[0.02] transition-colors ml-[16px]">
-                  View Full Timeline Details <ChevronRight className="w-[14px] h-[14px]" />
-                </button>
-            </div>
+            {/* Removed View Full Timeline Button */}
 
           </div>
-
         </div>
 
 
@@ -143,7 +130,7 @@ export function TimelineTab({ politician, promises }: Props) {
       
       {/* Footer Info */}
       <div className="mt-[24px] flex items-center gap-[8px] text-[#52525B] text-[11px]">
-        <Info className="w-[14px] h-[14px]" /> Timeline data is compiled from official records including Election Commission, Himachal Pradesh Vidhan Sabha, and Government Gazettes.
+        <Info className="w-[14px] h-[14px]" /> Timeline data is compiled from official records including Election Commission, {politician.state} Vidhan Sabha, and Government Gazettes.
       </div>
       
     </div>

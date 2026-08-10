@@ -5,61 +5,20 @@ import { Promise as PromiseType } from '@/lib/types';
 import { POLITICIANS } from '@/data/politicians';
 import { Clock, ArrowRight, FileText, AlertCircle, Users } from 'lucide-react';
 import { PoliticianHoverCard } from '../politicians/PoliticianHoverCard';
+import { ProgressBar } from '@/components/ui/ProgressBar';
+import { motion, useReducedMotion } from 'framer-motion';
+import { getCompletionPercentage, getCompletionColor, getStatusMeta } from '@/lib/promises';
 
 interface Props {
   promise: PromiseType;
   viewMode?: 'default' | 'compact';
   politicianProfileMode?: boolean;
+  index?: number;
 }
 
-const getCompletionPercentage = (status: string): number => {
-  switch (status) {
-    case 'completed':
-    case 'operational': return 100;
-    case 'mostly_completed': return 75;
-    case 'partially_completed': return 50;
-    case 'in_progress':
-    case 'construction_started':
-    case 'implementation_started': return 25;
-    case 'tender_issued': return 10;
-    case 'planning': return 5;
-    case 'delayed': return 25;
-    default: return 0;
-  }
-};
 
-const getCompletionColor = (percent: number): string => {
-  if (percent >= 66) return 'var(--color-accent-positive)';
-  if (percent >= 34) return 'var(--color-accent-warning)';
-  return 'var(--color-accent-negative)';
-};
-
-const getStatusMeta = (status: string): { color: string; bg: string; label: string } => {
-  switch (status) {
-    case 'completed':
-    case 'operational':
-      return { color: 'var(--color-accent-positive)', bg: 'var(--color-accent-positive-dim)', label: status.replace(/_/g, ' ') };
-    case 'in_progress':
-    case 'construction_started':
-    case 'implementation_started':
-    case 'tender_issued':
-    case 'planning':
-      return { color: 'var(--color-accent-info)', bg: 'var(--color-accent-info-dim)', label: status.replace(/_/g, ' ') };
-    case 'delayed':
-    case 'no_verified_progress':
-    case 'partially_completed':
-    case 'mostly_completed':
-      return { color: 'var(--color-accent-warning)', bg: 'var(--color-accent-warning-dim)', label: status.replace(/_/g, ' ') };
-    case 'cancelled':
-    case 'insufficient_evidence':
-    case 'unable_to_verify':
-      return { color: 'var(--color-accent-negative)', bg: 'var(--color-accent-negative-dim)', label: status.replace(/_/g, ' ') };
-    default:
-      return { color: 'var(--color-text-secondary)', bg: 'var(--color-border-subtle)', label: status.replace(/_/g, ' ') };
-  }
-};
-
-export function PromiseCard({ promise, viewMode = 'default', politicianProfileMode = false }: Props) {
+export function PromiseCard({ promise, viewMode = 'default', politicianProfileMode = false, index = 0 }: Props) {
+  const shouldReduceMotion = useReducedMotion();
   const politician = POLITICIANS.find(p => p.id === promise.politicianId);
   const statusMeta = getStatusMeta(promise.status);
 
@@ -94,8 +53,29 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
   
   if (viewMode === 'compact') {
     return (
-      <Link href={`/promises/${promise.id}`} className="group block w-full outline-none">
-        <div className="card-glass card-hover h-full flex flex-col min-h-[340px]">
+      <motion.div 
+        className="group block w-full outline-none"
+        initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ 
+          duration: 0.4, 
+          delay: Math.min(index, 10) * 0.05,
+          ease: 'easeOut'
+        }}
+      >
+        <motion.div 
+          whileHover={shouldReduceMotion ? {} : {
+            y: -4,
+            boxShadow: [
+              'inset 0 0 0 1px rgba(255,255,255,0.12)',
+              '0 8px 24px rgba(0,0,0,0.4)',
+              '0 20px 48px rgba(0,0,0,0.28)',
+              '0 1px 0 rgba(255,255,255,0.04)',
+            ].join(', '),
+          }}
+          transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
+          className="card-glass h-full flex flex-col min-h-[340px]"
+        >
           {/* Header row: status + category + confidence */}
           <div className="flex items-center gap-3 flex-wrap mb-6">
             <div 
@@ -119,7 +99,7 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
           </div>
 
           {/* Title */}
-          <h3 className="text-heading-md mb-4 group-hover:underline text-balance">
+          <h3 className="text-heading-md mb-4 text-balance">
             {promise.title}
           </h3>
 
@@ -129,16 +109,15 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
           </p>
 
           {/* Footer */}
-          <div className="mt-auto flex items-center justify-between border-t border-white/5 pt-6">
+          <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-6">
             {politicianProfileMode ? (
               <Link href={`?tab=timeline&promiseId=${promise.id}`} className="inline-flex items-center text-white text-meta group-focus-visible:ring-2 ring-white/50 ring-offset-4 ring-offset-[var(--color-base)]">
                 VIEW TIMELINE
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 ease-out group-hover:translate-x-1" />
               </Link>
             ) : (
-              <div className="inline-flex items-center text-white text-meta group-focus-visible:ring-2 ring-white/50 ring-offset-4 ring-offset-[var(--color-base)]">
-                VIEW INVESTIGATION
-                <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-200 ease-out group-hover:translate-x-1" />
+              <div className="inline-flex items-center text-[var(--text-tertiary)] opacity-60 text-meta cursor-not-allowed">
+                DETAILS COMING SOON
               </div>
             )}
             
@@ -149,13 +128,31 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
               </span>
             )}
           </div>
-        </div>
-      </Link>
+        </motion.div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="card-glass card-hover group flex flex-col md:flex-row mb-8 p-0 overflow-hidden">
+    <motion.div 
+      initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ 
+        duration: 0.4, 
+        delay: Math.min(index, 10) * 0.05,
+        ease: 'easeOut'
+      }}
+      whileHover={shouldReduceMotion ? {} : {
+        y: -4,
+        boxShadow: [
+          'inset 0 0 0 1px rgba(255,255,255,0.12)',
+          '0 8px 24px rgba(0,0,0,0.4)',
+          '0 20px 48px rgba(0,0,0,0.28)',
+          '0 1px 0 rgba(255,255,255,0.04)',
+        ].join(', '),
+      }}
+      className="card-glass group flex flex-col md:flex-row mb-8 p-0 overflow-hidden"
+    >
       {/* ── Left: Vertical Audit Trail (35%) ─────────────────── */}
       <div className="md:w-[35%] border-b md:border-b-0 md:border-r border-white/5 p-8 md:p-10 flex-shrink-0 bg-[#1A1F2E]">
         <div className="text-meta mb-8 flex items-center gap-2">
@@ -178,9 +175,9 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
               <div className="text-body-sm line-clamp-2">
                 {event.description}
               </div>
-              <Link href={`/promises/${promise.id}`} className="text-meta !text-gray-500 hover:!text-white mt-2 inline-block">
-                Read more &rarr;
-              </Link>
+              <div className="text-meta !text-[var(--text-tertiary)] opacity-60 mt-2 inline-block cursor-not-allowed">
+                Details coming soon
+              </div>
             </div>
           ))}
           {promise.timeline.length > 3 && (
@@ -236,11 +233,11 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
         </div>
 
         {/* Title */}
-        <Link href={`/promises/${promise.id}`} className="block mb-6 group/link">
-          <h3 className="text-heading-xl hover:underline">
+        <div className="block mb-6 group/link">
+          <h3 className="text-heading-xl">
             {promise.title}
           </h3>
-        </Link>
+        </div>
 
         {/* Excerpt */}
         <p className="text-body-lg mb-8 line-clamp-3">
@@ -255,19 +252,15 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
               {getCompletionPercentage(promise.status)}%
             </span>
           </div>
-          <div className="w-full bg-[var(--color-border-subtle)] h-2 rounded-full overflow-hidden">
-            <div 
-              className="h-full rounded-full transition-all duration-1000 ease-out" 
-              style={{ 
-                width: `${getCompletionPercentage(promise.status)}%`,
-                backgroundColor: getCompletionColor(getCompletionPercentage(promise.status))
-              }} 
-            />
-          </div>
+          <ProgressBar 
+            value={getCompletionPercentage(promise.status)} 
+            color={getCompletionColor(getCompletionPercentage(promise.status))} 
+            height="8px" 
+          />
         </div>
 
         {/* Footer row */}
-        <div className="mt-auto flex items-center justify-between flex-wrap gap-4 pt-8 border-t border-white/5">
+        <div className="mt-10 flex items-center justify-between flex-wrap gap-4 pt-8 border-t border-white/5">
           <div className="flex items-center gap-4">
             {politicianProfileMode ? (
               <Link href={`?tab=timeline&promiseId=${promise.id}`} className="flex items-center text-meta text-white hover:text-[var(--color-accent-info)] transition-colors">
@@ -290,6 +283,6 @@ export function PromiseCard({ promise, viewMode = 'default', politicianProfileMo
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

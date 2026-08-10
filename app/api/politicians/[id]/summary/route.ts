@@ -56,9 +56,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 
   // 5. Data has changed or no summary exists. We must regenerate.
-  // Prevent firing multiple jobs if already generating the same hash.
+  // Prevent firing multiple jobs if already generating the same hash, unless it's been stuck for over 5 minutes.
   if (existingSummary && existingSummary.status === "GENERATING" && existingSummary.inputHash === inputHash) {
-    return NextResponse.json(existingSummary);
+    const timeSinceGenerated = Date.now() - new Date(existingSummary.lastDataUpdate).getTime();
+    if (timeSinceGenerated < 5 * 60 * 1000) {
+      return NextResponse.json(existingSummary);
+    }
+    // If it's been more than 5 minutes, we assume the previous job failed or crashed, so we proceed to regenerate.
   }
 
   // Update DB to mark as GENERATING, preserving old summary text so frontend can still display it.

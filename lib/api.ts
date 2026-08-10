@@ -144,6 +144,30 @@ export async function getParty(slug: string): Promise<Party | null> {
   }) as any;
 }
 
+export async function getParties(): Promise<(Party & { _count: { politicians: number } })[]> {
+  return await prisma.party.findMany({
+    include: {
+      _count: {
+        select: { politicians: true }
+      }
+    }
+  }) as any;
+}
+
+export async function getPoliticiansByParty(partyId: string): Promise<Politician[]> {
+  return await prisma.politician.findMany({
+    where: { partyId },
+    include: { party: true, criminalCases: true, assetDeclarations: true, careerTimeline: true }
+  }) as any;
+}
+
+export async function getPromisesByParty(partyId: string): Promise<PromiseType[]> {
+  return await prisma.promise.findMany({
+    where: { partyId },
+    include: { politician: true, party: true, timeline: true }
+  }) as any;
+}
+
 export async function getPoliticiansByState(stateName: string): Promise<Politician[]> {
   return await prisma.politician.findMany({
     where: { state: stateName },

@@ -17,7 +17,7 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
   return (
     <div className="flex flex-col gap-[24px] mb-12">
       {/* TOP ROW */}
-      <div className="grid grid-cols-1 xl:grid-cols-[300px_1fr_400px] gap-[24px]">
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,300px)_1fr_minmax(280px,400px)] gap-[24px]">
         {/* COLUMN 1: PORTRAIT */}
         <div className="relative overflow-hidden rounded-lg w-full h-full min-h-[400px] bg-[var(--bg-base)] transition-all duration-[220ms] hover:translate-y-[-2px]">
           <div className="absolute inset-0 z-0">
@@ -39,15 +39,15 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
         </div>
 
         {/* COLUMN 2: DETAILS & SCORE */}
-        <div className="premium-card p-[32px] flex flex-col md:flex-row gap-[32px]">
+        <div className="card-elevated p-[32px] flex flex-col md:flex-row gap-[32px]">
           {/* Left: Details */}
           <div className="flex-1 flex flex-col justify-between border-r border-white/10 pr-[32px]">
             <div>
               <div className="flex items-center gap-[8px] mb-[4px]">
-                <h1 className="text-3xl font-bold text-white">{politician.name}</h1>
+                <h1 className="text-3xl font-bold text-white break-words min-w-0">{politician.name}</h1>
                 <BadgeCheck className="w-6 h-6 text-[#3B82F6]" />
               </div>
-              <p className="text-[#A1A1AA] text-[16px] font-medium mb-[24px]">{politician.position}, {politician.state}</p>
+              <p className="text-[#A1A1AA] text-[16px] font-medium mb-[24px] break-words min-w-0">{politician.position}, {politician.state}</p>
 
               <div className="flex items-center gap-[16px] mb-[24px]">
                 {party?.logoUrl ? (
@@ -152,56 +152,56 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
           <div className="flex items-center mb-[16px] h-[24px]">
             <span className="text-[#A1A1AA] text-[12px] uppercase tracking-wider font-bold">At a Glance</span>
           </div>
-          <div className="grid grid-cols-2 gap-[12px] flex-grow">
+          <div className="grid grid-cols-2 gap-[8px] flex-grow">
             {/* Promises */}
-            <Link href="#promises" className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer">
-              <div className="flex items-center justify-between mb-[12px]">
-                <ClipboardList className="w-[20px] h-[20px] text-[var(--color-accent-positive)] group-hover:scale-110 transition-transform" />
-                <div className="text-white font-bold text-[20px]">{quickLook.promisesKept}/{quickLook.promisesTotal}</div>
+            <Link href="#promises" className="card-elevated p-[12px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer min-w-0">
+              <div className="flex items-center justify-between mb-[10px] gap-[4px]">
+                <ClipboardList className="w-[18px] h-[18px] shrink-0 text-[var(--color-accent-positive)] group-hover:scale-110 transition-transform" />
+                <div className="text-white font-bold text-[18px] tabular-nums">{quickLook.promisesKept}/{quickLook.promisesTotal}</div>
               </div>
-              <div className="text-[#A1A1AA] text-[13px] font-medium mb-[8px] group-hover:text-white transition-colors">Promises Delivered</div>
+              <div className="text-[#A1A1AA] text-[12px] font-medium mb-[8px] group-hover:text-white transition-colors leading-tight">Promises Delivered</div>
               <div className="w-full h-[4px] bg-white/5 rounded-full overflow-hidden">
                 <div className="h-full bg-[var(--color-accent-positive)] rounded-full transition-all duration-[800ms]" style={{ width: `${quickLook.promisesTotal > 0 ? (quickLook.promisesKept / quickLook.promisesTotal) * 100 : 0}%` }} />
               </div>
             </Link>
 
             {/* Attendance */}
-            <Link href="#performance" className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer">
-              <div className="flex items-center justify-between mb-[12px]">
-                <User className="w-[20px] h-[20px] text-[var(--color-accent-positive)] group-hover:scale-110 transition-transform" />
-                <div className="text-white font-bold text-[20px]">{quickLook.attendancePercent}%</div>
+            <Link href="#performance" className="card-elevated p-[12px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer min-w-0">
+              <div className="flex items-center justify-between mb-[10px] gap-[4px]">
+                <User className="w-[18px] h-[18px] shrink-0 text-[var(--color-accent-positive)] group-hover:scale-110 transition-transform" />
+                <div className="text-white font-bold text-[18px] tabular-nums">{quickLook.attendancePercent}%</div>
               </div>
-              <div className="text-[#A1A1AA] text-[13px] font-medium mb-[4px] group-hover:text-white transition-colors">Attendance</div>
-              <div className="text-[#A1A1AA] text-[11px]">Above Chamber Avg.</div>
+              <div className="text-[#A1A1AA] text-[12px] font-medium mb-[2px] group-hover:text-white transition-colors leading-tight">Attendance</div>
+              <div className="text-[#A1A1AA] text-[10px]">Above Chamber Avg.</div>
             </Link>
 
             {/* Bills */}
-            <Link href="#legislation" className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer">
-              <div className="flex items-center justify-between mb-[12px]">
-                <Gavel className="w-[20px] h-[20px] text-[var(--color-accent-warning)] group-hover:scale-110 transition-transform" />
-                <div className="text-white font-bold text-[20px]">{quickLook.billsIntroduced}</div>
+            <Link href="#legislation" className="card-elevated p-[12px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer min-w-0">
+              <div className="flex items-center justify-between mb-[10px] gap-[4px]">
+                <Gavel className="w-[18px] h-[18px] shrink-0 text-[var(--color-accent-warning)] group-hover:scale-110 transition-transform" />
+                <div className="text-white font-bold text-[18px] tabular-nums">{quickLook.billsIntroduced}</div>
               </div>
-              <div className="text-[#A1A1AA] text-[13px] font-medium mb-[4px] group-hover:text-white transition-colors">Bills Introduced</div>
-              <div className="text-[#A1A1AA] text-[11px]">{quickLook.billsPassed} Passed</div>
+              <div className="text-[#A1A1AA] text-[12px] font-medium mb-[2px] group-hover:text-white transition-colors leading-tight">Bills Introduced</div>
+              <div className="text-[#A1A1AA] text-[10px]">{quickLook.billsPassed} Passed</div>
             </Link>
 
             {/* Legal */}
-            <Link href="#cases" className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer">
-              <div className="flex items-center justify-between mb-[12px]">
-                <Scale className="w-[20px] h-[20px] text-[#D97706] group-hover:scale-110 transition-transform" />
-                <div className="text-white font-bold text-[20px]">{quickLook.legalCases}</div>
+            <Link href="#cases" className="card-elevated p-[12px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer min-w-0">
+              <div className="flex items-center justify-between mb-[10px] gap-[4px]">
+                <Scale className="w-[18px] h-[18px] shrink-0 text-[#D97706] group-hover:scale-110 transition-transform" />
+                <div className="text-white font-bold text-[18px] tabular-nums">{quickLook.legalCases}</div>
               </div>
-              <div className="text-[#A1A1AA] text-[13px] font-medium mb-[4px] group-hover:text-white transition-colors">{quickLook.legalCases === 1 ? 'Legal Case Pending' : 'Legal Cases Pending'}</div>
-              <div className="text-[#A1A1AA] text-[11px]">{quickLook.legalCases > 0 ? (politician.criminalCases.some(c => c.severity === 'heinous') ? 'Heinous Offenses Found' : 'Non-heinous') : 'Clear Record'}</div>
+              <div className="text-[#A1A1AA] text-[12px] font-medium mb-[2px] group-hover:text-white transition-colors leading-tight">{quickLook.legalCases === 1 ? 'Legal Case' : 'Legal Cases'}</div>
+              <div className="text-[#A1A1AA] text-[10px]">{quickLook.legalCases > 0 ? (politician.criminalCases.some(c => c.severity === 'heinous') ? 'Heinous Offenses' : 'Non-heinous') : 'Clear Record'}</div>
             </Link>
 
             {/* Net Worth */}
-            <Link href="#financials" className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer">
-              <div className="flex items-center justify-between mb-[12px]">
-                <IndianRupee className="w-[20px] h-[20px] text-[#818CF8] group-hover:scale-110 transition-transform" />
-                <div className="text-white font-bold text-[20px]">{quickLook.netWorthCr}</div>
+            <Link href="#financials" className="card-elevated p-[12px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all cursor-pointer min-w-0">
+              <div className="flex items-center justify-between mb-[10px] gap-[4px]">
+                <IndianRupee className="w-[18px] h-[18px] shrink-0 text-[#818CF8] group-hover:scale-110 transition-transform" />
+                <div className="text-white font-bold text-[18px] tabular-nums truncate max-w-[80px]">{quickLook.netWorthCr || '—'}</div>
               </div>
-              <div className="text-[#A1A1AA] text-[13px] font-medium mb-[4px] group-hover:text-white transition-colors">Net Worth ({politician.assetDeclarations?.[0]?.year || 'Latest'})</div>
+              <div className="text-[#A1A1AA] text-[12px] font-medium mb-[2px] group-hover:text-white transition-colors leading-tight">Net Worth ({politician.assetDeclarations?.[0]?.year || 'N/A'})</div>
               <div className="text-[#A1A1AA] text-[11px]">
                 {(() => {
                   const percent = politician.assetDeclarations?.[0]?.growthPercent;
@@ -211,12 +211,12 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
               </div>            </Link>
 
             {/* Education Level */}
-            <div className="premium-card p-[16px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all">
-              <div className="flex items-center justify-between mb-[8px]">
-                <GraduationCap className="w-[20px] h-[20px] text-[#60A5FA] group-hover:scale-110 transition-transform shrink-0" />
+            <div className="card-elevated p-[12px] flex flex-col justify-center group hover:bg-white/[0.04] transition-all min-w-0">
+              <div className="flex items-center mb-[6px]">
+                <GraduationCap className="w-[18px] h-[18px] shrink-0 text-[#60A5FA] group-hover:scale-110 transition-transform" />
               </div>
-              <div className="text-white font-bold text-[14px] leading-tight line-clamp-2 mb-[4px]" title={politician.education}>{politician.education}</div>
-              <div className="text-[#A1A1AA] text-[13px] font-medium mb-[4px] group-hover:text-white transition-colors">Education Level</div>
+              <div className="text-white font-bold text-[12px] leading-tight line-clamp-2 mb-[4px]" title={politician.education}>{politician.education || '—'}</div>
+              <div className="text-[#A1A1AA] text-[12px] font-medium mb-[2px] group-hover:text-white transition-colors leading-tight">Education</div>
               <div className="text-[#A1A1AA] text-[11px]">Highest Qualification</div>
             </div>
           </div>
@@ -229,7 +229,7 @@ export function PoliticianHero({ politician, party, quickLook }: Props) {
         <IntelligenceOverview politicianId={politician.id} />
 
         {/* QUICK LINKS */}
-        <div className="premium-card p-[20px] grid grid-cols-2 gap-[12px]">
+        <div className="card-elevated p-[20px] grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-[8px]">
           <Link href="/compare" className="flex items-center gap-[16px] group p-[12px] rounded-xl hover:bg-white/[0.04] transition-all">
             <div className="w-[40px] h-[40px] rounded-full bg-white/[0.03] flex items-center justify-center border border-white/5 group-hover:border-[#3B82F6]/30 group-hover:bg-[#3B82F6]/10 transition-all">
               <Scale className="w-[18px] h-[18px] text-[#3B82F6] group-hover:text-[#60A5FA] transition-all" />

@@ -30,6 +30,7 @@ async function main() {
         ideology: party.ideology,
         founded: party.founded,
         logoUrl: party.logoUrl,
+        isNational: party.isNational || false,
       }
     });
   }
@@ -157,7 +158,7 @@ async function main() {
         evidenceIds: pr.evidenceIds,
         
         timeline: {
-          create: pr.timeline.map(t => ({
+          create: pr.timeline.map((t: any) => ({
             id: t.id,
             date: new Date(t.date),
             title: t.title,
