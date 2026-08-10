@@ -1,12 +1,14 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { POLITICIANS, PARTIES } from '@/data/politicians';
 import { PROMISES } from '@/data/promises';
 import { aggregateStats } from '@/lib/aggregation';
 import { CompareType } from './CompareBuilder';
 import { useSearchCache } from '@/lib/useSearchCache';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+import { METRICS_REGISTRY, MetricDefinition } from '@/lib/metrics';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface CompareTableProps {
   type: CompareType;
@@ -17,10 +19,9 @@ interface CompareTableProps {
 const SLOT_COLORS = ['#E6B16A', '#6C8FD1', '#3FA76A', '#B98A6B'];
 
 export function CompareTable({ type, entityIds }: CompareTableProps) {
-  const [currentView, setCurrentView] = useState<'executive' | 'detailed'>('executive');
-
   const hasDuplicates = new Set(entityIds).size !== entityIds.length;
   const cache         = useSearchCache<any>('aggregateStats');
+  const shouldReduceMotion = useReducedMotion();
 
   const columnsData = useMemo(() => {
     if (hasDuplicates) return [];
@@ -33,11 +34,14 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
       let matchedPromises: typeof PROMISES = [];
       let name = '';
       let shortName = '';
+      let photoUrl = '';
+      let partyName = '';
 
       if (type === 'party') {
         const party = PARTIES.find(p => p.id === id);
         name       = party?.name || id;
         shortName  = party?.abbreviation || id;
+        partyName  = 'Party';
         matchedPoliticians = POLITICIANS.filter(p => p.partyId === id);
         matchedPromises    = PROMISES.filter(p => p.partyId === id);
       } else if (type === 'state') {
@@ -45,6 +49,7 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
           .find(s => s.toLowerCase().replace(/\s+/g, '-') === id);
         name      = stateName || id;
         shortName = name;
+        partyName = 'State';
         matchedPoliticians = POLITICIANS.filter(p => p.state === stateName);
         matchedPromises    = PROMISES.filter(p => p.state === stateName);
       } else if (type === 'constituency') {
@@ -52,6 +57,7 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
           .find(c => c.toLowerCase().replace(/\s+/g, '-') === id);
         name      = constName || id;
         shortName = name;
+        partyName = 'Constituency';
         matchedPoliticians = POLITICIANS.filter(p => p.constituency === constName);
         const polIds = new Set(matchedPoliticians.map(p => p.id));
         matchedPromises = PROMISES.filter(p => polIds.has(p.politicianId));
@@ -59,12 +65,14 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
         const pol = POLITICIANS.find(p => p.id === id);
         name      = pol?.name || id;
         shortName = name.split(' ').slice(-1)[0];
+        photoUrl  = pol?.photoUrl || '';
+        partyName = PARTIES.find(p => p.id === pol?.partyId)?.abbreviation || '';
         if (pol) matchedPoliticians = [pol];
         matchedPromises = PROMISES.filter(p => p.politicianId === id);
       }
 
       const result = {
-        id, name, shortName,
+        id, name, shortName, photoUrl, partyName,
         stats: aggregateStats(matchedPoliticians, matchedPromises),
         color: SLOT_COLORS[index],
         initials: name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase(),
@@ -87,46 +95,31 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
   if (columnsData.length < 2) return null;
 
   const metrics = [
-    { label: 'Promises Tracked',  key: 'totalPromises',  isPercentage: false, invertColor: false, format: null },
-    { label: 'Fulfillment',       key: 'avgFulfillment', isPercentage: true,  invertColor: false, format: null },
-    { label: 'Attendance',        key: 'avgAttendance',  isPercentage: true,  invertColor: false, format: null },
-    { label: 'Net Assets',        key: 'avgNetAssets',   isPercentage: false, invertColor: false,
-      format: (v: number) => `₹${(v / 10000000).toFixed(1)} Cr` },
-    { label: 'Legal Cases',       key: 'totalCases',     isPercentage: false, invertColor: true,  format: null },
+    METRICS_REGISTRY.totalPromises,
+    METRICS_REGISTRY.avgFulfillment,
+    METRICS_REGISTRY.avgAttendance,
+    METRICS_REGISTRY.avgNetAssets,
+    METRICS_REGISTRY.totalCases,
   ];
 
-  const fmtVal = (metric: typeof metrics[0], v: number) =>
+  const fmtVal = (metric: MetricDefinition, v: number) =>
     metric.format ? metric.format(v) : metric.isPercentage ? `${v}%` : String(v ?? 0);
 
   // Who leads each metric
-  const getLeader = (metric: typeof metrics[0]) => {
-    const vals = columnsData.map(c => c.stats[metric.key as keyof typeof c.stats] as number ?? 0);
-    const best = metric.invertColor ? Math.min(...vals) : Math.max(...vals);
+  const getLeader = (metric: MetricDefinition) => {
+    if (metric.polarity === 'context_only') {
+      return columnsData.map(() => false);
+    }
+    const vals = columnsData.map(c => c.stats[metric.id as keyof typeof c.stats] as number ?? 0);
+    const best = metric.polarity === 'lower_is_better' ? Math.min(...vals) : Math.max(...vals);
     return vals.map(v => (v === best && vals.filter(x => x === best).length < vals.length));
   };
 
   return (
     <div className="border-t border-[var(--border-subtle)]">
       {/* ── TOOLBAR ─────────────────────────────────── */}
-      <div className="sticky top-[80px] z-30 bg-[var(--bg-base)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-12 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2" role="group" aria-label="Switch comparison view">
-            <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--text-tertiary)] mr-2">View:</span>
-            {(['executive', 'detailed'] as const).map(v => (
-              <button
-                key={v}
-                onClick={() => setCurrentView(v)}
-                aria-pressed={currentView === v}
-                className={`px-4 py-2 rounded-full text-[12px] font-semibold capitalize transition-all duration-200 ${
-                  currentView === v
-                    ? 'bg-white text-black'
-                    : 'bg-white/5 text-[var(--text-tertiary)] hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                {v}
-              </button>
-            ))}
-          </div>
+      <div className="sticky top-[80px] z-40 bg-[var(--bg-base)] border-b border-[var(--border-subtle)]">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-12 py-4 flex items-center justify-end">
           <button
             onClick={() => window.print()}
             className="text-[12px] font-medium text-[var(--text-tertiary)] hover:text-white transition-colors"
@@ -137,177 +130,125 @@ export function CompareTable({ type, entityIds }: CompareTableProps) {
       </div>
 
       <div className="max-w-[1200px] mx-auto px-6 lg:px-12 py-10">
+        <div className="overflow-x-auto relative scrollbar-hide">
+          <table className="w-full border-collapse">
+            <thead className="sticky top-[133px] z-30 bg-[var(--bg-base)]">
+              <tr>
+                <th className="sticky left-0 z-40 bg-[var(--bg-base)] text-left pb-6 pr-6 text-[11px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] min-w-[160px] align-bottom border-b border-[var(--border-subtle)]">
+                  Metric
+                </th>
+                {columnsData.map(col => (
+                  <th
+                    key={col.id}
+                    className="text-center pb-6 px-4 min-w-[140px] align-bottom border-b border-[var(--border-subtle)]"
+                  >
+                    <div className="flex flex-col items-center gap-3">
+                      {col.photoUrl ? (
+                        <img 
+                          src={col.photoUrl} 
+                          alt={col.name} 
+                          className="w-[56px] h-[56px] rounded-[var(--radius-sm)] object-cover" 
+                          style={{ border: `2px solid ${col.color}44` }} 
+                        />
+                      ) : (
+                        <div
+                          className="w-[56px] h-[56px] rounded-[var(--radius-sm)] flex items-center justify-center text-[16px] font-black text-white flex-shrink-0"
+                          style={{ backgroundColor: col.color + '22', border: `2px solid ${col.color}44` }}
+                        >
+                          <span style={{ color: col.color }}>{col.initials}</span>
+                        </div>
+                      )}
+                      <div className="min-w-0 flex flex-col items-center">
+                        <div className="text-[14px] font-bold truncate" style={{ color: col.color }}>{col.shortName}</div>
+                        {col.partyName && <div className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wider font-semibold mt-0.5">{col.partyName}</div>}
+                      </div>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {metrics.map((metric, mIdx) => {
+                const vals    = columnsData.map(c => (c.stats[metric.id as keyof typeof c.stats] as number) ?? 0);
+                const leaders = getLeader(metric);
+                const max     = Math.max(...vals);
+                const barMax  = max > 0 ? max : 1;
+                const isContext = metric.polarity === 'context_only';
 
-        {/* ── ENTITY COLUMN HEADERS ──────────────────── */}
-        <div className="grid gap-4 mb-10"
-          style={{ gridTemplateColumns: `repeat(${columnsData.length}, 1fr)` }}
-        >
-          {columnsData.map(col => (
-            <div key={col.id} className="premium-card p-5 flex items-center gap-4">
-              <div
-                className="w-[48px] h-[48px] rounded-[var(--radius-sm)] flex items-center justify-center text-[13px] font-black text-white flex-shrink-0"
-                style={{ backgroundColor: col.color + '22', border: `1.5px solid ${col.color}44` }}
-              >
-                <span style={{ color: col.color }}>{col.initials}</span>
-              </div>
-              <div className="min-w-0">
-                <div className="text-[16px] font-bold text-white truncate">{col.name}</div>
-                <div className="text-[11px] text-[var(--text-tertiary)] truncate capitalize">{type}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* ── EXECUTIVE VIEW ─────────────────────────── */}
-        {currentView === 'executive' && (
-          <div className="space-y-4">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-6 flex items-center gap-3">
-              <span className="w-8 h-px bg-[var(--border-subtle)]" aria-hidden="true" />
-              Executive Summary — Key Metrics
-            </div>
-
-            {metrics.map(metric => {
-              const vals    = columnsData.map(c => (c.stats[metric.key as keyof typeof c.stats] as number) ?? 0);
-              const leaders = getLeader(metric);
-              const max     = Math.max(...vals);
-              const barMax  = max > 0 ? max : 1;
-
-              return (
-                <div key={metric.key} className="premium-card p-5">
-                  <div className="text-[11px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-4">
-                    {metric.label}
-                  </div>
-                  <div className="space-y-3">
+                return (
+                  <tr
+                    key={metric.id}
+                    className="group"
+                  >
+                    <td className="sticky left-0 z-20 bg-[var(--bg-base)] py-6 pr-6 text-[13px] font-medium text-[var(--text-tertiary)] border-b border-[var(--border-subtle)] group-hover:bg-white/[0.02] transition-colors">
+                      {metric.label}
+                    </td>
                     {columnsData.map((col, idx) => {
-                      const val      = (vals[idx] ?? 0);
+                      const val      = vals[idx] ?? 0;
                       const isLeader = leaders[idx];
-                      const barPct   = metric.isPercentage ? val : (val / barMax) * 100;
+                      
+                      let barPct = metric.isPercentage ? val : (val / barMax) * 100;
+                      if (!metric.isPercentage && metric.polarity === 'lower_is_better') {
+                        barPct = ((barMax - val) / barMax) * 100;
+                      }
 
                       return (
-                        <div key={col.id} className="flex items-center gap-4">
-                          <div className="w-[80px] text-[12px] font-semibold text-white truncate flex-shrink-0">
-                            {col.shortName}
-                          </div>
-                          <div className="flex-1 h-[6px] bg-white/5 rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full transition-all duration-700"
-                              style={{
-                                width: `${Math.min(barPct, 100)}%`,
-                                backgroundColor: col.color,
-                              }}
-                            />
-                          </div>
-                          <div className="w-[80px] text-right flex items-center justify-end gap-1.5 flex-shrink-0">
-                            <span className="text-[13px] font-black" style={{ color: col.color }}>
-                              {fmtVal(metric, val)}
-                            </span>
-                            {isLeader ? (
-                              <TrendingUp className="w-[12px] h-[12px] text-[var(--color-accent-positive)]" aria-label="Leads this metric" />
-                            ) : val === Math.min(...vals) && max !== Math.min(...vals) ? (
-                              <TrendingDown className="w-[12px] h-[12px] text-[var(--color-accent-negative)]" aria-label="Lowest on this metric" />
-                            ) : (
-                              <Minus className="w-[12px] h-[12px] text-[var(--text-tertiary)]" aria-hidden="true" />
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* ── DETAILED VIEW — comparison table ───────── */}
-        {currentView === 'detailed' && (
-          <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] mb-6 flex items-center gap-3">
-              <span className="w-8 h-px bg-[var(--border-subtle)]" aria-hidden="true" />
-              Detailed Comparison Table
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="border-b border-[var(--border-subtle)]">
-                    <th className="text-left pb-4 pr-6 text-[11px] font-bold uppercase tracking-widest text-[var(--text-tertiary)] w-[160px]">
-                      Metric
-                    </th>
-                    {columnsData.map(col => (
-                      <th
-                        key={col.id}
-                        className="text-right pb-4 px-4 text-[13px] font-bold"
-                        style={{ color: col.color }}
-                      >
-                        {col.shortName}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {metrics.map((metric, mIdx) => {
-                    const vals    = columnsData.map(c => (c.stats[metric.key as keyof typeof c.stats] as number) ?? 0);
-                    const leaders = getLeader(metric);
-
-                    return (
-                      <tr
-                        key={metric.key}
-                        className={`border-b border-[var(--border-subtle)] ${mIdx % 2 === 0 ? 'bg-white/[0.01]' : ''}`}
-                      >
-                        <td className="py-4 pr-6 text-[13px] font-medium text-[var(--text-tertiary)]">
-                          {metric.label}
-                        </td>
-                        {columnsData.map((col, idx) => {
-                          const val      = vals[idx] ?? 0;
-                          const isLeader = leaders[idx];
-                          const isLowest = val === Math.min(...vals) && Math.max(...vals) !== Math.min(...vals);
-
-                          return (
-                            <td key={col.id} className="py-4 px-4 text-right">
+                        <td 
+                          key={col.id} 
+                          className="py-6 px-4 text-center border-b border-[var(--border-subtle)] relative transition-colors"
+                          style={{ 
+                            backgroundColor: isLeader && !isContext ? `${col.color}15` : undefined 
+                          }}
+                        >
+                          <div className="flex flex-col items-center gap-2.5">
+                            <div className="flex items-center gap-1.5 justify-center min-h-[24px]">
+                              {isLeader && !isContext && (
+                                <motion.div
+                                  initial={shouldReduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+                                  whileInView={{ opacity: 1, scale: 1 }}
+                                  viewport={{ once: true }}
+                                  transition={{ delay: shouldReduceMotion ? 0 : 0.6, type: 'spring', stiffness: 300, damping: 20 }}
+                                >
+                                  <CheckCircle2 className="w-[14px] h-[14px]" style={{ color: col.color }} aria-label="Winner" />
+                                </motion.div>
+                              )}
                               <span
-                                className={`text-[14px] font-black ${
-                                  isLeader ? 'text-[var(--color-accent-positive)]'
-                                  : isLowest ? 'text-[var(--color-accent-negative)]'
-                                  : 'text-white'
+                                className={`text-[16px] tracking-tight ${
+                                  isLeader && !isContext ? 'font-black text-white'
+                                  : 'font-semibold text-[var(--text-secondary)]'
                                 }`}
                               >
                                 {fmtVal(metric, val)}
                               </span>
-                              {isLeader && (
-                                <span className="ml-1.5 text-[9px] font-black uppercase tracking-wider text-[var(--color-accent-positive)]">
-                                  HIGH
-                                </span>
-                              )}
-                              {isLowest && (
-                                <span className="ml-1.5 text-[9px] font-black uppercase tracking-wider text-[var(--color-accent-negative)]">
-                                  LOW
-                                </span>
-                              )}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            <p className="mt-4 text-[11px] text-[var(--text-tertiary)]">
-              <strong className="text-white">Legend —</strong>{' '}
-              <span className="text-[var(--color-accent-positive)]">GREEN HIGH</span> = best performer ·{' '}
-              <span className="text-[var(--color-accent-negative)]">RED LOW</span> = lowest performer.
-              For Legal Cases, lower is better.
-            </p>
-          </div>
-        )}
+                            </div>
+                            <div className="w-full max-w-[80px] h-[4px] bg-white/5 rounded-full overflow-hidden mx-auto">
+                              <motion.div
+                                className="h-full rounded-full"
+                                initial={{ width: shouldReduceMotion ? `${Math.min(Math.max(barPct, 0), 100)}%` : 0 }}
+                                whileInView={{ width: `${Math.min(Math.max(barPct, 0), 100)}%` }}
+                                viewport={{ once: true }}
+                                transition={{ duration: shouldReduceMotion ? 0 : 0.8, ease: "easeOut" }}
+                                style={{
+                                  backgroundColor: col.color,
+                                  opacity: isLeader && !isContext ? 1 : 0.3
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
 
         {/* Data footnote */}
-        <p className="mt-10 text-[11px] text-[var(--text-tertiary)] leading-relaxed border-t border-[var(--border-subtle)] pt-6">
-          All statistics aggregated from primary source affidavit data and verified parliamentary records.
-          Fulfillment % = promises fulfilled ÷ total tracked promises.
-          Attendance % = self-reported from parliamentary records.
+        <p className="mt-10 text-[11px] text-[var(--text-tertiary)] leading-relaxed pt-6 border-t border-[var(--border-subtle)] text-center">
+          All statistics aggregated from primary source affidavit data and verified parliamentary records.<br/>
+          <span className="opacity-70">Fulfillment % = promises fulfilled ÷ total tracked promises. Attendance % = self-reported from parliamentary records.</span>
         </p>
       </div>
     </div>
